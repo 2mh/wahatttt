@@ -9,7 +9,8 @@ from classOfDictClasses import classOfDictClasses
 testObj = classOfDictClasses()
 
 testObj.writeOutVarFile()
-testObj.writeOutVarInDictFile()
+testObj.writeOutDynamicVarInDictFile()
+testObj.writeOutStaticVarInDictFile()
 testObj.writeOutVarInClassDictFile()
 
 print "Check your *.txt files."

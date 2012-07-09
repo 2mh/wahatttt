@@ -7,18 +7,20 @@
 class dictClass(dict):
     
     var = ""
-    ####################################################
-    # Uncommented dictionary behaves static (as in Java)
-    # dictionary = {}
+    # Static dictionary
+    dictionaryStatic = {}
     
     def __init__(self,value):
-        self.dictionary = {}
+        self.dictionaryDynamic = {}
         self.var = value
-        self.dictionary["var"] = value
+        self.dictionaryDynamic["var"] = value
+        self.dictionaryStatic["var"] = value
         self["var"] = value
         
     def getVar(self): return self.var
 
-    def getVarInDict(self): return self.dictionary["var"]
+    def getDynamicVarInDict(self): return self.dictionaryDynamic["var"]
+    
+    def getStaticVarInDict(self): return self.dictionaryStatic["var"]
     
     def getVarInClassDict(self): return self["var"]

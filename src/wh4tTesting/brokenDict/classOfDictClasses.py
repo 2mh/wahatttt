@@ -24,10 +24,15 @@ class classOfDictClasses:
             f.write(dc.getVar())
         f.close()
         
-    def writeOutVarInDictFile(self):
-        f = open("outVarInDictFile.txt","w","utf-8")
+    def writeOutStaticVarInDictFile(self):
+        f = open("outStaticVarInDictFile.txt","w","utf-8")
         for dc in self.dictClasses:
-            f.write(dc.getVarInDict())
+            f.write(dc.getStaticVarInDict())
+            
+    def writeOutDynamicVarInDictFile(self):
+        f = open("outDynamicVarInDictFile.txt","w","utf-8")
+        for dc in self.dictClasses:
+            f.write(dc.getDynamicVarInDict())
             
     def writeOutVarInClassDictFile(self):
         f = open("outVarInClassDictFile.txt","w","utf-8")
