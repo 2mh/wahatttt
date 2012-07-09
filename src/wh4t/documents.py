@@ -212,8 +212,8 @@ class collection:
                     
         return self.docsWordsByEditDistance
    
-    def writeWordsByEditDistanceFile(self,distance=""):
-        fileName = getMailBodyWordsByEditDistanceFile(editDistance=distance)
+    def writeWordsByEditDistanceFile(self,editDistance=""):
+        fileName = getMailBodyWordsByEditDistanceFile(editDistance=editDistance)
         f = open(fileName,"w",getDefaultEncoding())
         for word1, word2 in self.docsWordsByEditDistance:
             f.write(word1 + "\t" + word2 + "\n")
