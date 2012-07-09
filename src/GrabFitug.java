@@ -8,7 +8,6 @@ import java.io.*;
 import java.sql.Date;
 import wh4t.Converter;
 
-
 public class GrabFitug {
 
 	//---------------------------------------------------------------	
