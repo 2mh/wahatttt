@@ -1,6 +1,6 @@
 /**
  * @author Bernd Fix <bernd@wauland.de>, 2000-2012
- * @author Hernani Marques <h2m@access.uzh.ch>, 2000 (minimal changes)
+ * @author Hernani Marques <h2m@access.uzh.ch>, 2012 (minimal changes)
  */
 
 package wht4;
