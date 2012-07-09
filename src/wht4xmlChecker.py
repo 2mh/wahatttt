@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#! /usr/bin/python2.6
 # -*- coding: utf-8 -*-
 """
 Based upon (public domain) source, at URL:
@@ -14,12 +14,15 @@ from collections import defaultdict
 from sys import argv
 from codecs import open
 from re import sub
-import wht4global as w
+from wht4.settings import printOwnInfo
+from wht4.settings import getDefaultEncoding
+from wht4.settings import getInvalidXmlFileName
+from wht4.settings import getMailFolder
 
-w.printOwnInfo(__file__)
+printOwnInfo(__file__)
 
-invalidXmlFileHandler = open(w.getInvalidXmlFileName(),
-"w",w.getDefaultEncoding())
+invalidXmlFileHandler = open(getInvalidXmlFileName(),
+"w",getDefaultEncoding())
 invalidXmlDoc = Doc()
 invalidColl = invalidXmlDoc.createElement("invalidCollection")
 invalidXmlDoc.appendChild(invalidColl)
@@ -34,13 +37,13 @@ def addInvalidDocs(fileName, excStr):
     invalidColl.appendChild(invalidDoc)
     invalidStat[sub("[0-9:]*\s","",errStr)] += 1
 
-def parseFile(file):
+def parseFile(fileName):
     parser = make_parser()
     parser.setContentHandler(ContentHandler())
-    parser.parse(file)
+    parser.parse(fileName)
 
 if len(argv) == 1:
-    argv.append(w.getMailFolder() + "*")
+    argv.append(getMailFolder() + "*")
 
 for arg in argv[1:]:
     for fileName in glob(arg):
@@ -57,9 +60,9 @@ for err,no in invalidStat.items():
     print err+" : "+str(no)
 invalidXmlFileHandler.write(invalidXmlDoc.toprettyxml())
 invalidXmlFileHandler.close()
-if len(invalidStat) == 0:
-    print "No errors found."
+if len(invalidStat.values()) == 0:
+    print "No XML errors found in " + getMailFolder()
 else:
     print "XML file with detailed error info written to " \
-        +w.getInvalidXmlFileName()
+        +getInvalidXmlFileName()
 
