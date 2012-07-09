@@ -12,7 +12,7 @@ class dictClass(dict):
     
     def __init__(self,value):
         self.dictionaryDynamic = {}
-        ### Uncommented self.dictionaryStatic would turn dynamic
+        ### Uncommenting the following, self.dictionaryStatic turns dynamic
         #self.dictionaryStatic = {}
         self.var = value
         self.dictionaryDynamic["var"] = value
