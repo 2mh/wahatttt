@@ -7,9 +7,12 @@
 class dictClass(dict):
     
     var = ""
-    dictionary = {}
+    ####################################################
+    # Uncommented dictionary behaves static (as in Java)
+    # dictionary = {}
     
     def __init__(self,value):
+        self.dictionary = {}
         self.var = value
         self.dictionary["var"] = value
         self["var"] = value
