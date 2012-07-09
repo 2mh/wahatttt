@@ -35,9 +35,10 @@ MAILBODY_TYPES_LOWERED_FILE = WH4T_BASEDIR + "mailBodyTypesLoweredFile"
 MAILBODY_WORDS_FILE = WH4T_BASEDIR + "mailBodyWordsFile"
 MAILBODY_WORDS_BY_EDITDISTANCE_FILE = WH4T_BASEDIR + "mailBodyWordsByEditDistance"
 MAILBODY_STEMS_FILE = WH4T_BASEDIR + "mailBodyStemsFile"
+MAILBODY_TOP_WORDS_FILE = WH4T_BASEDIR + "mailBodyTopWordsFile"
 MAIL_FOLDER_BASENAME = WH4T_BASEDIR + "fitug_xml"
 MAIL_FOLDER = join(getcwd(),MAIL_FOLDER_BASENAME)+sep
-VERSION = "0.1"
+VERSION = "0.4"
 
 # Helper functions
 def print72(): print 72*"*"
@@ -82,5 +83,7 @@ def getMailBodyStemsFile(): return MAILBODY_STEMS_FILE
 def getMailBodyWordsByEditDistanceFile(editDistance=""):
     fileName = MAILBODY_WORDS_BY_EDITDISTANCE_FILE
     return fileName + str(editDistance)
+
+def getMailBodyTopWordsFile(): return MAILBODY_TOP_WORDS_FILE
 
 def getBaseDir(): return WH4T_BASEDIR

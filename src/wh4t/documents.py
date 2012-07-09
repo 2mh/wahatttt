@@ -12,6 +12,7 @@ from settings import getMailBodyRawFile
 from settings import getMailBodyWordsFile
 from settings import getMailBodyStemsFile
 from settings import getMailBodyWordsByEditDistanceFile
+from settings import getMailBodyTopWordsFile
 from document import document
 from nltk import PunktWordTokenizer as tokenizer
 from nltk.probability import FreqDist as freqdist
@@ -22,6 +23,7 @@ from re import match
 from os import listdir
 from nltk.metrics import edit_distance
 from listByLen import listByLen
+from collections import defaultdict
 
 class collection:
     docList = []
@@ -32,6 +34,7 @@ class collection:
     docsWords = []
     docsStemmed = []
     docsWordsByEditDistance = set()
+    docsTopWords = defaultdict()
     
     docsTextFreqDistObj = None
     
@@ -165,6 +168,19 @@ class collection:
             self.docsTextFreqDistObj = freqdist(self.getDocsWords())
             
         return self.docsTextFreqDistObj
+    
+    def getDocsTopWords(self,numberOfWords=42):
+        if len(self.docsTopWords) == 0:
+            self.docsTopWords = \
+                self.docsTextFreqDist().items()[:numberOfWords]
+        return self.docsTopWords
+        
+    def writeDocsTopWordsFile(self,numberOfWords=42):
+        fileName = getMailBodyTopWordsFile()
+        f = open(fileName,"w",getDefaultEncoding())
+        for word,freq in self.getDocsTopWords(numberOfWords=numberOfWords):
+            f.write(word + "\t\t" + str(freq) + "\n")
+        f.close()
    
     def getWordsByEditDistance(self,editDistance,wordLen=None,numberOfMostFreq=1000):
         if len(self.docsWordsByEditDistance) == 0:
@@ -196,7 +212,7 @@ class collection:
                     
         return self.docsWordsByEditDistance
    
-    def writeWordsFileByEditDistance(self,distance=""):
+    def writeWordsByEditDistanceFile(self,distance=""):
         fileName = getMailBodyWordsByEditDistanceFile(editDistance=distance)
         f = open(fileName,"w",getDefaultEncoding())
         for word1, word2 in self.docsWordsByEditDistance:

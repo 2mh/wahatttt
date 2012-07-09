@@ -10,11 +10,13 @@ from wh4t.documents import collection
 printOwnInfo(__file__)
 
 dist = 2
-noOfTopWords = 23000
+noOfTopWords = 420
 xmlCollection = collection()
 
 """XXX: Must be optimized first"""
 print "Finding forms for the top " + str(noOfTopWords) + " words by edit distance " + \
 str(dist) + "; this may take a while!"
 xmlCollection.getWordsByEditDistance(dist,numberOfMostFreq=noOfTopWords)
-xmlCollection.writeWordsFileByEditDistance(distance=dist)
+xmlCollection.writeWordsByEditDistanceFile(distance=dist)
+xmlCollection.writeDocsTopWordsFile(numberOfWords=noOfTopWords)
+print "Top words written to disk."

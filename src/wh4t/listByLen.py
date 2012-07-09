@@ -22,9 +22,9 @@ class listByLen(list):
 import listByLen
 regularList = list(["a","wuff","miau","yeah","koffer","hamsterföderation","hamsterföderative"])
 print regularList
+['a', 'wuff', 'miau', 'yeah', 'koffer', 'hamsterf\xc3\xb6deration', 'hamsterf\xc3\xb6derative']
 
 newList = listByLen(regularList)[1:4]
 print newList
-['a', 'wuff', 'miau', 'yeah', 'koffer', 'hamsterf\xc3\xb6deration', 'hamsterf\xc3\xb6derative']
 ['a', 'wuff', 'miau', 'yeah']
 """
