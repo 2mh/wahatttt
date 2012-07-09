@@ -24,17 +24,17 @@ VERSION: Version of the wahatttt system as a whole; as of 1.0 it'll be usable
 """
 
 DEFAULT_ENCODING = "utf-8"
-WHT4_BASEDIR = abspath("..")+sep
-INVALID_XML_FILE_NAME = WHT4_BASEDIR + "wht4invalidXml.xml"
-MAILBODY_RAW_FILE = WHT4_BASEDIR + "mailBodyRawFile.txt"
-MAILBODY_LIN_FILE = WHT4_BASEDIR + "mailBodyLinFile.txt"
-MAILBODY_SYMBOLS_FILE = WHT4_BASEDIR + "mailBodySymbolsFile.txt"
-MAILBODY_TOKENS_FILE = WHT4_BASEDIR + "mailBodyTokensFile.txt"
-MAILBODY_TYPES_FILE = WHT4_BASEDIR + "mailBodyTypesFile.txt"
-MAILBODY_TYPES_LOWERED_FILE = WHT4_BASEDIR + "mailBodyTypesLoweredFile.txt"
-MAILBODY_WORDS_FILE = WHT4_BASEDIR + "mailBodyWordsFile.txt"
-MAILBODY_STEMS_FILE = WHT4_BASEDIR + "mailBodyStemsFile.txt"
-MAIL_FOLDER_BASENAME = WHT4_BASEDIR + "fitug_xml"
+WH4T_BASEDIR = abspath("..")+sep
+INVALID_XML_FILE_NAME = WH4T_BASEDIR + "wh4tinvalidXml.xml"
+MAILBODY_RAW_FILE = WH4T_BASEDIR + "mailBodyRawFile.txt"
+MAILBODY_LIN_FILE = WH4T_BASEDIR + "mailBodyLinFile.txt"
+MAILBODY_SYMBOLS_FILE = WH4T_BASEDIR + "mailBodySymbolsFile.txt"
+MAILBODY_TOKENS_FILE = WH4T_BASEDIR + "mailBodyTokensFile.txt"
+MAILBODY_TYPES_FILE = WH4T_BASEDIR + "mailBodyTypesFile.txt"
+MAILBODY_TYPES_LOWERED_FILE = WH4T_BASEDIR + "mailBodyTypesLoweredFile.txt"
+MAILBODY_WORDS_FILE = WH4T_BASEDIR + "mailBodyWordsFile.txt"
+MAILBODY_STEMS_FILE = WH4T_BASEDIR + "mailBodyStemsFile.txt"
+MAIL_FOLDER_BASENAME = WH4T_BASEDIR + "fitug_xml"
 MAIL_FOLDER = join(getcwd(),MAIL_FOLDER_BASENAME)+sep
 VERSION = "0.1"
 
@@ -45,7 +45,7 @@ def printOK(): print(" -- OK")
 
 def getOwnInfo(callingFile):
     progName = sub(".py","",basename(callingFile))
-    infoStr = "wahatttt"+" v"+VERSION+" - "+sub("wht4","",progName)
+    infoStr = "wahatttt"+" v"+VERSION+" - "+sub("wh4t","",progName)
     return infoStr
 
 def printOwnInfo(callingFile): 
@@ -65,7 +65,7 @@ def getMailBodyLinFile(): return MAILBODY_LIN_FILE()
 
 def getMailBodySymbolsFile(): return MAILBODY_SYMBOLS_FILE
 
-def getWht4BaseDir(): return WHT4_BASEDIR
+def getWht4BaseDir(): return WH4T_BASEDIR
 
 def getMailBodyTokensFile(): return MAILBODY_TOKENS_FILE
 
@@ -78,4 +78,4 @@ def getMailBodyWordsFile(): return MAILBODY_WORDS_FILE
 
 def getMailBodyStemsFile(): return MAILBODY_STEMS_FILE
 
-def getBaseDir(): return WHT4_BASEDIR
+def getBaseDir(): return WH4T_BASEDIR

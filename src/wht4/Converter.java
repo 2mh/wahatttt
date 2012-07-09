@@ -2,7 +2,7 @@
  * @author Bernd Fix <bernd@wauland.de>, 2000-2012
  */
 
-package wht4;
+package wh4t;
 
 import java.net.URLDecoder;
 import java.net.URLEncoder;
