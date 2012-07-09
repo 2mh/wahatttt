@@ -12,6 +12,8 @@ class dictClass(dict):
     
     def __init__(self,value):
         self.dictionaryDynamic = {}
+        ### Uncommented self.dictionaryStatic would turn dynamic
+        #self.dictionaryStatic = {}
         self.var = value
         self.dictionaryDynamic["var"] = value
         self.dictionaryStatic["var"] = value
