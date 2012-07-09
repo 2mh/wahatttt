@@ -11,6 +11,7 @@ from settings import getMailBodyTypesFile
 from settings import getMailBodyRawFile
 from settings import getMailBodyWordsFile
 from settings import getMailBodyStemsFile
+from settings import getMailBodyWordsByEditDistanceFile
 from document import document
 from nltk import PunktWordTokenizer as tokenizer
 from nltk.probability import FreqDist as freqdist
@@ -19,6 +20,8 @@ from codecs import open
 from sys import stdout
 from re import match
 from os import listdir
+from nltk.metrics import edit_distance
+from listByLen import listByLen
 
 class collection:
     docList = []
@@ -28,6 +31,7 @@ class collection:
     docsWordsUnique = set() # unused
     docsWords = []
     docsStemmed = []
+    docsWordsByEditDistance = set()
     
     docsTextFreqDistObj = None
     
@@ -161,4 +165,41 @@ class collection:
             self.docsTextFreqDistObj = freqdist(self.getDocsWords())
             
         return self.docsTextFreqDistObj
-    
+   
+    def getWordsByEditDistance(self,editDistance,wordLen=None,numberOfMostFreq=1000):
+        if len(self.docsWordsByEditDistance) == 0:
+            
+            wordsList = self.docsTextFreqDist().keys()[:numberOfMostFreq]
+            referenceWordsList = self.getDocsTypes()
+            
+            if not wordLen == None:
+                wordsList = listByLen(wordsList)[wordLen:wordLen]
+            
+            wordsListLen = len(wordsList)
+            print "Length of words list: " + str(wordsListLen)
+            cnt = 0
+            for word1 in wordsList:
+                lenWord1 = len(word1)
+                startLen = lenWord1-editDistance
+                endLen = lenWord1+editDistance
+                referenceWordsList = listByLen(referenceWordsList)[startLen:endLen]
+                referenceWordsListLen = len(referenceWordsList)
+                print "Length of reference words list: " + \
+                    str(referenceWordsListLen)
+                cnt += 1
+                print "Progress: " + str(float(cnt) / wordsListLen * 100 ) + " %"
+                for word2 in referenceWordsList:
+                    if edit_distance(word1,word2) == editDistance:
+                        self.docsWordsByEditDistance.add((word1,word2))
+                print "Number of forms found, up to now: " + \
+                    str(len(self.docsWordsByEditDistance))                  
+                    
+        return self.docsWordsByEditDistance
+   
+    def writeWordsFileByEditDistance(self,distance=""):
+        fileName = getMailBodyWordsByEditDistanceFile(editDistance=distance)
+        f = open(fileName,"w",getDefaultEncoding())
+        for word1, word2 in self.docsWordsByEditDistance:
+            f.write(word1 + "\t" + word2 + "\n")
+        f.close()
+        print "File " + fileName + " written to disk."

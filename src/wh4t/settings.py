@@ -26,14 +26,15 @@ VERSION: Version of the wahatttt system as a whole; as of 1.0 it'll be usable
 DEFAULT_ENCODING = "utf-8"
 WH4T_BASEDIR = abspath("..")+sep
 INVALID_XML_FILE_NAME = WH4T_BASEDIR + "wh4tinvalidXml.xml"
-MAILBODY_RAW_FILE = WH4T_BASEDIR + "mailBodyRawFile.txt"
-MAILBODY_LIN_FILE = WH4T_BASEDIR + "mailBodyLinFile.txt"
-MAILBODY_SYMBOLS_FILE = WH4T_BASEDIR + "mailBodySymbolsFile.txt"
-MAILBODY_TOKENS_FILE = WH4T_BASEDIR + "mailBodyTokensFile.txt"
-MAILBODY_TYPES_FILE = WH4T_BASEDIR + "mailBodyTypesFile.txt"
-MAILBODY_TYPES_LOWERED_FILE = WH4T_BASEDIR + "mailBodyTypesLoweredFile.txt"
-MAILBODY_WORDS_FILE = WH4T_BASEDIR + "mailBodyWordsFile.txt"
-MAILBODY_STEMS_FILE = WH4T_BASEDIR + "mailBodyStemsFile.txt"
+MAILBODY_RAW_FILE = WH4T_BASEDIR + "mailBodyRawFile"
+MAILBODY_LIN_FILE = WH4T_BASEDIR + "mailBodyLinFile"
+MAILBODY_SYMBOLS_FILE = WH4T_BASEDIR + "mailBodySymbolsFile"
+MAILBODY_TOKENS_FILE = WH4T_BASEDIR + "mailBodyTokensFile"
+MAILBODY_TYPES_FILE = WH4T_BASEDIR + "mailBodyTypesFile"
+MAILBODY_TYPES_LOWERED_FILE = WH4T_BASEDIR + "mailBodyTypesLoweredFile"
+MAILBODY_WORDS_FILE = WH4T_BASEDIR + "mailBodyWordsFile"
+MAILBODY_WORDS_BY_EDITDISTANCE_FILE = WH4T_BASEDIR + "mailBodyWordsByEditDistance"
+MAILBODY_STEMS_FILE = WH4T_BASEDIR + "mailBodyStemsFile"
 MAIL_FOLDER_BASENAME = WH4T_BASEDIR + "fitug_xml"
 MAIL_FOLDER = join(getcwd(),MAIL_FOLDER_BASENAME)+sep
 VERSION = "0.1"
@@ -77,5 +78,9 @@ def getMailBodyTypesFile(lower=False):
 def getMailBodyWordsFile(): return MAILBODY_WORDS_FILE
 
 def getMailBodyStemsFile(): return MAILBODY_STEMS_FILE
+
+def getMailBodyWordsByEditDistanceFile(editDistance=""):
+    fileName = MAILBODY_WORDS_BY_EDITDISTANCE_FILE
+    return fileName + str(editDistance)
 
 def getBaseDir(): return WH4T_BASEDIR
