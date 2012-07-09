@@ -12,13 +12,24 @@ public class GrabFitug {
 
 	//---------------------------------------------------------------	
 	
-	private String basePath = "../fitug_xml/";
+	private static String basePath = "../fitug_xml/";
 	private int startYear = 96;
 	private int startMonth = 6;
 	
 	//---------------------------------------------------------------	
 
 	public static void main (String[] argl) {
+
+		File dir = new File(basePath);
+
+  		if (!dir.exists())
+  		{
+    			System.out.println("Create directory: " + dir);
+    			boolean res = dir.mkdir();  
+    			if(res)
+       				System.out.println("Directory " + dir + " created");
+  		}
+
 		try {
 			new GrabFitug().scanAll ();
 		} catch (Exception e) {
