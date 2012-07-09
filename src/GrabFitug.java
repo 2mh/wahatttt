@@ -1,20 +1,19 @@
 /**
  * @author Bernd Fix <bernd@wauland.de>, 2000-2012
- * @author Hernani Marques <h2m@access.uzh.ch>, 2012 (minimal changes)
+ * @author Hernani Marques <h2m@access.uzh.ch>, 2012 (some adaptions)
  */
-
-package wht4;
 
 import java.net.*;
 import java.io.*;
 import java.sql.Date;
+import wh4t.Converter;
 
 
 public class GrabFitug {
 
 	//---------------------------------------------------------------	
 	
-	private String basePath = "/home/hernani/uzh/FS2012/wahatttt/fitug_xml/";
+	private String basePath = "../fitug_xml/";
 	private int startYear = 96;
 	private int startMonth = 6;
 	
