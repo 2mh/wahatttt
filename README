@@ -1,4 +1,79 @@
-# wahatttt - wh4t software
+=========================
+wahatttt - wh4t software:
+=========================
+
+Goals:
+------
+The goal of the project "wh4t" (shortened form of "wahatttt") 
+is to create a text-technologically traversed archive of e-mails
+origining from Herwart Holland-Moritz (also known as Wau Holland,
+or simply "[Ww]au", born 1951). The idea is to classify the
+e-mails of Wau upon topics and (in a later phase) to visualize
+this information in a suitable way for the interested public.
+
+What should emerge is (kind of) a picture of the (varying) 
+areas Wau was active in, presented in a structured way.
+
+Wau was one of the founding figures of the Chaos Computer Club (CCC), 
+the biggest Hacker Foundation in Europe, with today hackerspaces all
+over Europe, which are directly or indirectly related / connected
+to the CCC.
+
+After his (early) death in 2001 the Wau Holland Foundation
+(German: Wau-Holland-Stiftung or WHS) emerged in order to make his works
+public and keep his ideas and ideals alive.
+
+
+Setting of this project:
+------------------------
+This project emerges from an idea and some prior work done by
+Bernd Fix of the WHS. However, it's now (independently) carried
+out as a student programming project at the University
+of Zurich (UZH).
+
+Data/source Text:
+------------------
+The text material used -- for the time being -- comes from the
+debate@ FITUG mailing list. FITUG stands for
+"Förderverein Informationstechnik und Gesellschaft", roughly
+meaning "Booster club (for) information technology and society". 
+From a corpus point of view the texts are likely to be full of
+computational technical terms, but also enriched with expressions
+from political/sociological fields.
+
+It's (prior) archives are publicly available:
+* http://www.fitug.de/debate/index.html
+
+Wau used to post on debate@ between 1996 and 2000.
+
+Further data may be gathered from the (Google) USENET archives
+or from (not yet publicly) available material being held in Berlin,
+Germany.
+
+These additional data will be subject of inclusion in later project
+phases.
+
+
+what or wahatttt is this name about?
+------------------------------------
+"wahatttt" stands for "what" in a longish, not quite correctly
+spelled version, and is actually a word (as of the Urban
+Dictionary):
+* http://www.urbandictionary.com/define.php?term=Wahatttt
+
+Alternatively, it may be an acronym for the following (longish)
+constructions; in German:
+(1) WAu HollAnd - TexT-Technologisch-Traversiert
+(2) WAu Hacker-Archiv - TexT-Technologisch-Traversiert
+
+Or, put in English, it may (further) stand for:
+(3) WAu Holland -- TexT-Technologically-Traversed
+(4) WAu Hacker Archive -- TexT-Technologically-Traversed
+
+All these ambiguities -- starting already in the name of the
+project -- our out here for something: They are here to
+symbolize the difficulties this project faces.
+
 
 Software requirements:
 ----------------------
@@ -12,10 +87,11 @@ OpenJDK 64-Bit Server VM (build 14.0-b16, mixed mode)
 $ python -V # Using nltk-2.0.1rc4
 Python 2.6.6
 
+
 First exploration:
 ------------------
 
-Issue the following commands:
+Invoke the following commands:
 
 git clone https://github.com/2mh/wahatttt.git
 cd wahatttt/src/
