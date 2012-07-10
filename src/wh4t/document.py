@@ -7,27 +7,21 @@ from xml.etree import cElementTree as ET
 from os.path import getsize
 
 class document(dict):
-    
-    """ XXX: Interesting problem (python v2.6.6):
-        - If I put all the fields not into this class (is dict) itself, but into
-          a dictionary of this class, data gets lost during processing ...
-          E. g. for the use of a class-internal dict, which loses data:
-          (1) mail = {}; # Before __init__
-          (2) self.mail[self.XML_FILEPATH] = xmlFilePath # In __init__
-        - WTF? To investigate later.
+    """
+    The class document is used to represent the individual documents,
+    which are to be classified by wh4t.
+    For the time being these documents are e-mail messages from the
+    FTIUG debate@ mailing list.
+
+    This class is a dict -- it parses the XML files and stores all of its 
+    values in terms of key-value-pairs.
     """
     
-    """
-    Fields to parse and save in mail dict, containing
-    - tags
-    - some attributes
-    """
-    
-    # the only (important) attributes used are mail id numbers
+    # The only (important) attributes used are mail id numbers
     MAIL_TAG_ID_ATTR = "id"
     IN_REPLY_TO_TAG_ID_ATTR = MAIL_TAG_ID_ATTR
     
-    # tags
+    # Tags used include such as <subj>, <author> or <content> (text body)
     XML_FILEPATH = "file"
     MAIL_TAG = "mail" # containing id attrib
     URL_TAG = "url" # mail resource at http location, in HTML
@@ -40,37 +34,44 @@ class document(dict):
     CONTENT_TAG = "content"
     
     def __init__(self,xmlFilePath):
+        """
+        Upon initialization all the tags and (important) attributes are
+        read and stored in the object's itself (is a dict).
+        """
         self[self.XML_FILEPATH] = xmlFilePath
         xmlFileHandler = ET.parse(xmlFilePath)
         
-        # Go through <mail>
+        # Get <mail> node
         xmlMailElem = xmlFileHandler.find(self.MAIL_TAG)
         
-        # Get id
+        # Store id attribute of <mail>
         self[self.MAIL_TAG] = xmlMailElem.get(self.MAIL_TAG_ID_ATTR)
    
-        # Get url
+        # Store text of <url> tag
         self[self.URL_TAG] = xmlMailElem.find(self.URL_TAG).text    
          
-        # Get subject
+        # Store text of <subj> tag
         self[self.SUBJ_TAG] = xmlMailElem.find(self.SUBJ_TAG).text
         
-        # Get author
+        # Store text of <author> tag
         self[self.AUTHOR_TAG] = xmlMailElem.find(self.AUTHOR_TAG).text
         
-        # Get e-mail
+        # Store text of <email> tag
         self[self.EMAIL_TAG] = xmlMailElem.find(self.EMAIL_TAG).text
         
-        # Get date
+        # Store text of <date> tag
         self[self.DATE_TAG] = xmlMailElem.find(self.DATE_TAG).text
         
-        """
-        Get id from mail in reply to, but:
-        - not all mails have references
-        - thus wo have, do have -- ATM -- one reference only
-        """
+        
+        # Get id from mail in <inReplyTo> tag, but:
+        # - Not all mails have its parent: <references>
+        # - However, thus wo have, do have -- ATM -- one reference only.
+        
         xmlRefElem = xmlMailElem.find(self.REF_TAG)
         
+        # Check for existence of <references>
+        # At the end: Store id attricbute of <inReplyToTag> in object 
+        # itself, if the <references> tag does, in fact, exit
         if (xmlRefElem) == None:
             self[self.IN_REPLY_TO_TAG] = None
         else:
@@ -80,16 +81,9 @@ class document(dict):
             self[self.IN_REPLY_TO_TAG] = \
             xmlInReplyToElem.get(self.IN_REPLY_TO_TAG_ID_ATTR)
         
-        # Get mail text
+        # Store text of <content> tag (=mail body) 
         self[self.CONTENT_TAG] = \
-            xmlFileHandler.find(self.CONTENT_TAG).text
-            
-        self[self.CONTENT_TAG] = xmlFileHandler.find(self.CONTENT_TAG).text
-        
-        self.text = xmlFileHandler.find(self.CONTENT_TAG).text
-        
-        self[self.CONTENT_TAG] = self.text
-        
+            xmlFileHandler.find(self.CONTENT_TAG).text        
         
     # Return xml file name (/w path)
     def getXmlFileName(self): return self[self.XML_FILEPATH]
