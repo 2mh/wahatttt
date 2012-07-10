@@ -32,7 +32,7 @@ class collection:
     docsTyped = set() # unique elements
     docsWordsUnique = set() # unused
     docsWords = []
-    docsStemmed = []
+    docsStemmed = set()
     docsWordsByEditDistance = set()
     docsTopWords = defaultdict()
     
@@ -152,7 +152,7 @@ class collection:
     def getDocsStems(self):
         if len(self.docsStemmed) == 0:
             for word in self.getDocsWords():
-                self.docsStemmed.append(germanStemmer().stem(word))
+                self.docsStemmed.add(germanStemmer().stem(word))
         return self.docsStemmed
     
     def writeStemsFile(self):

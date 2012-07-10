@@ -5,9 +5,24 @@
 @author Hernani Marques <h2m@access.uzh.ch>, 2012 (some adaptions)
 """
 
-class listByLen(list):    
+class listByLen(list):
+    """
+    
+     
+    It's used like the following:
+    import listByLen
+    regularList = list(["a","wuff","miau","yeah","koffer","hamsterföderation","hamsterföderative"])
+    print regularList
+    ['a', 'wuff', 'miau', 'yeah', 'koffer', 'hamsterf\xc3\xb6deration', 'hamsterf\xc3\xb6derative']
+
+    newList = listByLen(regularList)[1:4]
+    print newList
+    ['a', 'wuff', 'miau', 'yeah']
+    """    
     def __getitem__(self,length):
-        """returns [ i for i in self if len(i) == length ]"""
+        """
+        @return: [ i for i in self if len(i) == length]
+        """
         
         return listByLen( ( i for i in self if len(i) == length ) )
         
@@ -18,13 +33,4 @@ class listByLen(list):
             a.extend(self[length])
         return a
 
-""" How to use?
-import listByLen
-regularList = list(["a","wuff","miau","yeah","koffer","hamsterföderation","hamsterföderative"])
-print regularList
-['a', 'wuff', 'miau', 'yeah', 'koffer', 'hamsterf\xc3\xb6deration', 'hamsterf\xc3\xb6derative']
 
-newList = listByLen(regularList)[1:4]
-print newList
-['a', 'wuff', 'miau', 'yeah']
-"""

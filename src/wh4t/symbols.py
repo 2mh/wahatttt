@@ -50,7 +50,7 @@ class symbols(dict):
      
     def writeSymbolsFile(self):
         """ 
-        Writes a file with all the symbols (i. e. this class' keys)
+        Writes a file with all the symbols (i. e. this class's keys)
         in order.
         """
     
