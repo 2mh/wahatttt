@@ -1,48 +1,76 @@
+#! /usr/bin/python2.6
 # -*- coding: utf-8 -*-
-
 """
 @author Hernani Marques <h2m@access.uzh.ch>, 2012
 """
 
 from codecs import open
 from settings import getMailBodySymbolsFile
-from symbol import symbol
 from settings import getDefaultEncoding
 from settings import getMailBodyRawFile
 
-class symbols:
+class symbols(dict):
+    """
+    This class stores all symbols available in the document collection,
+    as keys. The corresponding values represent attributes, which these
+    symbols have. For instance, the symbol "a" is an "alpha" symbol.
     
-    symbolSet = set()
+    It's assumed that this information might be useful to determine of
+    which type a document is. E. g. if it is made up mainly of
+    non-ASCII symbols it's either written in a language with lots of
+    other symbols, or: probably the document is full of "garbage", thus
+    from a linguistic POV not interesting and worth classifying.
+    """
     
     def __init__(self):
-        pass
-    
-    def addSymbol(self,sym):
-        self.symbolSet.append(sym)
+        """
+        At instantiation all available symbols get created.
+        """
+        self._createSymbolsDict()
 
-    def createSymbolSet(self):
+    def _createSymbolsDict(self):
+        """
+        Opens a file (for now) with all text available and stores its symbols
+        as keys (for each of whom a determined attribute is stored as value).
+        """
         
-        # Only create if necessary
-        if len(self.symbolSet) == 0: 
+        f = open(getMailBodyRawFile(),"r",encoding=getDefaultEncoding())
+        
+        # Get unique symbols first
+        symSet = set()
+        for sym in f.read():
+            symSet.add(sym)
             
-            f = open(getMailBodyRawFile(),"r",encoding=getDefaultEncoding())
-        
-            for sym in f.read(): 
-                symObj = symbol(sym) 
-                self.symbolSet.add(symObj)
-        
-            f.close()
-
-        
-    def writeSymbolsFile(self):
+        # For each symbol (key) determine an attribute to store in this instance
+        for sym in symSet:
+            symObj = self.classifySymbol(sym) 
+            self.__setitem__(sym,symObj.get(sym))
     
-        self.createSymbolSet()
+        f.close()
+     
+    def writeSymbolsFile(self):
+        """ 
+        Writes a file with all the symbols (i. e. this class' keys)
+        in order.
+        """
     
         f = open(getMailBodySymbolsFile(),"w",encoding=getDefaultEncoding())
              
-        for char in sorted(self.symbolSet,reverse=True):
-            f.write(char)
+        for symbol in sorted(self.keys(),reverse=True):
+            f.write(symbol)
         f.close()
-        
-            
-    def getNumberOfSymbols(self): return len(self.symbolSet)
+             
+    def getNumberOfSymbols(self): 
+        """
+        @return: The number of unique symbols (stored in this class)
+                 available.
+        """
+        return len(self)
+    
+    def classifySymbol(self,symbol):
+        """
+        XXX: To be implemented.
+        @return: For each symbol this class return this symbol
+                 as key together with its attribute as value.
+        """
+        return {symbol:None}
