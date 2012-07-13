@@ -34,13 +34,13 @@ def UmlautToASCII(text):
     retText = "" # Will become Unicode string, as text is unicode 
     for char in text:
         if char == u'ä':
-    	   retText = concatText(retText,u"ae")
+    	   retText = concatText(retText, u"ae")
         elif char == u'ö':
-    	   retText = concatText(retText,u"oe")
+    	   retText = concatText(retText, u"oe")
         elif char == u'ü':
-    	   retText = concatText(retText,u"ue")
+    	   retText = concatText(retText, u"ue")
         else:
-    	   retText = concatText(retText,u""+char)
+    	   retText = concatText(retText, u"" + char)
         return retText
     
 """

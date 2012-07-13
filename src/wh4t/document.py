@@ -51,7 +51,7 @@ class document(dict):
     # The object gets instantiated here
     ###################################
     
-    def __init__(self,xmlFilePath):
+    def __init__(self, xmlFilePath):
         """
         @param xmlFilePath: The path to the xml file we want to parse
         Upon initialization all the tags and (important) attributes are

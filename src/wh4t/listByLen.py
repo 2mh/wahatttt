@@ -19,19 +19,19 @@ class listByLen(list):
     print newList
     ['a', 'wuff', 'miau', 'yeah']
     """    
-    def __getitem__(self,length):
+    def __getitem__(self, length):
         """
         @return: [ i for i in self if len(i) == length]
         """ 
         return listByLen( ( i for i in self if len(i) == length ) )
         
-    def __getslice__(self,start,end):
+    def __getslice__(self, start, end):
         """
         @param start: Start of subset of list we want.
         @param end: End of subset of list we want.
         @return: List (subset) from a given start to the end.
         """   
         a = listByLen()
-        for length in range(start,end+1):
+        for length in range(start, end + 1):
             a.extend(self[length])
         return a

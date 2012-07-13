@@ -72,7 +72,7 @@ def main():
     # Problematic here: There are lots of non-linguistic tokens being
     # created, like URLs, at this stage.
     # That's why these tokens here are denoted as being "raw".
-    print "-- Get tokens ...";
+    print "-- Get tokens ..."
     tokenizedText = xmlCollection.getDocsTokens()
     print "Total number of (raw) tokens: " + \
     str(len(tokenizedText)); printLine()
@@ -99,7 +99,7 @@ def main():
     
     # - Print total number of unique stems, which got created by NLTK
     #   means, applied over words.
-    print "-- Get number of unique stems ...";
+    print "-- Get number of unique stems ..."
     stemmedText = xmlCollection.getDocsStems()
     print "Total number of unique stems: " + \
     str(len(stemmedText)); printLine()

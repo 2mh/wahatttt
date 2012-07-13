@@ -34,7 +34,7 @@ class symbols(dict):
         as keys (for each of whom a determined attribute is stored as value).
         """
         
-        f = open(getMailBodyRawFile(),"r",encoding=getDefaultEncoding())
+        f = open(getMailBodyRawFile(), "r", encoding=getDefaultEncoding())
         
         # Get unique symbols first
         symSet = set()
@@ -43,8 +43,8 @@ class symbols(dict):
             
         # For each symbol (key) determine an attribute to store in this instance
         for sym in symSet:
-            symObj = self.classifySymbol(sym) 
-            self.__setitem__(sym,symObj.get(sym))
+            symObj = self._classifySymbol(sym) 
+            self.__setitem__(sym, symObj.get(sym))
     
         f.close()
      
@@ -54,9 +54,9 @@ class symbols(dict):
         in order.
         """
     
-        f = open(getMailBodySymbolsFile(),"w",encoding=getDefaultEncoding())
+        f = open(getMailBodySymbolsFile(), "w", encoding=getDefaultEncoding())
              
-        for symbol in sorted(self.keys(),reverse=True):
+        for symbol in sorted(self.keys(), reverse=True):
             f.write(symbol)
         f.close()
              
@@ -67,8 +67,9 @@ class symbols(dict):
         """
         return len(self)
     
-    def classifySymbol(self,symbol):
+    def _classifySymbol(self, symbol):
         """
+        Meant as class internal method.
         XXX: To be implemented.
         @return: For each symbol this class return this symbol
                  as key together with its attribute as value.

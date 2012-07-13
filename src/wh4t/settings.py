@@ -34,7 +34,7 @@ DEFAULT_EDIT_DISTANCE_FILENAME_SUFFIX = ""
 ##########################
 
 # The project's base path relative to the position of this settings file.
-WH4T_BASEDIR = abspath("..")+sep
+WH4T_BASEDIR = abspath("..") + sep
 
 # XML file containing info about broken XML files, if any (hopefully not).
 INVALID_XML_FILE_NAME = WH4T_BASEDIR + "wh4tinvalidXml.xml"
@@ -88,8 +88,8 @@ def getOwnInfo(callingFile):
     @return: A string indicating this software package, the filename --
              specific to the calling file object -- and the version number.
     """
-    progName = sub(".py","",basename(callingFile))
-    infoStr = "wahatttt"+" v"+VERSION+" - "+sub("wh4t","",progName)
+    progName = sub(".py", "", basename(callingFile))
+    infoStr = "wahatttt" + " v" + VERSION+" - " + sub("wh4t", "", progName)
     return infoStr
 
 def getDefaultNumberOfTopWords():

@@ -34,11 +34,11 @@ def addInvalidDocs(fileName, excStr):
     """
     invalidDoc = invalidXmlDoc.createElement("invalidDocument")
     invalidFileName = invalidXmlDoc.createTextNode(fileName)
-    errStr = sub(fileName+":","",excStr)
-    invalidDoc.setAttribute("error",errStr)
+    errStr = sub(fileName + ":", "", excStr)
+    invalidDoc.setAttribute("error", errStr)
     invalidDoc.appendChild(invalidFileName)
     invalidColl.appendChild(invalidDoc)
-    invalidStat[sub("[0-9:]*\s","",errStr)] += 1
+    invalidStat[sub("[0-9:]*\s", "", errStr)] += 1
 
 def parseFile(fileName):
     """
@@ -65,20 +65,20 @@ for arg in argv[1:]:
             continue
         
 # Prepare XML file to write invalid input XML files of the collection into.
-invalidXmlFileHandler = open(getInvalidXmlFileName(),
-"w",getDefaultEncoding())
+invalidXmlFileHandler = open(getInvalidXmlFileName(), "w",
+                             getDefaultEncoding())
 invalidXmlDoc = Doc()
 invalidColl = invalidXmlDoc.createElement("invalidCollection")
 invalidXmlDoc.appendChild(invalidColl)
 invalidStat = defaultdict(int)
 
 # Check collection of invalid docs and effectively write XML invalid file.
-for err,no in invalidStat.items():
-    print err+" : "+str(no)
+for err, no in invalidStat.items():
+    print err + " : " + str(no)
 invalidXmlFileHandler.write(invalidXmlDoc.toprettyxml())
 invalidXmlFileHandler.close()
 if len(invalidStat.values()) == 0:
     print "No XML errors found in " + getMailFolder()
 else:
     print "XML file with detailed error info written to " \
-        +getInvalidXmlFileName()
+        + getInvalidXmlFileName()

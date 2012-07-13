@@ -18,6 +18,7 @@ from settings import getMailBodyWordsByEditDistanceFile
 from settings import getMailBodyTopWordsFile
 from settings import getDefaultNumberOfTopWords
 from settings import getDefaultSourceWordLenForEditDistancing
+from settings import getDefaultEditDistanceFilenameSuffix
 
 from nltk import PunktWordTokenizer as tokenizer
 from nltk.probability import FreqDist as freqdist
@@ -28,7 +29,6 @@ from codecs import open
 from re import match
 from os import listdir
 from collections import defaultdict
-from src.wh4t.settings import getDefaultEditDistanceFilenameSuffix
 
 class collection(dict):
     """
@@ -62,38 +62,38 @@ class collection(dict):
         """
         
         # For holding a list of documents
-        self.__setitem__(self.DOC_LIST,list())
+        self.__setitem__(self.DOC_LIST, list())
 
         # For holding the collection's raw text
-        self.__setitem__(self.DOCS_TEXT,str())
+        self.__setitem__(self.DOCS_TEXT, str())
         
         # For holding all of the text tokenized by NLTK
-        self.__setitem__(self.DOCS_TOKENIZED,list())
+        self.__setitem__(self.DOCS_TOKENIZED, list())
         
         # For holding the types of the collection
-        self.__setitem__(self.DOCS_TYPED,set())
+        self.__setitem__(self.DOCS_TYPED, set())
         
         # For holding a list of all the words, i. e. the cleaned
         # tokens; the words are not necessarily unique 
-        self.__setitem__(self.DOCS_WORDS,list())
+        self.__setitem__(self.DOCS_WORDS, list())
         
         # For holding a list of all the stems; it's a set (=> unique values)
-        self.__setitem__(self.DOCS_STEMMED,set())
+        self.__setitem__(self.DOCS_STEMMED, set())
         
         # For holding unique pairs of words being of some edit distance
-        self.__setitem__(self.DOCS_WORDS_BY_EDIT_DISTANCE,set())
+        self.__setitem__(self.DOCS_WORDS_BY_EDIT_DISTANCE, set())
         
         # For holding a specified amount of most frequent words, along
         # with each frequency as absolute number.
-        self.__setitem__(self.DOCS_TOP_WORDS,defaultdict())
+        self.__setitem__(self.DOCS_TOP_WORDS, defaultdict())
         
         # To hold an object with the frequencies of all words
-        self.__setitem__(self.DOCS_TEXT_FREQ_DIST,None)
+        self.__setitem__(self.DOCS_TEXT_FREQ_DIST, None)
         
         # Read in all documents
         # XXX: This part may change in its behaviour soon
         for xmlFileName in listdir(getMailFolder()):
-            xmlDocument = document(getMailFolder()+xmlFileName)
+            xmlDocument = document(getMailFolder() + xmlFileName)
             self[self.DOC_LIST].append(xmlDocument)
         
     def getDoc(self,pos): 
@@ -148,7 +148,7 @@ class collection(dict):
                 tokenizer().tokenize(self.getDocsText())
         return self[self.DOCS_TOKENIZED]
         
-    def getDocsTypes(self,lower=False):
+    def getDocsTypes(self, lower=False):
         """
         @return: A set of all types (=unique tokens) found in the
                  collection; create this set one time only.
@@ -180,10 +180,10 @@ class collection(dict):
                     if s in t:
                         toAdd = False
                         break
-                if not match("[a-z]+\.[a-z]+",t) == None \
-                or not match("[ \*_\]\^\\\\!$\"\'%` ]+.*",t) == None \
-                or not match("[ &*\(\)+\#,-.:;?+\\@\[ ]+.*",t) == None \
-                or not match("[a-z]{1}-",t) == None \
+                if not match("[a-z]+\.[a-z]+", t) == None \
+                or not match("[ \*_\]\^\\\\!$\"\'%` ]+.*", t) == None \
+                or not match("[ &*\(\)+\#,-.:;?+\\@\[ ]+.*", t) == None \
+                or not match("[a-z]{1}-", t) == None \
                 or t.find("--") >= 0 or t.find("..") >= 0:
                     toAdd = False             
                 if (toAdd == True):    
@@ -211,7 +211,7 @@ class collection(dict):
             
         return self[self.DOCS_TEXT_FREQ_DIST]
     
-    def getDocsTopWords(self,numberOfWords=getDefaultNumberOfTopWords()):
+    def getDocsTopWords(self, numberOfWords=getDefaultNumberOfTopWords()):
         """
         @param numberOfWords: int indicating how many top words 
                               (by frequency) we want to gather; optional
@@ -222,7 +222,7 @@ class collection(dict):
                 self.docsTextFreqDist().items()[:numberOfWords]
         return self[self.DOCS_TOP_WORDS]
     
-    def getWordsByEditDistance(self,editDistance,
+    def getWordsByEditDistance(self, editDistance,
         wordLen=getDefaultSourceWordLenForEditDistancing(),
         numberOfMostFreq=getDefaultNumberOfTopWords):
         """
@@ -249,8 +249,8 @@ class collection(dict):
             cnt = 0
             for word1 in wordsList:
                 lenWord1 = len(word1)
-                startLen = lenWord1-editDistance
-                endLen = lenWord1+editDistance
+                startLen = lenWord1 - editDistance
+                endLen = lenWord1 + editDistance
                 referenceWordsList = \
                     listByLen(referenceWordsList)[startLen:endLen]
                 referenceWordsListLen = len(referenceWordsList)
@@ -260,7 +260,7 @@ class collection(dict):
                 print "Progress: " + str(float(cnt) / wordsListLen * 100 ) \
                  + " %"
                 for word2 in referenceWordsList:
-                    if edit_distance(word1,word2) == editDistance:
+                    if edit_distance(word1, word2) == editDistance:
                         self[self.DOCS_WORDS_BY_EDIT_DISTANCE].add((word1,
                                                                     word2))
                 print "Number of forms found, up to now: " + \
@@ -277,7 +277,7 @@ class collection(dict):
         Write raw text of <content> (of all mails) into a file, in the
         (alphabetical) order the files appear listed.
         """
-        f = open(getMailBodyRawFile(),"w",encoding=getDefaultEncoding())
+        f = open(getMailBodyRawFile(), "w", encoding=getDefaultEncoding())
         f.write(self.getDocsText())
         f.close()
     
@@ -285,22 +285,22 @@ class collection(dict):
         """
         Write all files' tokens into a file, as list, in the appearing order.
         """
-        f = open(getMailBodyTokensFile(),"w",encoding=getDefaultEncoding())       
+        f = open(getMailBodyTokensFile(), "w", encoding=getDefaultEncoding())       
         for token in self.getDocsTokens():
-            f.write(token+"\n")
+            f.write(token + "\n")
         f.close()
     
-    def writeDocsTypesFile(self,lower=False):
+    def writeDocsTypesFile(self, lower=False):
         """
         Write all files' types (=unique tokens) into a file, line by line.
         @param lower: Optional parameter; default value here is False. When
                       set to True the types will all be printed lower case,
                       usually resulting in a smaller list.
         """
-        f = open(getMailBodyTypesFile(lower),"w",
+        f = open(getMailBodyTypesFile(lower), "w",
                  encoding=getDefaultEncoding())
         for t in self.getDocsTypes(lower):
-            f.write(t+"\n")
+            f.write(t + "\n")
         f.close()
     
     def writeDocsWordsFile(self):
@@ -308,18 +308,18 @@ class collection(dict):
         Write all words of all files into a file, one word per line, in
         the given order.
         """
-        f = open(getMailBodyWordsFile(),"w",encoding=getDefaultEncoding())      
+        f = open(getMailBodyWordsFile(), "w", encoding=getDefaultEncoding())      
         for token in self.getDocsWords():
-            f.write(token+"\n")
+            f.write(token + "\n")
         f.close()
     
     def writeStemsFile(self):
         """
         Write all (unique) stems into a file; one per line.
         """
-        f = open(getMailBodyStemsFile(),"w",encoding=getDefaultEncoding())
+        f = open(getMailBodyStemsFile(), "w", encoding=getDefaultEncoding())
         for stem in self.getDocsStems():
-            f.write(stem+"\n")
+            f.write(stem + "\n")
         f.close()
         
     def writeDocsTopWordsFile(self,
@@ -330,7 +330,7 @@ class collection(dict):
         the absolute frequency number (in all documents of the collection).
         """
         fileName = getMailBodyTopWordsFile()
-        f = open(fileName,"w",getDefaultEncoding())
+        f = open(fileName, "w", getDefaultEncoding())
         for word,freq in self.getDocsTopWords(numberOfWords=numberOfWords):
             f.write(word + "\t\t\t" + str(freq) + "\n")
         f.close()
@@ -346,7 +346,7 @@ class collection(dict):
         """
         fileName = \
             getMailBodyWordsByEditDistanceFile(editDistance=editDistance)
-        f = open(fileName,"w",getDefaultEncoding())
+        f = open(fileName, "w", getDefaultEncoding())
         for word1, word2 in self[self.DOCS_WORDS_BY_EDIT_DISTANCE]:
             f.write(word1 + "\t" + word2 + "\n")
         f.close()
