@@ -7,20 +7,20 @@ http://code.activestate.com/recipes/52256-check-xml-well-formedness/
 @author Hernani Marques <h2m@access.uzh.ch>, 2012 (some adaptions)
 """
 
-from wh4t.settings import printOwnInfo
-from wh4t.settings import getDefaultEncoding
-from wh4t.settings import getInvalidXmlFileName
-from wh4t.settings import getMailFolder
-
-from xml.sax.handler import ContentHandler
-from xml.sax import make_parser
-from xml.dom.minidom import Document as Doc
-
 from glob import glob
 from collections import defaultdict
 from sys import argv
 from codecs import open
 from re import sub
+
+from xml.sax.handler import ContentHandler
+from xml.sax import make_parser
+from xml.dom.minidom import Document as Doc
+
+from wh4t.settings import printOwnInfo
+from wh4t.settings import getDefaultEncoding
+from wh4t.settings import getInvalidXmlFileName
+from wh4t.settings import getMailFolder
 
 printOwnInfo(__file__)
 

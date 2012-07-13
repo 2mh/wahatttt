@@ -5,6 +5,7 @@
 """
 
 from codecs import open
+
 from settings import getMailBodySymbolsFile
 from settings import getDefaultEncoding
 from settings import getMailBodyRawFile
@@ -32,8 +33,8 @@ class symbols(dict):
         """
         Opens a file (for now) with all text available and stores its symbols
         as keys (for each of whom a determined attribute is stored as value).
-        """
-        
+        Meant as internal method.
+        """     
         f = open(getMailBodyRawFile(), "r", encoding=getDefaultEncoding())
         
         # Get unique symbols first
@@ -41,7 +42,8 @@ class symbols(dict):
         for sym in f.read():
             symSet.add(sym)
             
-        # For each symbol (key) determine an attribute to store in this instance
+        # For each symbol (key) determine an attribute to store in this 
+        # instance
         for sym in symSet:
             symObj = self._classifySymbol(sym) 
             self.__setitem__(sym, symObj.get(sym))
@@ -53,7 +55,6 @@ class symbols(dict):
         Writes a file with all the symbols (i. e. this class's keys)
         in order.
         """
-    
         f = open(getMailBodySymbolsFile(), "w", encoding=getDefaultEncoding())
              
         for symbol in sorted(self.keys(), reverse=True):
@@ -69,9 +70,25 @@ class symbols(dict):
     
     def _classifySymbol(self, symbol):
         """
-        Meant as class internal method.
         XXX: To be implemented.
         @return: For each symbol this class return this symbol
                  as key together with its attribute as value.
+        Meant as class internal method.    
+        """
+        
+        """
+        XXX: Under development ...
+        # Categories
+        ALPHA = "alpha" # e. g. "a", "B", but also "ä" or "Ö"
+        DIGIT = "digit" # 0-9
+        UNDEF = "undefined"
+        
+        symbolClass = UNDEF
+        
+        # Check if it's an symbol considered ALPHA
+        if symbol.isalpha() or symbol in "äöüÄÖÜ": 
+            symbolClass = ALPHA
+        
+        return {symbol:symbolClass}
         """
         return {symbol:None}

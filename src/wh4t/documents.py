@@ -4,9 +4,18 @@
 @author Hernani Marques <h2m@access.uzh.ch>, 2012
 """
 
+from codecs import open
+from re import match
+from os import listdir
+from collections import defaultdict
+
+from nltk import PunktWordTokenizer as tokenizer
+from nltk.probability import FreqDist as freqdist
+from nltk.stem.snowball import GermanStemmer as germanStemmer
+from nltk.metrics import edit_distance
+
 from document import document
 from listByLen import listByLen
-
 from settings import getMailFolder
 from settings import getMailBodyTokensFile
 from settings import getDefaultEncoding
@@ -19,16 +28,6 @@ from settings import getMailBodyTopWordsFile
 from settings import getDefaultNumberOfTopWords
 from settings import getDefaultSourceWordLenForEditDistancing
 from settings import getDefaultEditDistanceFilenameSuffix
-
-from nltk import PunktWordTokenizer as tokenizer
-from nltk.probability import FreqDist as freqdist
-from nltk.stem.snowball import GermanStemmer as germanStemmer
-from nltk.metrics import edit_distance
-
-from codecs import open
-from re import match
-from os import listdir
-from collections import defaultdict
 
 class collection(dict):
     """

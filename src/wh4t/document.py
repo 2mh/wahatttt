@@ -3,8 +3,9 @@
 """
 @author Hernani Marques <h2m@access.uzh.ch>, 2012
 """
-from xml.etree import cElementTree as ET
+
 from os.path import getsize
+from xml.etree import cElementTree as ET
 
 class document(dict):
     """
