@@ -6,8 +6,15 @@
 
 from wh4t.settings import printOwnInfo
 from wh4t.documents import collection
+from wh4t.symbols import symbols
 
 printOwnInfo(__file__)
+
+# Create a symbols object to see which symbols are available, along with
+# their attributions
+syms = symbols()
+for sym,symClass in syms.items():
+    print sym + "\t" + str(symClass)
 
 # Params for getting (similar) words by edit distance and number of
 # most frequent words (=top words) we are interested in.

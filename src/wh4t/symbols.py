@@ -59,6 +59,7 @@ class symbols(dict):
              
         for symbol in sorted(self.keys(), reverse=True):
             f.write(symbol)
+            
         f.close()
              
     def getNumberOfSymbols(self): 
@@ -70,25 +71,41 @@ class symbols(dict):
     
     def _classifySymbol(self, symbol):
         """
-        XXX: To be implemented.
-        @return: For each symbol this class return this symbol
-                 as key together with its attribute as value.
-        Meant as class internal method.    
+        @return: For each symbol this (internal) method returns this symbol
+                 as key together with its attribute (set) as value.
         """
-        
-        """
-        XXX: Under development ...
-        # Categories
-        ALPHA = "alpha" # e. g. "a", "B", but also "ä" or "Ö"
+    
+        # Categories where symbols (most specifically) may belong to
+        ALPHA = "alpha" # E. g. "a", "B", but also "ä" or "Ö"
         DIGIT = "digit" # 0-9
-        UNDEF = "undefined"
+        PUNCT = "interpunctuation" # E. g. ",", "'" or "("
+        WHITE = "whitespace" # E. g. " ", \t or \n
+        MATH = "mathematics" # E. g. "-", "+" or "^"
+        COMP = "computer" # E. g. things like "/", "\", or "#"
+        LAW = "law" # E. g. "§" or "©"
+        MONEY = "money" # E. g. "$" or "£"
+        UNDEF = "undefined" # For everything lasting
         
-        symbolClass = UNDEF
+        symbolClass = set()
         
-        # Check if it's an symbol considered ALPHA
-        if symbol.isalpha() or symbol in "äöüÄÖÜ": 
-            symbolClass = ALPHA
+        # Assign a symbol its symbolic class(es)
+        if symbol.isalpha():
+            symbolClass.add(ALPHA)
+        if symbol.isdigit():
+            symbolClass.add(DIGIT)
+        if symbol in "'\"`,.:»«-´;?![]()":
+            symbolClass.add(PUNCT)
+        if symbol in "+-*/=:^{}[]()!><|·%":
+            symbolClass.add(MATH)
+        if symbol in "#+-*=_/\\^[](){}:$!~><|@&%":
+            symbolClass.add(COMP)    
+        if symbol in " \t\n":
+            symbolClass.add(WHITE)
+        if symbol in "£$":
+            symbolClass.add(MONEY)
+        if symbol in "§©":
+            symbolClass.add(LAW)
+        if len(symbolClass) == 0:
+            symbolClass.add(UNDEF)
         
         return {symbol:symbolClass}
-        """
-        return {symbol:None}
