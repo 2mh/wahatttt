@@ -7,7 +7,7 @@ Started upon (public domain) source: http://stackoverflow.com/questions/701704/h
 """
 
 from BeautifulSoup import BeautifulStoneSoup
-import wht4.settings as w
+import src.wh4t.settings as w
 
 w.printOwnInfo(__file__)
 

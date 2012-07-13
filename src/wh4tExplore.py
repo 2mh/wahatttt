@@ -12,12 +12,16 @@ from wh4t.settings import getMailBodyTokensFile
 from wh4t.settings import getMailBodyTypesFile
 from wh4t.settings import getMailBodyWordsFile
 from wh4t.settings import printOwnInfo
-from wh4t.settings import print72 as prL
+from wh4t.settings import printLine
 from wh4t.settings import printOK
 
 from wh4t.symbols import symbols
 
 from sys import stdout
+
+#####################
+# Program starts here
+#####################
 
 def main():
     """
@@ -34,14 +38,15 @@ def main():
       information.
     - Put some of the (verbose) text into other classes.
     """
-    
+       
     printOwnInfo(__file__)  
     
     # Print total file size (=folder size) information of the input material
     xmlCollection = collection()
     print "-- Calculating total file size ..."
-    print "Total file size: " + str(xmlCollection.getDocsFileSize()) + " bytes"
-    prL()
+    print "Total file size: " + str(xmlCollection.getDocsFileSize()) + \
+        " bytes"
+    printLine()
     
     # Print total raw text material information, being body text of messages 
     # w/o meta-data
@@ -57,10 +62,10 @@ def main():
     # - Give number of unique symbols employed
     stdout.write("Write symbols used into file: " + getMailBodySymbolsFile())
     syms = symbols()
-    syms.writeSymbolsFile(); printOK(); prL()
+    syms.writeSymbolsFile(); printOK(); printLine()
     print "-- Get unique symbols ..."
     print "Total number of unique symbols: " + str(syms.getNumberOfSymbols())
-    prL()
+    printLine()
     
     # Print total numbers of tokens available; separation is done by means
     # of the Natural Language Toolkit (NLTK)
@@ -70,7 +75,7 @@ def main():
     print "-- Get tokens ...";
     tokenizedText = xmlCollection.getDocsTokens()
     print "Total number of (raw) tokens: " + \
-    str(len(tokenizedText)); prL()
+    str(len(tokenizedText)); printLine()
     
     # - Print total number of unique tokens (=types); also here, lots of
     #   "non-linguistic" types are preserved, ATM.
@@ -81,7 +86,7 @@ def main():
     print "Total number of (raw) types: " + \
     str(len(typedText))
     print "Total number of (raw) types (lower-cased): " + \
-    str(len(typedTextLowered)); prL()
+    str(len(typedTextLowered)); printLine()
     
     # - Print total number of words. These are "real" words; they
     #   are very likely to be of linguistic nature, because they 
@@ -90,14 +95,14 @@ def main():
     print "-- Get number of words ..."
     words = xmlCollection.getDocsWords()
     print "Total number of words: " + \
-    str(len(words)); prL()
+    str(len(words)); printLine()
     
     # - Print total number of unique stems, which got created by NLTK
     #   means, applied over words.
     print "-- Get number of unique stems ...";
     stemmedText = xmlCollection.getDocsStems()
     print "Total number of unique stems: " + \
-    str(len(stemmedText)); prL()
+    str(len(stemmedText)); printLine()
     
     # Finally write some files, containing tokens, types, types in
     # lower case and words.
@@ -105,15 +110,16 @@ def main():
     xmlCollection.writeDocsTokenFile(); printOK()
     stdout.write("Write types into file: " + getMailBodyTypesFile())
     xmlCollection.writeDocsTypesFile(); printOK()
-    stdout.write("Write types (lowered) into file: " + getMailBodyTypesFile(lower=True))
+    stdout.write("Write types (lowered) into file: " + 
+                 getMailBodyTypesFile(lower=True))
     xmlCollection.writeDocsTypesFile(lower=True); printOK()
     stdout.write("Write words into file: " + getMailBodyWordsFile())
-    xmlCollection.writeDocsWordsFile(); printOK(); prL()
+    xmlCollection.writeDocsWordsFile(); printOK(); printLine()
     
     # Print the 42 most frequent words -- Zipf's law turns true ;-)
     print "Top 42 words: "
     for stem in xmlCollection.docsTextFreqDist().keys()[:42]: print stem
-    prL()
+    printLine()
 
 if __name__ == "__main__":
     main()

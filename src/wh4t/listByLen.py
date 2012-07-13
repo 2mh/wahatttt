@@ -6,14 +6,14 @@
 """
 
 class listByLen(list):
-    """
-    
-     
+    """    
     It's used like the following:
     import listByLen
-    regularList = list(["a","wuff","miau","yeah","koffer","hamsterföderation","hamsterföderative"])
+    regularList = list(["a","wuff","miau","yeah","koffer",
+                        "hamsterföderation","hamsterföderative"])
     print regularList
-    ['a', 'wuff', 'miau', 'yeah', 'koffer', 'hamsterf\xc3\xb6deration', 'hamsterf\xc3\xb6derative']
+    ['a', 'wuff', 'miau', 'yeah', 'koffer', 'hamsterf\xc3\xb6deration',
+     'hamsterf\xc3\xb6derative']
 
     newList = listByLen(regularList)[1:4]
     print newList
@@ -22,15 +22,16 @@ class listByLen(list):
     def __getitem__(self,length):
         """
         @return: [ i for i in self if len(i) == length]
-        """
-        
+        """ 
         return listByLen( ( i for i in self if len(i) == length ) )
         
     def __getslice__(self,start,end):
-        
+        """
+        @param start: Start of subset of list we want.
+        @param end: End of subset of list we want.
+        @return: List (subset) from a given start to the end.
+        """   
         a = listByLen()
         for length in range(start,end+1):
             a.extend(self[length])
         return a
-
-
