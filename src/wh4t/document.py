@@ -230,6 +230,7 @@ class document(dict):
     
     def getTypes(self, lower=False):
         """
+        @param lower: To be set to True to get only lower case types.
         @return: A set of all types (=unique tokens) found in the
                  document; create this set one time only.
         """

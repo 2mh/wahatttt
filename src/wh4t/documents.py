@@ -5,13 +5,10 @@
 """
 
 from codecs import open
-from re import match
 from os import listdir
 from collections import defaultdict
 
-from nltk import PunktWordTokenizer as tokenizer
 from nltk.probability import FreqDist as freqdist
-from nltk.stem.snowball import GermanStemmer as germanStemmer
 from nltk.metrics import edit_distance
 
 from document import document
@@ -48,6 +45,7 @@ class collection(dict):
     DOCS_TEXT = "docs_text"
     DOCS_TOKENIZED = "docs_tokenized"
     DOCS_TYPED = "docs_typed"
+    DOCS_TYPED_LOWERED = "docs_typed_lowered"
     DOCS_WORDS = "docs_words"
     DOCS_STEMMED = "docs_stemmed"
     DOCS_WORDS_BY_EDIT_DISTANCE = "docs_words_by_edit_distance"
@@ -71,6 +69,9 @@ class collection(dict):
         
         # For holding the types of the collection
         self.__setitem__(self.DOCS_TYPED, set())
+        
+        # For holding the lowered types of the collection
+        self.__setitem__(self.DOCS_TYPED_LOWERED, set())
         
         # For holding a list of all the words, i. e. the cleaned
         # tokens; the words are not necessarily unique 
@@ -143,62 +144,58 @@ class collection(dict):
                  as is. Ensure to get the tokens once only.
         """
         if len(self[self.DOCS_TOKENIZED]) == 0:
-            self[self.DOCS_TOKENIZED] = \
-                tokenizer().tokenize(self.getDocsText())
+            for doc in self.getDocs():
+                for token in doc.getTokens():
+                    self[self.DOCS_TOKENIZED].append(token)
+                    
         return self[self.DOCS_TOKENIZED]
         
     def getDocsTypes(self, lower=False):
         """
+        @param lower: If set to True returns lowered types, otherwise
+                      mixed-case types are the result.
         @return: A set of all types (=unique tokens) found in the
-                 collection; create this set one time only.
+                 collection; types always get created again. Always create
+                 set once, both mixed- lower-cased.
         """
+        # It's enough to check mixed-types 
         if len(self[self.DOCS_TYPED]) == 0:
-            self[self.DOCS_TYPED] = set(self.getDocsTokens())
-        if(lower == False):
+            for doc in self.getDocs():
+                for token in doc.getTypes(lower=False):
+                    self[self.DOCS_TYPED].add(token)
+                for token in doc.getTypes(lower=True):
+                    self[self.DOCS_TYPED_LOWERED].add(token)
+        
+        if (lower==False):
             return self[self.DOCS_TYPED]
-        # Lower case list and return set
-        return set(map(lambda x:x.lower(), self[self.DOCS_TYPED]))
+        # If lower==True
+        return self[self.DOCS_TYPED_LOWERED]
         
     def getDocsWords(self):
         """
-        @return: Return words (determined by surface forms) that seem to be 
-                 of linguistic nature, and thus "real" words. Words in
-                 this sense are built out of the tokens, which also include
-                 lots of programming code in different languages or other
-                 surfaces, which don't seem to be natural language -- like
-                 PGP signatures or similar.
-                 This construction is carried out one time only.
-        XXX: This part my change heavily. Also: The regexps are ugly hacks.
+        @return: Return words (look up document.py for more info how that
+                 comes). Do that once only.
         """
-        nonWordSymbol = "0123456789<>=/"
-        toAdd = True
-        
-        if len(self[self.DOCS_WORDS]) == 0:  
-            for t in self.getDocsTokens():
-                for s in nonWordSymbol:
-                    if s in t:
-                        toAdd = False
-                        break
-                if not match("[a-z]+\.[a-z]+", t) == None \
-                or not match("[ \*_\]\^\\\\!$\"\'%` ]+.*", t) == None \
-                or not match("[ &*\(\)+\#,-.:;?+\\@\[ ]+.*", t) == None \
-                or not match("[a-z]{1}-", t) == None \
-                or t.find("--") >= 0 or t.find("..") >= 0:
-                    toAdd = False             
-                if (toAdd == True):    
-                    self[self.DOCS_WORDS].append(t)
-                else: # toAdd is False
-                    toAdd = True
+        if len(self[self.DOCS_WORDS]) == 0:
+            for doc in self.getDocs():
+                for word in doc.getWords():
+                    self[self.DOCS_WORDS].append(word)
         
         return self[self.DOCS_WORDS]
         
     def getDocsStems(self):
         """
-        @return: Set of stems found upon the words. Create once.
+        @return: Set of all stems found in the documents.
         """
         if len(self[self.DOCS_STEMMED]) == 0:
+            for doc in self.getDocs(): 
+                for stem in doc.getStems():
+                    self[self.DOCS_STEMMED].add(stem)
+            """
+            Like this it was much more efficient (less method calls):    
             for word in self.getDocsWords():
                 self[self.DOCS_STEMMED].add(germanStemmer().stem(word))
+            """
         return self[self.DOCS_STEMMED]
            
     def docsTextFreqDist(self):
