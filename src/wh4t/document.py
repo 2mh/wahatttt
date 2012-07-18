@@ -5,7 +5,12 @@
 """
 
 from os.path import getsize
+from collections import defaultdict
+from re import match
+
 from xml.etree import cElementTree as ET
+from nltk import PunktWordTokenizer as tokenizer
+from nltk.stem.snowball import GermanStemmer as germanStemmer
 
 class document(dict):
     """
@@ -42,6 +47,19 @@ class document(dict):
     IN_REPLY_TO_TAG = "inReplyTo"
     CONTENT_TAG = "content"
     
+    ##################################################################
+    # Derived key-value pairs
+    # - Derived pairs include tokenized text, stemmed text, words etc.
+    ##################################################################
+    
+    TOKENS = "tokens"
+    TYPES = "types"
+    WORDS = "words"
+    STEMS = "stems"
+    WORDS_BY_EDIT_DISTANCE = "words_by_edit_distance"
+    TOP_WORDS = "top_words"
+    TEXT_FREQ_DIST = "text_freq_dist"
+    
     #################################################################
     # Other key names, for now for storing the xml filename
     #################################################################
@@ -60,6 +78,10 @@ class document(dict):
         """
         self[self.XML_FILEPATH] = xmlFilePath
         xmlFileHandler = ET.parse(xmlFilePath)
+        
+        ################################################
+        # Initialize items with material directly parsed
+        #################################################
         
         # Get <mail> node
         xmlMailElem = xmlFileHandler.find(self.MAIL_TAG)
@@ -101,15 +123,37 @@ class document(dict):
         
         # Store text of <content> tag (=mail body) 
         self[self.CONTENT_TAG] = \
-            xmlFileHandler.find(self.CONTENT_TAG).text        
+            xmlFileHandler.find(self.CONTENT_TAG).text
+            
+        ###############################################################
+        # Initialize items for later use, like tokens, words lists/sets
+        ###############################################################
         
-    def getXmlFileName(self): 
         """
-        @return: The full absolute path to the XML file represented
-                 in this object.
-        """
-        return self[self.XML_FILEPATH]
+    TEXT_FREQ_DIST = "text_freq_dist"
+    """
+        
+        # For holding tokens of the text
+        self[self.TOKENS] = list()
     
+        # For holding types (=unique tokens)
+        self[self.TYPES] = set()
+        
+        # For holding words (=cleaned tokens)
+        self[self.WORDS] = list()
+        
+        # For holding (unique) stems
+        self[self.STEMS] = set()
+        
+        # For holding pairs of words distanced by some edits, in a set
+        self[self.WORDS_BY_EDIT_DISTANCE] = set()
+        
+        # For holding the most frequent words (with absolute frequency vals)
+        self[self.TOP_WORDS] = defaultdict()
+        
+        # For holding an object to play with the frequency distribution
+        self[self.TEXT_FREQ_DIST] = None
+        
     ############################################################
     # Getters for the values stored in an instance of this class
     ############################################################
@@ -168,6 +212,81 @@ class document(dict):
                  in <content>
         """
         return self[self.CONTENT_TAG]
+    
+    def getXmlFileName(self): 
+        """
+        @return: The full absolute path to the XML file represented
+                 in this object.
+        """
+        return self[self.XML_FILEPATH]
+    
+    def getTokens(self):
+        """
+        @return: A list of all tokens found in the document; done by NLTK.
+        """
+        if len(self[self.TOKENS]) == 0:
+            self[self.TOKENS] = tokenizer().tokenize(self.getRawContent())
+        return self[self.TOKENS]
+    
+    def getTypes(self, lower=False):
+        """
+        @return: A set of all types (=unique tokens) found in the
+                 document; create this set one time only.
+        """
+        if len(self[self.TYPES]) == 0:
+            self[self.TYPES] = set(self.getTokens())
+        if(lower == False):
+            return self[self.TYPES]
+        # Lower case list and return set
+        return set(map(lambda x:x.lower(), self[self.TYPES]))
+    
+    def getWords(self):
+        """
+        @return: Return words (determined by surface forms) that seem to be 
+                 of linguistic nature, and thus "real" words. Words in
+                 this sense are built out of the tokens, which also include
+                 lots of programming code in different languages or other
+                 surfaces, which don't seem to be natural language -- like
+                 PGP signatures or similar.
+                 This construction is carried out one time only.
+        XXX: This part my change heavily. Also: The regexps are ugly hacks.
+        """
+        nonWordSymbol = "0123456789<>=/"
+        toAdd = True
+        
+        if len(self[self.WORDS]) == 0:  
+            for t in self.getTokens():
+                for s in nonWordSymbol:
+                    if s in t:
+                        toAdd = False
+                        break
+                if not match("[a-z]+\.[a-z]+", t) == None \
+                or not match("[ \*_\]\^\\\\!$\"\'%` ]+.*", t) == None \
+                or not match("[ &*\(\)+\#,-.:;?+\\@\[ ]+.*", t) == None \
+                or not match("[a-z]{1}-", t) == None \
+                or t.find("--") >= 0 or t.find("..") >= 0:
+                    toAdd = False             
+                if (toAdd == True):    
+                    self[self.WORDS].append(t)
+                else: # toAdd is False
+                    toAdd = True
+        
+        return self[self.WORDS]
+
+    def getStems(self):
+        """
+        @return: Set of stems found upon the words. Create once.
+        """
+        if len(self[self.STEMS]) == 0:
+            for word in self.getWords():
+                self[self.STEMS].add(germanStemmer().stem(word))
+        return self[self.STEMS]
+    
+    """
+    WORDS_BY_EDIT_DISTANCE = "words_by_edit_distance"
+    TOP_WORDS = "top_words"
+    TEXT_FREQ_DIST = "text_freq_dist"
+    """
     
     #################################################################
     # Other getters, not relying on data in an instance of this class

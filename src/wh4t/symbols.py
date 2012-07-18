@@ -55,7 +55,8 @@ class symbols(dict):
         Writes a file with all the symbols (i. e. this class's keys)
         in order.
         """
-        f = open(getMailBodySymbolsFile(), "w", encoding=getDefaultEncoding())
+        f = open(getMailBodySymbolsFile(), "w", 
+                 encoding=getDefaultEncoding())
              
         for symbol in sorted(self.keys(), reverse=True):
             f.write(symbol)

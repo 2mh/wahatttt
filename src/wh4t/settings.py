@@ -77,7 +77,7 @@ MAILBODY_TOP_WORDS_FILE = WH4T_BASEDIR + "mailBodyTopWordsFile"
 MAIL_FOLDER = WH4T_BASEDIR + "fitug_xml" + sep
 
 # Version of the wahatttt system as a whole; as of 1.0 it'll be usable
-VERSION = "0.45"
+VERSION = "0.5"
 
 #################
 # General getters

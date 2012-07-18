@@ -3,10 +3,13 @@
 """
 @author Hernani Marques <h2m@access.uzh.ch>, 2012
 """
+from sys import stdout
 
 from wh4t.settings import printOwnInfo
 from wh4t.documents import collection
 from wh4t.symbols import symbols
+
+from nltk.text import TextCollection
 
 printOwnInfo(__file__)
 
@@ -34,3 +37,23 @@ xmlCollection.getWordsByEditDistance(editDistance,
 xmlCollection.writeWordsByEditDistanceFile(editDistance=editDistance)
 xmlCollection.writeDocsTopWordsFile(numberOfWords=numberOfTopWords)
 print "Top words written to disk."
+
+# XXX: BIG FUCK UP ####################################### FIX FIX FIX #######
+
+# Print idf, tf and tf-idf values for the term "CCC", in document no. 42 - 
+# for testing.
+textCollection = TextCollection(xmlCollection.getDocsWords())
+print "idf: " + str(textCollection.idf("CCC"))
+print "tf: " + str(textCollection.tf("CCC", 
+    TextCollection(xmlCollection.getDoc(42).getTokens())))
+print "tf_idf: " + str(textCollection.tf_idf("CCC", 
+    TextCollection(xmlCollection.getDoc(42).getTokens())))
+
+# Do that now systematically for all documents
+print "Document where tf is bigger 0:"
+cnt = 0
+for doc in xmlCollection.getDocs():
+    tf = textCollection.tf("CCC",TextCollection(doc.getTokens()))
+    stdout.write(str(tf) + ", "); cnt += 1
+    if cnt == 10: print; cnt = 0
+    if tf > 0.0: print "\n" + doc.getXmlFileName()
