@@ -125,7 +125,7 @@ def main():
     stdout.write("Write stems into file: " + getMailBodyStemsFile())
     xmlCollection.writeStemsFile(); printOK();
     stdout.write("Write nouns into file: " + getMailBodyWordsFile(pos='n'))
-    xmlCollection.writeWordsFile(pos='n'); printOK(); printLine()
+    xmlCollection.writeDocsWordsFile(pos='n'); printOK(); printLine()
     
     # Print the 42 most frequent words -- Zipf's law turns true ;-)
     print "Top 42 words: "
