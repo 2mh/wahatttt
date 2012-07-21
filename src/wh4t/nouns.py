@@ -12,8 +12,8 @@ from library import normalize_word
 
 class nouns(list):
     """
-    This class holds a set of nouns for the German language, freely
-    available at the Apertium RBMT project.
+    This class holds a list of nouns for the German language, freely
+    available from the Apertium RBMT project.
     """
 
     def __init__(self):
