@@ -12,6 +12,9 @@ from xml.etree import cElementTree as ET
 from nltk import PunktWordTokenizer as tokenizer
 from nltk.stem.snowball import GermanStemmer as germanStemmer
 
+from nouns import nouns
+from library import normalize_word
+
 class document(dict):
     """
     The class document is used to represent the individual documents,
@@ -55,6 +58,7 @@ class document(dict):
     TOKENS = "tokens"
     TYPES = "types"
     WORDS = "words"
+    NOUNS = "nouns"
     STEMS = "stems"
     WORDS_BY_EDIT_DISTANCE = "words_by_edit_distance"
     TOP_WORDS = "top_words"
@@ -129,10 +133,6 @@ class document(dict):
         # Initialize items for later use, like tokens, words lists/sets
         ###############################################################
         
-        """
-    TEXT_FREQ_DIST = "text_freq_dist"
-    """
-        
         # For holding tokens of the text
         self[self.TOKENS] = list()
     
@@ -141,6 +141,9 @@ class document(dict):
         
         # For holding words (=cleaned tokens)
         self[self.WORDS] = list()
+        
+        # The nouns (of the words)
+        self[self.NOUNS] = list()
         
         # For holding (unique) stems
         self[self.STEMS] = set()
@@ -241,8 +244,10 @@ class document(dict):
         # Lower case list and return set
         return set(map(lambda x:x.lower(), self[self.TYPES]))
     
-    def getWords(self):
+    def getWords(self,pos='_'):
         """
+        @param pos: It's possible to say which words we want. ATM only '_'
+                (all words; that's the default) or 'n' (nouns) are supported.
         @return: Return words (determined by surface forms) that seem to be 
                  of linguistic nature, and thus "real" words. Words in
                  this sense are built out of the tokens, which also include
@@ -268,10 +273,26 @@ class document(dict):
                 or t.find("--") >= 0 or t.find("..") >= 0:
                     toAdd = False             
                 if (toAdd == True):    
-                    self[self.WORDS].append(t)
+                    self[self.WORDS].append(normalize_word(t))
                 else: # toAdd is False
                     toAdd = True
         
+        # Return only nouns; do it once only
+
+        if pos=='n':
+            if len(self[self.NOUNS]) == 0:
+                # Approach by comparing against a nouns' list
+                # and by considering words as nouns (=NE) which start with
+                # two upper case letters.
+                n_ref = nouns()
+                for word in self[self.WORDS]:
+                    if word in n_ref \
+                    or not match("^[A-Z]{2,}",word) == None:
+                        self[self.NOUNS].append(word)
+        
+            return self[self.NOUNS]
+            
+        # In case of '_' (all words) 
         return self[self.WORDS]
 
     def getStems(self):

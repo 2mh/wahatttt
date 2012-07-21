@@ -9,7 +9,7 @@ from wh4t.settings import printLine
 
 # Program starts here
 xmlDocuments = collection()
-xmlDocument = xmlDocuments.getDoc(42) # Get doc #42 for tests
+xmlDocument = xmlDocuments.getDoc(51) # Get a specific doc number for tests
 
 # Print raw content, tokens and then types (mixed- and lowercase)
 printLine()
@@ -27,6 +27,9 @@ print xmlDocument.getTypes(lower=True)
 printLine()
 print "Print words: "
 print xmlDocument.getWords()
+printLine()
+print "Print nouns: "
+print xmlDocument.getWords(pos='n')
 printLine()
 print "Print stems: "
 print xmlDocument.getStems()

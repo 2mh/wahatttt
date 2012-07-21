@@ -16,6 +16,7 @@ from wh4t.settings import printOwnInfo
 from wh4t.settings import printLine
 from wh4t.settings import printOK
 from wh4t.symbols import symbols
+from src.wh4t.settings import getMailBodyStemsFile
 
 #####################
 # Program starts here
@@ -95,6 +96,14 @@ def main():
     print "Total number of words: " + \
     str(len(words)); printLine()
     
+    # - Get the subset of nouns from the words
+    print "-- Get number of nouns ..."
+    nouns = xmlCollection.getDocsWords(pos='n')
+    print "total number of nouns: " + \
+    str(len(nouns));
+    print "total number of (unique) nouns: " + \
+    str(len(set(nouns))); printLine()
+    
     # - Print total number of unique stems, which got created by NLTK
     #   means, applied over words.
     print "-- Get number of unique stems ..."
@@ -103,7 +112,7 @@ def main():
     str(len(stemmedText)); printLine()
     
     # Finally write some files, containing tokens, types, types in
-    # lower case and words.
+    # lower case, words, stems and nouns.
     stdout.write("Write tokens into file: " + getMailBodyTokensFile())
     xmlCollection.writeDocsTokenFile(); printOK()
     stdout.write("Write types into file: " + getMailBodyTypesFile())
@@ -112,7 +121,11 @@ def main():
                  getMailBodyTypesFile(lower=True))
     xmlCollection.writeDocsTypesFile(lower=True); printOK()
     stdout.write("Write words into file: " + getMailBodyWordsFile())
-    xmlCollection.writeDocsWordsFile(); printOK(); printLine()
+    xmlCollection.writeDocsWordsFile(); printOK()
+    stdout.write("Write stems into file: " + getMailBodyStemsFile())
+    xmlCollection.writeStemsFile(); printOK();
+    stdout.write("Write nouns into file: " + getMailBodyWordsFile(pos='n'))
+    xmlCollection.writeWordsFile(pos='n'); printOK(); printLine()
     
     # Print the 42 most frequent words -- Zipf's law turns true ;-)
     print "Top 42 words: "

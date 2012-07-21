@@ -41,7 +41,7 @@ def UmlautToASCII(text):
     	   retText = concatText(retText, u"ue")
         else:
     	   retText = concatText(retText, u"" + char)
-        return retText
+    return retText
     
 """
 def unicodeToHTMLEntities(text):

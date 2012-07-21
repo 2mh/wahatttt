@@ -7,6 +7,9 @@
 from os import sep
 from os.path import basename
 from os.path import abspath
+from os.path import join
+from os.path import pardir
+from os.path import curdir
 from re import sub
 
 ################
@@ -34,7 +37,10 @@ DEFAULT_EDIT_DISTANCE_FILENAME_SUFFIX = ""
 ##########################
 
 # The project's base path relative to the position of this settings file.
-WH4T_BASEDIR = abspath("..") + sep
+WH4T_BASEDIR = abspath(join(curdir,pardir)) + sep
+
+# The project's (freely available linguistic) resources directory
+WH4T_RESDIR = WH4T_BASEDIR + "resources" + sep
 
 # XML file containing info about broken XML files, if any (hopefully not).
 INVALID_XML_FILE_NAME = WH4T_BASEDIR + "wh4tinvalidXml.xml"
@@ -61,6 +67,9 @@ MAILBODY_TYPES_LOWERED_FILE = WH4T_BASEDIR + "mailBodyTypesLoweredFile"
 # File with list of all words (= cleaned tokens), in the given order
 MAILBODY_WORDS_FILE = WH4T_BASEDIR + "mailBodyWordsFile"
 
+# File with nouns in the collection, is a subset of nouns.
+MAILBODY_NOUNS_FILE = WH4T_BASEDIR + "mailBodyNounsFile"
+
 # File with pairs of words by a specified edit distance, usually 1 or 2
 MAILBODY_WORDS_BY_EDIT_DISTANCE_FILE = WH4T_BASEDIR + \
     "mailBodyWordsByEditDistance"
@@ -75,6 +84,11 @@ MAILBODY_TOP_WORDS_FILE = WH4T_BASEDIR + "mailBodyTopWordsFile"
 # Path to the directory with the input data in XML format 
 # (as of now: only FITUG-mails)
 MAIL_FOLDER = WH4T_BASEDIR + "fitug_xml" + sep
+
+# Nouns file, containing nouns, found at the Apertium project:
+# "http://apertium.svn.sourceforge.net/viewvc/apertium/incubator/
+# apertium-de-en/"
+NOUNS_FILE = WH4T_RESDIR + "nouns.txt"
 
 # Version of the wahatttt system as a whole; as of 1.0 it'll be usable
 VERSION = "0.5"
@@ -175,10 +189,14 @@ def getMailBodyTypesFile(lower=False):
         return MAILBODY_TYPES_FILE
     return MAILBODY_TYPES_LOWERED_FILE
 
-def getMailBodyWordsFile(): 
+def getMailBodyWordsFile(pos='_'): 
     """
+    @param pos: When '_' all words, when 'n' nouns file
     @return: String with file path where found words are written to 
     """
+    if (pos == 'n'):
+        return MAILBODY_NOUNS_FILE
+    
     return MAILBODY_WORDS_FILE
 
 def getMailBodyStemsFile(): 
@@ -203,6 +221,12 @@ def getMailBodyTopWordsFile():
     @return: String with file path to store the most frequent words
     """
     return MAILBODY_TOP_WORDS_FILE
+
+def getNounsFile():
+    """
+    @return: String with file path with a list of nouns
+    """
+    return NOUNS_FILE
 
 ###################################
 # Simple printer / helper functions

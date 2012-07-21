@@ -99,7 +99,9 @@ First exploration:
 Invoke the following commands:
 
 git clone https://github.com/2mh/wahatttt.git
-cd wahatttt/src/
+cd wahatttt/resources
+./create_nouns_file.sh
+cd ../src/
 javac GrabFitug.java
 java GrabFitug
 ./wh4tXmlChecker.py

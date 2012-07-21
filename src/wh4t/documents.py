@@ -51,6 +51,7 @@ class collection(dict):
     DOCS_WORDS_BY_EDIT_DISTANCE = "docs_words_by_edit_distance"
     DOCS_TOP_WORDS = "docs_top_words"
     DOCS_TEXT_FREQ_DIST = "docs_text_freq_dist"    
+    DOCS_NOUNS = "docs_nouns"
         
     def __init__(self):
         """
@@ -89,6 +90,9 @@ class collection(dict):
         
         # To hold an object with the frequencies of all words
         self.__setitem__(self.DOCS_TEXT_FREQ_DIST, None)
+        
+        # To hold all nouns found, in a list (for frequency analysis)
+        self.__setitem__(self.DOCS_NOUNS, list())
         
         # Read in all documents
         # XXX: This part may change in its behaviour soon
@@ -171,8 +175,10 @@ class collection(dict):
         # If lower==True
         return self[self.DOCS_TYPED_LOWERED]
         
-    def getDocsWords(self):
+    def getDocsWords(self, pos='_'):
         """
+        Return all words, or a subset of them (for now: nouns).
+        @param pos: Can be '_' (all words) or 'n' (nouns only).
         @return: Return words (look up document.py for more info how that
                  comes). Do that once only.
         """
@@ -181,6 +187,15 @@ class collection(dict):
                 for word in doc.getWords():
                     self[self.DOCS_WORDS].append(word)
         
+        # When nouns are required; XXX: only functional / inefficient by now
+        if (pos == 'n'):
+            if len(self[self.DOCS_NOUNS]) == 0:
+                for doc in self.getDocs():
+                    for noun in doc.getWords(pos='n'):
+                        self[self.DOCS_NOUNS].append(noun)
+            return self[self.DOCS_NOUNS]
+        
+        # If pos is "_"
         return self[self.DOCS_WORDS]
         
     def getDocsStems(self):
@@ -299,13 +314,14 @@ class collection(dict):
             f.write(t + "\n")
         f.close()
     
-    def writeDocsWordsFile(self):
+    def writeDocsWordsFile(self,pos='_'):
         """
         Write all words of all files into a file, one word per line, in
-        the given order.
+        the given order. Can also write only a subset of words.
+        @param pos: Writes all words for value '_', and nouns for value 'n'.
         """
-        f = open(getMailBodyWordsFile(), "w", encoding=getDefaultEncoding())      
-        for token in self.getDocsWords():
+        f = open(getMailBodyWordsFile(pos=pos), "w", encoding=getDefaultEncoding())      
+        for token in self.getDocsWords(pos=pos):
             f.write(token + "\n")
         f.close()
     
