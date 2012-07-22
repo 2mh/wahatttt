@@ -12,6 +12,6 @@ def normalize_word(word_to_normalize):
     """
     
     # Transform Umlauts
-    return word_to_normalize.replace("Ä","Ae").replace("Ö","Oe"). \
-        replace("Ü","Ue").replace("ä","ae").replace("ö","oe"). \
-        replace("ü","ue").replace("ß","ss")
+    return word_to_normalize.replace(u"Ä","Ae").replace(u"Ö","Oe"). \
+        replace(u"Ü","Ue").replace(u"ä","ae").replace(u"ö","oe"). \
+        replace(u"ü","ue").replace(u"ß","ss")

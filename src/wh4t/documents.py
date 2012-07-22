@@ -196,7 +196,7 @@ class collection(dict):
         """
         if len(self[self.DOCS_WORDS]) == 0:
             for doc in self.getDocs():
-                for word in doc.getWords([]):
+                for word in doc.getWords():
                     self[self.DOCS_WORDS].append(word)
         
         # When nouns are required; XXX: (still) somewhat slow

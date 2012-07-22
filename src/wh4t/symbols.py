@@ -94,17 +94,17 @@ class symbols(dict):
             symbolClass.add(ALPHA)
         if symbol.isdigit():
             symbolClass.add(DIGIT)
-        if symbol in "'\"`,.:»«-´;?![]()":
+        if symbol in u"'\"`,.:»«-´;?![]()":
             symbolClass.add(PUNCT)
-        if symbol in "+-*/=:^{}[]()!><|·%":
+        if symbol in u"+-*/=:^{}[]()!><|·%":
             symbolClass.add(MATH)
-        if symbol in "#+-*=_/\\^[](){}:$!~><|@&%":
+        if symbol in u"#+-*=_/\\^[](){}:$!~><|@&%":
             symbolClass.add(COMP)    
-        if symbol in " \t\n":
+        if symbol in u" \t\n":
             symbolClass.add(WHITE)
-        if symbol in "£$":
+        if symbol in u"£$":
             symbolClass.add(MONEY)
-        if symbol in "§©":
+        if symbol in u"§©":
             symbolClass.add(LAW)
         if len(symbolClass) == 0:
             symbolClass.add(UNDEF)
