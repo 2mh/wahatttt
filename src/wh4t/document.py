@@ -244,7 +244,7 @@ class document(dict):
         # Lower case list and return set
         return set(map(lambda x:x.lower(), self[self.TYPES]))
     
-    def getWords(self,pos='_'):
+    def getWords(self,pos='_', reference_nouns=None):
         """
         @param pos: It's possible to say which words we want. ATM only '_'
                 (all words; that's the default) or 'n' (nouns) are supported.
@@ -278,15 +278,16 @@ class document(dict):
                     toAdd = True
         
         # Return only nouns; do it once only
-
-        if pos=='n':
+        if pos == 'n' and not reference_nouns == None:
+            # Approach by comparing against a nouns' list
+            # and by considering words as nouns which start with
+            # two upper case letters (being with high probability NEs).
+            # XXX: May be possible to do faster.
             if len(self[self.NOUNS]) == 0:
-                # Approach by comparing against a nouns' list
-                # and by considering words as nouns (=NE) which start with
-                # two upper case letters.
-                n_ref = nouns()
-                for word in self[self.WORDS]:
-                    if word in n_ref \
+                noun_candidates = [nc for nc in self[self.WORDS] 
+                                   if not match("^[^a-zäöü]", nc) == None]
+                for word in noun_candidates:
+                    if word in reference_nouns \
                     or not match("^[A-Z]{2,}",word) == None:
                         self[self.NOUNS].append(word)
         

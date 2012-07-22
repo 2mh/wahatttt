@@ -10,6 +10,7 @@ from collections import defaultdict
 
 from nltk.probability import FreqDist as freqdist
 from nltk.metrics import edit_distance
+from progressbar import ProgressBar as progressbar
 
 from document import document
 from listByLen import listByLen
@@ -25,6 +26,7 @@ from settings import getMailBodyTopWordsFile
 from settings import getDefaultNumberOfTopWords
 from settings import getDefaultSourceWordLenForEditDistancing
 from settings import getDefaultEditDistanceFilenameSuffix
+from nouns import nouns
 
 class collection(dict):
     """
@@ -52,6 +54,8 @@ class collection(dict):
     DOCS_TOP_WORDS = "docs_top_words"
     DOCS_TEXT_FREQ_DIST = "docs_text_freq_dist"    
     DOCS_NOUNS = "docs_nouns"
+    DOCS_REF_NOUNS = "docs_ref_nouns" 
+    DOCS_NUMBER = "docs_number"
         
     def __init__(self):
         """
@@ -94,11 +98,19 @@ class collection(dict):
         # To hold all nouns found, in a list (for frequency analysis)
         self.__setitem__(self.DOCS_NOUNS, list())
         
+        # Initializes a nouns object (is a list) of reference nouns we use 
+        # to find nouns in the collection
+        self.__setitem__(self.DOCS_REF_NOUNS, nouns())
+        
         # Read in all documents
         # XXX: This part may change in its behaviour soon
-        for xmlFileName in listdir(getMailFolder()):
+        filesList = listdir(getMailFolder())
+        for xmlFileName in filesList:
             xmlDocument = document(getMailFolder() + xmlFileName)
             self[self.DOC_LIST].append(xmlDocument)
+            
+        # Store number of files found
+        self.__setitem__(self.DOCS_NUMBER, len(filesList))
         
     def getDoc(self,pos): 
         """
@@ -184,15 +196,32 @@ class collection(dict):
         """
         if len(self[self.DOCS_WORDS]) == 0:
             for doc in self.getDocs():
-                for word in doc.getWords():
+                for word in doc.getWords([]):
                     self[self.DOCS_WORDS].append(word)
         
-        # When nouns are required; XXX: only functional / inefficient by now
+        # When nouns are required; XXX: (still) somewhat slow
         if (pos == 'n'):
             if len(self[self.DOCS_NOUNS]) == 0:
+                cnt = 0
+                pb = progressbar(maxval=self[self.DOCS_NUMBER]).start()
                 for doc in self.getDocs():
-                    for noun in doc.getWords(pos='n'):
-                        self[self.DOCS_NOUNS].append(noun)
+                    cnt += 1; pb.update(cnt)
+                    for noun in doc.getWords(pos='n',
+                        reference_nouns=self[self.DOCS_REF_NOUNS]):
+                            self[self.DOCS_NOUNS].append(noun)
+                pb.finish()
+                
+                """ Alternative code to find the nouns over all
+                    all the words, instead of a per-document basis.
+                
+                nouns_candidates = [nc for nc in self[self.DOCS_WORDS] \
+                            if not match("^[^a-zäöü]", nc) == None]
+                for word in nouns_candidates:
+                    cnt += 1
+                    print str(cnt) + " of " + str(len(nouns_candidates))
+                    if word in self[self.DOCS_REF_NOUNS]:
+                        self[self.DOCS_NOUNS].append(word)
+                """
             return self[self.DOCS_NOUNS]
         
         # If pos is "_"
@@ -320,7 +349,8 @@ class collection(dict):
         the given order. Can also write only a subset of words.
         @param pos: Writes all words for value '_', and nouns for value 'n'.
         """
-        f = open(getMailBodyWordsFile(pos=pos), "w", encoding=getDefaultEncoding())      
+        f = open(getMailBodyWordsFile(pos=pos), "w", 
+                 encoding=getDefaultEncoding())      
         for token in self.getDocsWords(pos=pos):
             f.write(token + "\n")
         f.close()

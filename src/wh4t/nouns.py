@@ -20,9 +20,12 @@ class nouns(list):
         """
         Reads in the nouns file and stores it.
         """
+        
         f = open(getNounsFile(),"r",getDefaultEncoding())
         for noun in f.readlines():
             self.append(normalize_word(noun.strip()))
+            
+        f.close()
     
     def getNouns(self):
         """
