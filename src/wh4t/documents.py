@@ -320,6 +320,25 @@ class collection(dict):
         f = open(getMailBodyRawFile(), "w", encoding=getDefaultEncoding())
         f.write(self.getDocsText())
         f.close()
+        
+    def writeRawText(self,in_one_file=False):
+        """
+        Write documents on a per-file basis in its raw content, or 
+        write this content collectively in one file alone.
+        XXX: Later replace writeDocsRawFile() method above.
+        @param in_one_file: If set to True writes all content in one file
+                            only, otherwise write every document in its own
+                            file. Defaults to latter behaviour.
+        """
+        if in_one_file == True:
+            self.writeDocsRawFile()
+        else:
+            print "Write documents' raw content units line by line ..."
+            for doc in self.getDocs():
+                doc.writeContent()
+            print "... all " \
+                + str(len(listdir(getMailFolder(contentFormat="line")))) \
+                + " documents written."
     
     def writeDocsTokenFile(self):
         """

@@ -4,16 +4,23 @@
 @author Hernani Marques <h2m@access.uzh.ch>, 2012
 """
 
+from os import makedirs
+from os import listdir
 from os.path import getsize
+from os.path import exists
+from os.path import basename
 from collections import defaultdict
 from re import match
+from codecs import open
 
 from xml.etree import cElementTree as ET
 from nltk import PunktWordTokenizer as tokenizer
 from nltk.stem.snowball import GermanStemmer as germanStemmer
 
-from nouns import nouns
 from library import normalize_word
+from library import rreplace
+from settings import getMailFolder
+from settings import getDefaultEncoding
 
 class document(dict):
     """
@@ -65,10 +72,12 @@ class document(dict):
     TEXT_FREQ_DIST = "text_freq_dist"
     
     #################################################################
-    # Other key names, for now for storing the xml filename
+    # Other key names, for now for storing the xml filename, and a
+    # document id
     #################################################################
     
     XML_FILEPATH = "file"
+    DOC_ID = "doc_id"
     
     ###################################
     # The object gets instantiated here
@@ -82,6 +91,9 @@ class document(dict):
         """
         self[self.XML_FILEPATH] = xmlFilePath
         xmlFileHandler = ET.parse(xmlFilePath)
+        
+        self[self.DOC_ID] = rreplace(basename(self[self.XML_FILEPATH]),
+                            ".xml","",1)
         
         ################################################
         # Initialize items with material directly parsed
@@ -248,6 +260,9 @@ class document(dict):
         """
         @param pos: It's possible to say which words we want. ATM only '_'
                 (all words; that's the default) or 'n' (nouns) are supported.
+        @param reference_nouns: Optional parameter (together with pos) to
+                               indicate which reference nouns (object nouns)
+                               to use.
         @return: Return words (determined by surface forms) that seem to be 
                  of linguistic nature, and thus "real" words. Words in
                  this sense are built out of the tokens, which also include
@@ -337,3 +352,27 @@ class document(dict):
         Print the <content> part of the message to the terminal. 
         """        
         print self[self.CONTENT_TAG]
+        
+    ########################
+    # Methods to write files
+    ########################
+    
+    def writeContent(self, contentFormat="line", contentType="raw"):
+        """
+        Write files in different possible formats and content types to a 
+        folder on disk.
+        @param contentFormat: If "line" writes content unit line per line.
+        @param contentType: If "raw", write tokens as is; other values like
+                            "words" may (become) possible.
+        """
+        d = getMailFolder(contentFormat=contentFormat)
+        if not exists(d):
+            print "Folder " + d + " not availabe. Create it."
+            makedirs(d)
+
+        # For now only "raw" contentType exists, and "line" contentFormat
+        f = open(d + self[self.DOC_ID], "w",
+                 getDefaultEncoding())       
+        for t in self.getTokens():
+            f.write(t + "\n")
+        f.close()

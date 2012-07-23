@@ -83,7 +83,11 @@ MAILBODY_TOP_WORDS_FILE = WH4T_BASEDIR + "mailBodyTopWordsFile"
 
 # Path to the directory with the input data in XML format 
 # (as of now: only FITUG-mails)
-MAIL_FOLDER = WH4T_BASEDIR + "fitug_xml" + sep
+MAIL_FOLDER_XML = WH4T_BASEDIR + "fitug_xml" + sep
+
+# Path to mail folder with all messages delimited by '\n' (for each content
+# unit)
+MAIL_FOLDER_LINE = WH4T_BASEDIR + "fitug_line" + sep
 
 # Nouns file, containing nouns, found at the Apertium project:
 # "http://apertium.svn.sourceforge.net/viewvc/apertium/incubator/
@@ -130,11 +134,17 @@ def getDefaultSourceWordLenForEditDistancing():
 # See definitions section for more information on its intended content.
 ##########################################################################
     
-def getMailFolder(): 
+def getMailFolder(contentFormat="XML"): 
     """
+    @param: If type's "CSV" return mail folder where mails in CSV format 
+            lie
     @return: String with mail folder path of the input data
     """
-    return MAIL_FOLDER
+    if contentFormat == "line":
+        return MAIL_FOLDER_LINE
+    
+    # Fallback case "XML"
+    return MAIL_FOLDER_XML
 
 def getInvalidXmlFileName(): 
     """
