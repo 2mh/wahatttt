@@ -6,6 +6,8 @@
 
 from wh4t.documents import collection
 from wh4t.settings import printLine
+from wh4t.nouns import nouns
+
 
 # Program starts here
 xmlDocuments = collection()
@@ -29,8 +31,9 @@ print "Print words: "
 print xmlDocument.getWords()
 printLine()
 print "Print nouns: "
-print xmlDocument.getWords(pos='n')
+print xmlDocument.getWords(pos='n',reference_nouns=nouns())
 printLine()
 print "Print stems: "
 print xmlDocument.getStems()
 printLine()
+

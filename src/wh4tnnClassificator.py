@@ -31,7 +31,7 @@ def main():
     # Do primary component analysis on all raw material & show it visually
     pca = Pca()
     d = getMailFolder(contentFormat="line")
-    for line_file in listdir(d):
+    for line_file in listdir(d)[:42]: # For now only a subset can be processed
         pca.load_line(d + line_file)
     pca.show()
     
