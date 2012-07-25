@@ -5,7 +5,6 @@
 """
 
 from os import makedirs
-from os import listdir
 from os.path import getsize
 from os.path import exists
 from os.path import basename
@@ -16,11 +15,13 @@ from codecs import open
 from xml.etree import cElementTree as ET
 from nltk import PunktWordTokenizer as tokenizer
 from nltk.stem.snowball import GermanStemmer as germanStemmer
+from hashlib import sha512
 
 from library import normalize_word
 from library import rreplace
 from settings import getMailFolder
 from settings import getDefaultEncoding
+from settings import getWordsFolder
 
 class document(dict):
     """
@@ -93,7 +94,7 @@ class document(dict):
         xmlFileHandler = ET.parse(xmlFilePath)
         
         self[self.DOC_ID] = rreplace(basename(self[self.XML_FILEPATH]),
-                            ".xml","",1)
+                            ".xml", "", 1)
         
         ################################################
         # Initialize items with material directly parsed
@@ -256,7 +257,7 @@ class document(dict):
         # Lower case list and return set
         return set(map(lambda x:x.lower(), self[self.TYPES]))
     
-    def getWords(self,pos='_', reference_nouns=None):
+    def getWords(self, pos='_', reference_nouns=None):
         """
         @param pos: It's possible to say which words we want. ATM only '_'
                 (all words; that's the default) or 'n' (nouns) are supported.
@@ -274,6 +275,9 @@ class document(dict):
         """
         nonWordSymbol = "0123456789<>=/"
         toAdd = True
+        wordsFolder = getWordsFolder()
+        
+        
         
         if len(self[self.WORDS]) == 0:  
             for t in self.getTokens():
@@ -298,12 +302,14 @@ class document(dict):
             # and by considering words as nouns which start with
             # two upper case letters (being with high probability NEs).
             # XXX: May be possible to do faster.
+            nounsFolder = getWordsFolder(pos='n')
+            
             if len(self[self.NOUNS]) == 0:
                 noun_candidates = [nc for nc in self[self.WORDS] 
                                    if not match("^[^a-zäöü]", nc) == None]
                 for word in noun_candidates:
                     if word in reference_nouns \
-                    or not match("^[A-Z]{2,}",word) == None:
+                    or not match("^[A-Z]{2,}", word) == None:
                         self[self.NOUNS].append(word)
         
             return self[self.NOUNS]

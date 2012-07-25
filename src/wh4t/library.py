@@ -3,7 +3,39 @@
 """
 @author Hernani Marques <h2m@access.uzh.ch>, 2012
 """
+from codecs import open
+from os.path import exists
 
+from settings import getHashFile
+from settings import getDefaultEncoding
+
+class hashFile(file):
+
+    def __init__(self, mode="r"):
+        hashFile = getHashFile()
+        file.__init__(self, hashFile, mode)
+        
+        if not exists(hashFile):
+            print "Hash file doesn't exist."
+            print "Create: " + hashFile
+            self = open(hashFile, "w", getDefaultEncoding())
+            self.close()
+   
+class hashDict(dict):
+    
+    def __init__(self):
+        f = hashFile()
+        for line in f.readlines():
+            pair = line.split()
+            self[pair[0]] = pair[1]
+        f.close()
+    
+    def save(self):
+        f = hashFile(mode="w")
+        for pair in self.items():
+            f.write(' '.join(map(str, pair)) + '\n')
+        f.close()    
+            
 def normalize_word(word_to_normalize):
     """
     This function helps to normalize words in order to make

@@ -37,62 +37,73 @@ DEFAULT_EDIT_DISTANCE_FILENAME_SUFFIX = ""
 ##########################
 
 # The project's base path relative to the position of this settings file.
-WH4T_BASEDIR = abspath(join(curdir,pardir)) + sep
+WH4T_BASE_DIR = abspath(join(curdir,pardir)) + sep
 
 # The project's (freely available linguistic) resources directory
-WH4T_RESDIR = WH4T_BASEDIR + "resources" + sep
+WH4T_RES_DIR = WH4T_BASE_DIR + "resources" + sep
+
+# A directory where words are hold, per document; file by file
+WH4T_WORDS_DIR = WH4T_BASE_DIR + "words" + sep
+
+# A directory where nouns are hold, per document; file by file
+WH4T_NOUNS_DIR = WH4T_BASE_DIR + "nouns" + sep
 
 # XML file containing info about broken XML files, if any (hopefully not).
-INVALID_XML_FILE_NAME = WH4T_BASEDIR + "wh4tinvalidXml.xml"
+INVALID_XML_FILE_NAME = WH4T_BASE_DIR + "wh4tinvalidXml.xml"
 
 # Text file with all (body) content available, in raw form.
-MAILBODY_RAW_FILE = WH4T_BASEDIR + "mailBodyRawFile"
+MAILBODY_RAW_FILE = WH4T_BASE_DIR + "mailBodyRawFile"
 
 # Text file with all (body) content available, linguistic data only,
 # achieved after some cleaning
-MAILBODY_LIN_FILE = WH4T_BASEDIR + "mailBodyLinFile"
+MAILBODY_LIN_FILE = WH4T_BASE_DIR + "mailBodyLinFile"
 
 # Text file with list of all symbols used in the mail body
-MAILBODY_SYMBOLS_FILE = WH4T_BASEDIR + "mailBodySymbolsFile"
+MAILBODY_SYMBOLS_FILE = WH4T_BASE_DIR + "mailBodySymbolsFile"
 
 # File with list of all tokens used, from the raw text (in the given order)
-MAILBODY_TOKENS_FILE = WH4T_BASEDIR + "mailBodyTokensFile"
+MAILBODY_TOKENS_FILE = WH4T_BASE_DIR + "mailBodyTokensFile"
 
 # File with list of all unique tokens (=types) used
-MAILBODY_TYPES_FILE = WH4T_BASEDIR + "mailBodyTypesFile"
+MAILBODY_TYPES_FILE = WH4T_BASE_DIR + "mailBodyTypesFile"
 
 # File with list of all unique tokens used in lowered form
-MAILBODY_TYPES_LOWERED_FILE = WH4T_BASEDIR + "mailBodyTypesLoweredFile"
+MAILBODY_TYPES_LOWERED_FILE = WH4T_BASE_DIR + "mailBodyTypesLoweredFile"
 
 # File with list of all words (= cleaned tokens), in the given order
-MAILBODY_WORDS_FILE = WH4T_BASEDIR + "mailBodyWordsFile"
+MAILBODY_WORDS_FILE = WH4T_BASE_DIR + "mailBodyWordsFile"
 
 # File with nouns in the collection, is a subset of nouns.
-MAILBODY_NOUNS_FILE = WH4T_BASEDIR + "mailBodyNounsFile"
+MAILBODY_NOUNS_FILE = WH4T_BASE_DIR + "mailBodyNouns"
 
 # File with pairs of words by a specified edit distance, usually 1 or 2
-MAILBODY_WORDS_BY_EDIT_DISTANCE_FILE = WH4T_BASEDIR + \
+MAILBODY_WORDS_BY_EDIT_DISTANCE_FILE = WH4T_BASE_DIR + \
     "mailBodyWordsByEditDistance"
     
 # File with list of all stems used in mail body, on a unique-basis
-MAILBODY_STEMS_FILE = WH4T_BASEDIR + "mailBodyStemsFile"
+MAILBODY_STEMS_FILE = WH4T_BASE_DIR + "mailBodyStemsFile"
 
 # File with a list of top words in the collection, along with its frequency 
 # in absolute numbers.
-MAILBODY_TOP_WORDS_FILE = WH4T_BASEDIR + "mailBodyTopWordsFile"
+MAILBODY_TOP_WORDS_FILE = WH4T_BASE_DIR + "mailBodyTopWordsFile"
 
 # Path to the directory with the input data in XML format 
 # (as of now: only FITUG-mails)
-MAIL_FOLDER_XML = WH4T_BASEDIR + "fitug_xml" + sep
+MAIL_FOLDER_XML = WH4T_BASE_DIR + "fitug_xml" + sep
 
 # Path to mail folder with all messages delimited by '\n' (for each content
 # unit)
-MAIL_FOLDER_LINE = WH4T_BASEDIR + "fitug_line" + sep
+MAIL_FOLDER_LINE = WH4T_BASE_DIR + "fitug_line" + sep
 
 # Nouns file, containing nouns, found at the Apertium project:
 # "http://apertium.svn.sourceforge.net/viewvc/apertium/incubator/
 # apertium-de-en/"
-NOUNS_FILE = WH4T_RESDIR + "nouns.txt"
+NOUNS_FILE = WH4T_RES_DIR + "nouns.txt"
+
+# This file is used to hold SHA512 hash sums of different generated material, 
+# in order to avoid generating files over and over again, and to allow for
+# reusing material w/o the need for regeneration.
+HASH_FILE = WH4T_BASE_DIR + "hashsums.txt"
 
 # Version of the wahatttt system as a whole; as of 1.0 it'll be usable
 VERSION = "0.5"
@@ -146,6 +157,16 @@ def getMailFolder(contentFormat="XML"):
     # Fallback case "XML"
     return MAIL_FOLDER_XML
 
+def getWordsFolder(pos='_'):
+    """
+    @param: If pos is 'n' return a path to store nouns, otherwise to store
+            words in general.
+    @return: Return a path as string to store words by document
+    """
+    if (pos == 'n'): return WH4T_NOUNS_DIR
+    # Default
+    return WH4T_WORDS_DIR
+
 def getInvalidXmlFileName(): 
     """
     @return: String to a file path for invalid XML documents
@@ -180,7 +201,7 @@ def getWh4tBaseDir():
     """
     @return: String with path for the project's main/root directory
     """
-    return WH4T_BASEDIR
+    return WH4T_BASE_DIR
 
 def getMailBodyTokensFile(): 
     """
@@ -232,11 +253,20 @@ def getMailBodyTopWordsFile():
     """
     return MAILBODY_TOP_WORDS_FILE
 
-def getNounsFile():
+def getNounsFile(measure=""):
     """
-    @return: String with file path with a list of nouns
+    @pos measure: If a special measure is saved in this file. Something that
+                  makes sense to be stored along with the nouns is their 
+                  "IDF" values.
+    @return: String with file path to store nouns (along with other info)
     """
-    return NOUNS_FILE
+    return NOUNS_FILE + measure
+
+def getHashFile():
+    """
+    @return: String with file path to store hash sums of files
+    """
+    return HASH_FILE
 
 ###################################
 # Simple printer / helper functions

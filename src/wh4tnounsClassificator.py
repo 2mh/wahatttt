@@ -47,7 +47,7 @@ def main():
         idf = nltkTextCollection.idf(word)
         if idf > 0.0: idfList.append((idf, word))
     
-    print idfList
+    for pair in idfList: print pair
         
     
     """
