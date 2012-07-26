@@ -10,19 +10,29 @@ from settings import getHashFile
 from settings import getDefaultEncoding
 
 class hashFile(file):
-
+    """
+    This class is a file class, specifically representing an hashsums file.
+    It's used to encapsulate specifics about its name and existence.
+    """
     def __init__(self, mode="r"):
         hashFile = getHashFile()
-        file.__init__(self, hashFile, mode)
         
         if not exists(hashFile):
             print "Hash file doesn't exist."
             print "Create: " + hashFile
-            self = open(hashFile, "w", getDefaultEncoding())
-            self.close()
+            try:
+                open(hashFile, "w", getDefaultEncoding()).close()
+            except Exception, e:
+                print str(e)
+        
+        file.__init__(self, hashFile, mode)
    
 class hashDict(dict):
-    
+    """
+    This class is a dict class, used to handle the hash file above.
+    Each entry in the hash file can be accessed through an object of
+    this type.
+    """
     def __init__(self):
         f = hashFile()
         for line in f.readlines():
@@ -31,6 +41,9 @@ class hashDict(dict):
         f.close()
     
     def save(self):
+        """
+        This method saves the contents of this class to disk.
+        """
         f = hashFile(mode="w")
         for pair in self.items():
             f.write(' '.join(map(str, pair)) + '\n')

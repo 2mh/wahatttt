@@ -19,6 +19,7 @@ from hashlib import sha512
 
 from library import normalize_word
 from library import rreplace
+from library import hashDict
 from settings import getMailFolder
 from settings import getDefaultEncoding
 from settings import getWordsFolder
@@ -314,7 +315,8 @@ class document(dict):
         
             return self[self.NOUNS]
             
-        # In case of '_' (all words) 
+        # In case of '_' (all words)
+        self.writeFile(self.WORDS, getWordsFolder())
         return self[self.WORDS]
 
     def getStems(self):
@@ -363,6 +365,36 @@ class document(dict):
     # Methods to write files
     ########################
     
+    def writeFile(self, key, folder, hash=True):
+        """
+        Writes a file (name: document name) to a specified folder.
+        @param key: Specifies which data to write, based on the key of the
+                    data stored in in this object, e. g. "WORDS" or "NOUNS".
+        @param folder: Absolute folder path where the file is written to.
+        @param hash: Defaults to True and is used to write an hashsum of
+                     the file to an hashfile.
+        """
+        doc_id = self[self.DOC_ID]
+        doc_as_str = '\n'.join(self[key])
+        sha512_sum = ""
+        if (hash == True):
+            hash_dict = hashDict() 
+            sha512_sum = sha512(doc_as_str).hexdigest()
+            hash_dict[folder + doc_id] = sha512_sum
+            hash_dict.save()
+        
+        if not exists(folder): 
+            print "Folder " + folder + " doesn't exist."
+            try:
+                makedirs(folder)
+                print "Folder " + folder + " created."
+            except Exception, e:
+                print str(e)
+        
+        f = open(folder + doc_id, "w", getDefaultEncoding())
+        f.write(doc_as_str)
+        f.close()
+
     def writeContent(self, contentFormat="line", contentType="raw"):
         """
         Write files in different possible formats and content types to a 
