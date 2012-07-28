@@ -20,9 +20,11 @@ from hashlib import sha512
 from library import normalize_word
 from library import rreplace
 from library import hashDict
+from library import clean_iterable
 from settings import getMailFolder
 from settings import getDefaultEncoding
 from settings import getWordsFolder
+from src.wh4t.settings import printLine
 
 class document(dict):
     """
@@ -72,6 +74,7 @@ class document(dict):
     WORDS_BY_EDIT_DISTANCE = "words_by_edit_distance"
     TOP_WORDS = "top_words"
     TEXT_FREQ_DIST = "text_freq_dist"
+    HASH_SUMS = "hashsums"
     
     #################################################################
     # Other key names, for now for storing the xml filename, and a
@@ -94,8 +97,12 @@ class document(dict):
         self[self.XML_FILEPATH] = xmlFilePath
         xmlFileHandler = ET.parse(xmlFilePath)
         
+        # A document id, based on the (unique) file name
         self[self.DOC_ID] = rreplace(basename(self[self.XML_FILEPATH]),
                             ".xml", "", 1)
+        
+        # Populate self[self.HASH_SUMS] with hashsums
+        self.loadHashsums()
         
         ################################################
         # Initialize items with material directly parsed
@@ -274,49 +281,74 @@ class document(dict):
                  This construction is carried out one time only.
         XXX: This part my change heavily. Also: The regexps are ugly hacks.
         """
-        nonWordSymbol = "0123456789<>=/"
-        toAdd = True
-        wordsFolder = getWordsFolder()
+        doc_id = self[self.DOC_ID]
+        hashsums_dict = self[self.HASH_SUMS]
+        w, w_hash  = self.getFile(self.WORDS)
+        folder = self.getFolderByKey(self.WORDS)      
+         
+        if self[self.HASH_SUMS] == 0 \
+        or w_hash == None \
+        or ''.join(hashsums_dict.keys()).find(folder + doc_id) < 0 \
+        or not \
+            w_hash == hashsums_dict[folder + doc_id]:
+            
+            nonWordSymbol = "0123456789<>=/"
+            toAdd = True
+            
+            if len(self[self.WORDS]) == 0:  
+                for t in self.getTokens():
+                    for s in nonWordSymbol:
+                        if s in t:
+                            toAdd = False
+                            break
+                    if not match("[a-z]+\.[a-z]+", t) == None \
+                    or not match("[ \*_\]\^\\\\!$\"\'%` ]+.*", t) == None \
+                    or not match("[ &*\(\)+\#,-.:;?+\\@\[ ]+.*", t) == None \
+                    or not match("[a-z]{1}-", t) == None \
+                    or t.find("--") >= 0 or t.find("..") >= 0:
+                        toAdd = False             
+                    if (toAdd == True):    
+                        self[self.WORDS].append(normalize_word(t))
+                    else: # toAdd is False
+                        toAdd = True
+                self.writeFile(self.WORDS)
+        else:
+            self[self.WORDS] = clean_iterable(w)
         
-        
-        
-        if len(self[self.WORDS]) == 0:  
-            for t in self.getTokens():
-                for s in nonWordSymbol:
-                    if s in t:
-                        toAdd = False
-                        break
-                if not match("[a-z]+\.[a-z]+", t) == None \
-                or not match("[ \*_\]\^\\\\!$\"\'%` ]+.*", t) == None \
-                or not match("[ &*\(\)+\#,-.:;?+\\@\[ ]+.*", t) == None \
-                or not match("[a-z]{1}-", t) == None \
-                or t.find("--") >= 0 or t.find("..") >= 0:
-                    toAdd = False             
-                if (toAdd == True):    
-                    self[self.WORDS].append(normalize_word(t))
-                else: # toAdd is False
-                    toAdd = True
-        
+        # By the very first run of the system a void hashsums file gets 
+        # initialized.
+        # After the above code, hashsums were created => let's reflect them.
+        if len(self[self.HASH_SUMS]) == 0: self.loadHashsums()
+            
         # Return only nouns; do it once only
         if pos == 'n' and not reference_nouns == None:
             # Approach by comparing against a nouns' list
             # and by considering words as nouns which start with
             # two upper case letters (being with high probability NEs).
             # XXX: May be possible to do faster.
-            nounsFolder = getWordsFolder(pos='n')
             
-            if len(self[self.NOUNS]) == 0:
-                noun_candidates = [nc for nc in self[self.WORDS] 
-                                   if not match("^[^a-zäöü]", nc) == None]
-                for word in noun_candidates:
-                    if word in reference_nouns \
-                    or not match("^[A-Z]{2,}", word) == None:
-                        self[self.NOUNS].append(word)
-        
+            n, n_hash = self.getFile(self.NOUNS)
+            folder = self.getFolderByKey(self.NOUNS)
+                
+            if n_hash == None \
+            or ''.join(hashsums_dict.keys()).find(folder + doc_id) < 0 \
+            or not n_hash == \
+                hashsums_dict[folder + doc_id]:
+                
+                if len(self[self.NOUNS]) == 0:
+                    noun_candidates = [nc for nc in self[self.WORDS] 
+                                       if not match("^[^a-zäöü]", nc) == None]
+                    for word in noun_candidates:
+                        if word in reference_nouns \
+                        or not match("^[A-Z]{2,}", word) == None:
+                            self[self.NOUNS].append(word.strip())
+                    self.writeFile(self.NOUNS)
+            else:
+                self[self.NOUNS] = clean_iterable(n)
+                
             return self[self.NOUNS]
-            
-        # In case of '_' (all words)
-        self.writeFile(self.WORDS, getWordsFolder())
+               
+        # In case param pos is '_' (all words)            
         return self[self.WORDS]
 
     def getStems(self):
@@ -351,6 +383,45 @@ class document(dict):
         """
         return len(self.getRawContent())
     
+    def getFile(self, key, hashsum=True):
+        """
+        @param key: Specifies which data to look at, e. g. "NOUNS" (str).
+        @param hashsum: If True (default) return not only file's contents, but
+                     also hashsum, otherwise return only file content.
+        @return: Hashsum (str) of this document's data in some context
+                 specified by param key. If no file available returns None
+                 values.
+        """
+        sha512_sum = None
+        content = None
+        
+        folder = self.getFolderByKey(key)
+        try:
+            f = open(folder + self[self.DOC_ID], "r", getDefaultEncoding())
+            content = f.readlines()
+            sha512_sum = sha512("".join(content)).hexdigest()
+            f.close()
+        except IOError:
+            pass
+        
+        if hashsum == False:
+            return content
+        # Otherwise: Return a tuple
+        return content, sha512_sum
+    
+    def getFolderByKey(self, key):
+        """
+        @param key: Key indicating which folder we want, e. g. "NOUNS"
+        @return: str being folder path, based on a key value passed
+        """
+        folder = ""
+        if key == self.WORDS:
+            folder = getWordsFolder()
+        elif key == self.NOUNS:
+            folder = getWordsFolder(pos='n')
+        # More folder variations to add
+        return folder
+    
     ##########################################
     # Methods to print content to the terminal
     ##########################################
@@ -365,19 +436,20 @@ class document(dict):
     # Methods to write files
     ########################
     
-    def writeFile(self, key, folder, hash=True):
+    def writeFile(self, key, hashsum=True):
         """
         Writes a file (name: document name) to a specified folder.
         @param key: Specifies which data to write, based on the key of the
                     data stored in in this object, e. g. "WORDS" or "NOUNS".
-        @param folder: Absolute folder path where the file is written to.
-        @param hash: Defaults to True and is used to write an hashsum of
+        @param hashsum: Defaults to True and is used to write an hashsum of
                      the file to an hashfile.
         """
+        folder = self.getFolderByKey(key)
+        
         doc_id = self[self.DOC_ID]
-        doc_as_str = '\n'.join(self[key])
+        doc_as_str = "\n".join(self[key])
         sha512_sum = ""
-        if (hash == True):
+        if (hashsum == True):
             hash_dict = hashDict() 
             sha512_sum = sha512(doc_as_str).hexdigest()
             hash_dict[folder + doc_id] = sha512_sum
@@ -414,3 +486,13 @@ class document(dict):
         for t in self.getTokens():
             f.write(t + "\n")
         f.close()
+        
+    ##############
+    # Misc methods
+    ##############
+    def loadHashsums(self):
+        """
+        Simply read in the hashsumsfile (again) and save it here.
+        This is important when changes occurred during processing.
+        """
+        self[self.HASH_SUMS] = hashDict()

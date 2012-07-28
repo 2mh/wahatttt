@@ -78,3 +78,11 @@ def rreplace(s, old, new, occurrence):
     """
     li = s.rsplit(old, occurrence)
     return new.join(li)
+
+def clean_iterable(toClean):
+    """
+    @param toClean: An iterable whose elements should be freed from 
+                    whitespaces.
+    @return: Return iterable freed from whitespaces.
+    """
+    return map(lambda s : s.strip(), toClean)
