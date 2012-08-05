@@ -33,6 +33,7 @@ class hashDict(dict):
     this type.
     """
     def __init__(self):
+        dict.__init__(self)
         f = hashFile()
         for line in f.readlines():
             pair = line.split()

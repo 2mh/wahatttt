@@ -19,8 +19,9 @@ class nouns(list):
         """
         Reads in the nouns file and stores it.
         """
+        list.__init__(self)
         
-        f = open(getNounsFile(),"r",getDefaultEncoding())
+        f = open(getNounsFile(), "r" ,getDefaultEncoding())
         for noun in f.readlines():
             self.append(normalize_word(noun.strip()))
             

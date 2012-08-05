@@ -58,6 +58,7 @@ class collection(dict):
         Initialization of key-value pairs to hold the collection
         of documents.
         """
+        dict.__init__(self)
         
         # For holding a list of documents
         self.__setitem__(self.DOC_LIST, list())
@@ -108,7 +109,7 @@ class collection(dict):
         # Store number of files found
         self.__setitem__(self.DOCS_NUMBER, len(filesList))
         
-    def getDoc(self,pos): 
+    def getDoc(self, pos): 
         """
         @param pos: The position (int) of the document in the list.
         @return: A specific document (of type document)
@@ -203,8 +204,8 @@ class collection(dict):
                 for doc in self.getDocs():
                     cnt += 1; pb.update(cnt)
                     for noun in doc.getWords(pos='n',
-                        reference_nouns=self[self.DOCS_REF_NOUNS]):
-                            self[self.DOCS_NOUNS].append(noun)
+                                reference_nouns=self[self.DOCS_REF_NOUNS]):
+                        self[self.DOCS_NOUNS].append(noun)
                 pb.finish()
                 
                 """ Alternative code to find the nouns over all
@@ -300,7 +301,7 @@ class collection(dict):
                         self[self.DOCS_WORDS_BY_EDIT_DISTANCE].add((word1,
                                                                     word2))
                 print "Number of forms found, up to now: " + \
-                    str(len(self[self.DOCS_WORDS_BY_EDIT_DISTANCE]))                  
+                    str(len(self[self.DOCS_WORDS_BY_EDIT_DISTANCE]))         
                     
         return self[self.DOCS_WORDS_BY_EDIT_DISTANCE]
     
@@ -317,7 +318,7 @@ class collection(dict):
         f.write(self.getDocsText())
         f.close()
         
-    def writeRawText(self,in_one_file=False):
+    def writeRawText(self, in_one_file=False):
         """
         Write documents on a per-file basis in its raw content, or 
         write this content collectively in one file alone.
@@ -340,7 +341,7 @@ class collection(dict):
         """
         Write all files' tokens into a file, as list, in the appearing order.
         """
-        f = open(getMailBodyTokensFile(), "w", encoding=getDefaultEncoding())       
+        f = open(getMailBodyTokensFile(), "w", encoding=getDefaultEncoding())
         for token in self.getDocsTokens():
             f.write(token + "\n")
         f.close()
@@ -358,7 +359,7 @@ class collection(dict):
             f.write(t + "\n")
         f.close()
     
-    def writeDocsWordsFile(self,pos='_'):
+    def writeDocsWordsFile(self, pos='_'):
         """
         Write all words of all files into a file, one word per line, in
         the given order. Can also write only a subset of words.
@@ -388,7 +389,7 @@ class collection(dict):
         """
         fileName = getMailBodyTopWordsFile()
         f = open(fileName, "w", getDefaultEncoding())
-        for word,freq in self.getDocsTopWords(numberOfWords=numberOfWords):
+        for word, freq in self.getDocsTopWords(numberOfWords=numberOfWords):
             f.write(word + "\t\t\t" + str(freq) + "\n")
         f.close()
    

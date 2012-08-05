@@ -16,7 +16,7 @@ printOwnInfo(__file__)
 # Create a symbols object to see which symbols are available, along with
 # their attributions
 syms = symbols()
-for sym,symClass in syms.items():
+for sym, symClass in syms.items():
     print sym + "\t" + str(symClass)
 
 # Params for getting (similar) words by edit distance and number of
@@ -53,7 +53,11 @@ print "tf_idf: " + str(textCollection.tf_idf("CCC",
 print "Document where tf is bigger 0:"
 cnt = 0
 for doc in xmlCollection.getDocs():
-    tf = textCollection.tf("CCC",TextCollection(doc.getTokens()))
-    stdout.write(str(tf) + ", "); cnt += 1
-    if cnt == 10: print; cnt = 0
-    if tf > 0.0: print "\n" + doc.getXmlFileName()
+    tf = textCollection.tf("CCC", TextCollection(doc.getTokens()))
+    stdout.write(str(tf) + ", ")
+    cnt += 1
+    if cnt == 10: 
+        print
+    cnt = 0
+    if tf > 0.0: 
+        print "\n" + doc.getXmlFileName()

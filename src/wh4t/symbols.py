@@ -26,6 +26,7 @@ class symbols(dict):
         """
         At instantiation all available symbols get created.
         """
+        dict.__init__(self)
         self._createSymbolsDict()
 
     def _createSymbolsDict(self):

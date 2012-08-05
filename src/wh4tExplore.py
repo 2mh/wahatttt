@@ -49,14 +49,20 @@ def main():
     
     # Write all (body) text to a text file
     stdout.write("Write raw text into file: " + getMailBodyRawFile())
-    xmlCollection.writeDocsRawFile(); printOK()
+    xmlCollection.writeDocsRawFile()
+    printOK()
+    
     
     # - Write all unique symbols like "a", "ö" or "\", which are used, 
     #   into a file
     # - Give number of unique symbols employed
+    
     stdout.write("Write symbols used into file: " + getMailBodySymbolsFile())
     syms = symbols()
-    syms.writeSymbolsFile(); printOK(); printLine()
+    syms.writeSymbolsFile()
+    printOK() 
+    printLine()
+    
     print "-- Get unique symbols ..."
     print "Total number of unique symbols: " + str(syms.getNumberOfSymbols())
     printLine()
@@ -95,7 +101,7 @@ def main():
     print "-- Get number of nouns ..."
     nouns = xmlCollection.getDocsWords(pos='n')
     print "total number of nouns: " + \
-    str(len(nouns));
+    str(len(nouns))
     print "total number of (unique) nouns: " + \
     str(len(set(nouns))); printLine()
     
@@ -106,25 +112,40 @@ def main():
     print "Total number of unique stems: " + \
     str(len(stemmedText)); printLine()
     
+    
     # Finally write some files, containing tokens, types, types in
     # lower case, words, stems and nouns.
+    
     stdout.write("Write tokens into file: " + getMailBodyTokensFile())
-    xmlCollection.writeDocsTokenFile(); printOK()
+    xmlCollection.writeDocsTokenFile() 
+    printOK()
+    
     stdout.write("Write types into file: " + getMailBodyTypesFile())
-    xmlCollection.writeDocsTypesFile(); printOK()
+    xmlCollection.writeDocsTypesFile()
+    printOK()
+    
     stdout.write("Write types (lowered) into file: " + 
                  getMailBodyTypesFile(lower=True))
-    xmlCollection.writeDocsTypesFile(lower=True); printOK()
+    xmlCollection.writeDocsTypesFile(lower=True)
+    printOK()
+    
     stdout.write("Write words into file: " + getMailBodyWordsFile())
-    xmlCollection.writeDocsWordsFile(); printOK()
+    xmlCollection.writeDocsWordsFile()
+    printOK()
+    
     stdout.write("Write stems into file: " + getMailBodyStemsFile())
-    xmlCollection.writeStemsFile(); printOK();
+    xmlCollection.writeStemsFile()
+    printOK()
+    
     stdout.write("Write nouns into file: " + getMailBodyWordsFile(pos='n'))
-    xmlCollection.writeDocsWordsFile(pos='n'); printOK(); printLine()
+    xmlCollection.writeDocsWordsFile(pos='n')
+    printOK()
+    printLine()
     
     # Print the 42 most frequent words -- Zipf's law turns true ;-)
     print "Top 42 words: "
-    for stem in xmlCollection.docsTextFreqDist().keys()[:42]: print stem
+    for stem in xmlCollection.docsTextFreqDist().keys()[:42]: 
+        print stem
     printLine()
 
 if __name__ == "__main__":

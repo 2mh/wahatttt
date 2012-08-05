@@ -86,6 +86,8 @@ class document(dict):
         Upon initialization all the tags and (important) attributes are
         read and stored in the object's itself (is a dict).
         """
+        dict.__init__(self)
+        
         self[self.XML_FILEPATH] = xmlFilePath
         xmlFileHandler = ET.parse(xmlFilePath)
         

@@ -45,11 +45,12 @@ def main():
         cnt += 1
         pb.update(cnt)
         idf = nltkTextCollection.idf(word)
-        if idf > 0.0: idfList.append((idf, word))
+        if idf > 0.0: 
+            idfList.append((idf, word))
     
-    for pair in idfList: print pair
+    for pair in idfList: 
+        print pair
         
-    
     """
     bigram_measures = BigramAssocMeasures()
     finder = BigramCollocationFinder.from_words(allWordsList)

@@ -30,7 +30,7 @@ print "Print words: "
 print xmlDocument.getWords()
 printLine()
 print "Print nouns: "
-print xmlDocument.getWords(pos='n',reference_nouns=nouns())
+print xmlDocument.getWords(pos='n', reference_nouns=nouns())
 printLine()
 print "Print stems: "
 print xmlDocument.getStems()

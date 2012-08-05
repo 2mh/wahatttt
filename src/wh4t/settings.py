@@ -33,7 +33,7 @@ DEFAULT_EDIT_DISTANCE_FILENAME_SUFFIX = ""
 ##########################
 
 # The project's base path relative to the position of this settings file.
-WH4T_BASE_DIR = abspath(join(curdir,pardir)) + sep
+WH4T_BASE_DIR = abspath(join(curdir, pardir)) + sep
 
 # The project's (freely available linguistic) resources directory
 WH4T_RES_DIR = WH4T_BASE_DIR + "resources" + sep
@@ -159,7 +159,8 @@ def getWordsFolder(pos='_'):
             words in general.
     @return: Return a path as string to store words by document
     """
-    if (pos == 'n'): return WH4T_NOUNS_DIR
+    if (pos == 'n'): 
+        return WH4T_NOUNS_DIR
     # Default
     return WH4T_WORDS_DIR
 
@@ -287,4 +288,6 @@ def printOwnInfo(callingFile):
     @param: Object of the file we want information about, usually the
             calling file.
     """
-    printLine(); print getOwnInfo(callingFile); printLine()
+    printLine() 
+    print getOwnInfo(callingFile)
+    printLine()

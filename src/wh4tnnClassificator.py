@@ -8,8 +8,7 @@ from os import listdir
 
 from kluster.pca import Pca
 
-from wh4t.settings import printOwnInfo
-from wh4t.settings import getMailFolder
+from wh4t.settings import printOwnInfo, getMailFolder
 from wh4t.documents import collection
 
 def main():
