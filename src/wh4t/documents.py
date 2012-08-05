@@ -14,18 +14,14 @@ from progressbar import ProgressBar as progressbar
 
 from document import document
 from listByLen import listByLen
-from settings import getMailFolder
-from settings import getMailBodyTokensFile
-from settings import getDefaultEncoding
-from settings import getMailBodyTypesFile
-from settings import getMailBodyRawFile
-from settings import getMailBodyWordsFile
-from settings import getMailBodyStemsFile
-from settings import getMailBodyWordsByEditDistanceFile
-from settings import getMailBodyTopWordsFile
-from settings import getDefaultNumberOfTopWords
-from settings import getDefaultSourceWordLenForEditDistancing
-from settings import getDefaultEditDistanceFilenameSuffix
+from settings import getMailFolder, getMailBodyTokensFile, \
+                     getDefaultEncoding, getMailBodyTypesFile, \
+                     getMailBodyRawFile, getMailBodyWordsFile, \
+                     getMailBodyStemsFile, \
+                     getMailBodyWordsByEditDistanceFile, \
+                     getMailBodyTopWordsFile, getDefaultNumberOfTopWords, \
+                     getDefaultSourceWordLenForEditDistancing, \
+                     getDefaultEditDistanceFilenameSuffix
 from nouns import nouns
 
 class collection(dict):

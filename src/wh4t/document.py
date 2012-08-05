@@ -5,9 +5,7 @@
 """
 
 from os import makedirs
-from os.path import getsize
-from os.path import exists
-from os.path import basename
+from os.path import getsize, exists, basename
 from collections import defaultdict
 from re import match
 from codecs import open
@@ -17,14 +15,8 @@ from nltk import PunktWordTokenizer as tokenizer
 from nltk.stem.snowball import GermanStemmer as germanStemmer
 from hashlib import sha512
 
-from library import normalize_word
-from library import rreplace
-from library import hashDict
-from library import clean_iterable
-from settings import getMailFolder
-from settings import getDefaultEncoding
-from settings import getWordsFolder
-from src.wh4t.settings import printLine
+from library import normalize_word, rreplace, hashDict, clean_iterable
+from settings import getMailFolder, getDefaultEncoding, getWordsFolder
 
 class document(dict):
     """

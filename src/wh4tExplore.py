@@ -7,15 +7,10 @@
 from sys import stdout
 
 from wh4t.documents import collection
-from wh4t.settings import getMailBodyRawFile
-from wh4t.settings import getMailBodySymbolsFile
-from wh4t.settings import getMailBodyTokensFile
-from wh4t.settings import getMailBodyTypesFile
-from wh4t.settings import getMailBodyWordsFile
-from wh4t.settings import getMailBodyStemsFile
-from wh4t.settings import printOwnInfo
-from wh4t.settings import printLine
-from wh4t.settings import printOK
+from wh4t.settings import getMailBodyRawFile, getMailBodySymbolsFile, \
+                          getMailBodyTokensFile, getMailBodyTypesFile, \
+                          getMailBodyWordsFile, getMailBodyStemsFile, \
+                          printOwnInfo, printLine, printOK
 from wh4t.symbols import symbols
 
 #####################

@@ -6,9 +6,8 @@
 
 from codecs import open
 
-from settings import getMailBodySymbolsFile
-from settings import getDefaultEncoding
-from settings import getMailBodyRawFile
+from settings import getMailBodySymbolsFile, getDefaultEncoding, \
+                     getMailBodyRawFile
 
 class symbols(dict):
     """

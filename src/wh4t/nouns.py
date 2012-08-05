@@ -6,8 +6,7 @@
 
 from codecs import open
 
-from settings import getNounsFile
-from settings import getDefaultEncoding
+from settings import getNounsFile, getDefaultEncoding
 from library import normalize_word
 
 class nouns(list):

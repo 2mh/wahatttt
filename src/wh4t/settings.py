@@ -5,11 +5,7 @@
 """
 
 from os import sep
-from os.path import basename
-from os.path import abspath
-from os.path import join
-from os.path import pardir
-from os.path import curdir
+from os.path import basename, abspath, join, pardir, curdir
 from re import sub
 
 ################

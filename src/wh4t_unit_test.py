@@ -8,7 +8,6 @@ from wh4t.documents import collection
 from wh4t.settings import printLine
 from wh4t.nouns import nouns
 
-
 # Program starts here
 xmlDocuments = collection()
 xmlDocument = xmlDocuments.getDoc(51) # Get a specific doc number for tests

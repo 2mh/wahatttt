@@ -6,8 +6,7 @@
 from codecs import open
 from os.path import exists
 
-from settings import getHashFile
-from settings import getDefaultEncoding
+from settings import getHashFile, getDefaultEncoding
 
 class hashFile(file):
     """

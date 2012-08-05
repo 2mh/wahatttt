@@ -17,10 +17,8 @@ from xml.sax.handler import ContentHandler
 from xml.sax import make_parser
 from xml.dom.minidom import Document as Doc
 
-from wh4t.settings import printOwnInfo
-from wh4t.settings import getDefaultEncoding
-from wh4t.settings import getInvalidXmlFileName
-from wh4t.settings import getMailFolder
+from wh4t.settings import printOwnInfo, getDefaultEncoding, \
+                          getInvalidXmlFileName, getMailFolder
 
 printOwnInfo(__file__)
 
