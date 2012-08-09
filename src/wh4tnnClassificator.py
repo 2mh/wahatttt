@@ -5,7 +5,7 @@
 """
 from codecs import open
 
-from nltk.text import Text, TextCollection
+from nltk.text import TextCollection
 from progressbar import ProgressBar as progressbar
 
 # from kluster.pca import Pca # To be removed eventually
