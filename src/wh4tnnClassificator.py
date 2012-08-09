@@ -14,7 +14,7 @@ from wh4t.settings import printOwnInfo, getMailBodyStemsFile, \
                           getDefaultEncoding
 from wh4t.documents import collection
 from wh4t.library import dict_from_file
-from atom import Text
+from wh4t.settings import get_tfidf_matrix_file
 
 def main():
     """ 
@@ -58,11 +58,23 @@ def main():
     for pair in sorted(idfSet, reverse=True): 
         f.write(pair[1] + " " + str(pair[0]) + "\n")
     f.close()
-     
+    
     idf_dict = dict_from_file(getMailBodyStemsFile(measure="_idf"))
     
-    for doc in xmlCollection.getDocs():
-        nltkTextCollection = TextCollection(Text(doc.getStems()))
+    f = open(get_tfidf_matrix_file(), "w", getDefaultEncoding())
+    for doc in sorted(xmlCollection.getDocs()):
+        docStems = doc.getStems()
+        col = TextCollection("")
+       
+        print doc.getId()
+        idf_row = ""
+        for docStem in sorted(xmlCollection.getDocsStems(uniq=True)):
+            tf = col.tf(docStem, docStems)
+            idf_row += str(tf*float(idf_dict[docStem])) + " "
+        f.write(idf_row + "\n")
+    f.close()
+    
+    # XXX: More code to follow soon
     
     """ To be removed eventually
     # Do primary component analysis on all raw material & show it visually
@@ -72,8 +84,6 @@ def main():
         pca.load_line(d + line_file)
     pca.show()
     """
-    
-    # XXX: To be continued ...
     
 if __name__ == "__main__":
     main()

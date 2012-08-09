@@ -83,6 +83,11 @@ MAILBODY_STEMS_FILE = WH4T_BASE_DIR + "mailBodyStemsFile"
 # in absolute numbers.
 MAILBODY_TOP_WORDS_FILE = WH4T_BASE_DIR + "mailBodyTopWordsFile"
 
+# For each (increasingly alphabetical ordered stem) hold the tf*idf values
+# on a per-document basis -- one document per line (in increasingly
+# alphabetical order of the document's name)
+TFIDF_MATRIX = WH4T_BASE_DIR + "tfidf_stems_matrix"
+
 # Path to the directory with the input data in XML format 
 # (as of now: only FITUG-mails)
 MAIL_FOLDER_XML = WH4T_BASE_DIR + "fitug_xml" + sep
@@ -265,6 +270,13 @@ def getHashFile():
     @return: String with file path to store hash sums of files
     """
     return HASH_FILE
+
+def get_tfidf_matrix_file():
+    """
+    @return: String with file path to tf*idf values of all stems for
+             all documents
+    """
+    return TFIDF_MATRIX
 
 ###################################
 # Simple printer / helper functions
