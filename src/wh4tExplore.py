@@ -107,11 +107,16 @@ def main():
     
     # - Print total number of unique stems, which got created by NLTK
     #   means, applied over words.
-    print "-- Get number of unique stems ..."
+    print "-- Get number of stems ..."
     stemmedText = xmlCollection.getDocsStems()
+    print "Total number of stems: " + \
+    str(len(stemmedText))
+    printLine()
+    print "-- Get number of unique stems ..."
+    stemmedUniqText = xmlCollection.getDocsStems(uniq=True)
     print "Total number of unique stems: " + \
-    str(len(stemmedText)); printLine()
-    
+    str(len(stemmedUniqText)) 
+    printLine()
     
     # Finally write some files, containing tokens, types, types in
     # lower case, words, stems and nouns.
@@ -133,7 +138,7 @@ def main():
     xmlCollection.writeDocsWordsFile()
     printOK()
     
-    stdout.write("Write stems into file: " + getMailBodyStemsFile())
+    stdout.write("Write stems (unique) into file: " + getMailBodyStemsFile())
     xmlCollection.writeStemsFile()
     printOK()
     

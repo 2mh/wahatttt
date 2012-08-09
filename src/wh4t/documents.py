@@ -46,6 +46,7 @@ class collection(dict):
     DOCS_TYPED_LOWERED = "docs_typed_lowered"
     DOCS_WORDS = "docs_words"
     DOCS_STEMMED = "docs_stemmed"
+    DOCS_STEMMED_UNIQ = "docs_stemmed_uniq"
     DOCS_WORDS_BY_EDIT_DISTANCE = "docs_words_by_edit_distance"
     DOCS_TOP_WORDS = "docs_top_words"
     DOCS_TEXT_FREQ_DIST = "docs_text_freq_dist"    
@@ -79,8 +80,11 @@ class collection(dict):
         # tokens; the words are not necessarily unique 
         self.__setitem__(self.DOCS_WORDS, list())
         
-        # For holding a list of all the stems; it's a set (=> unique values)
-        self.__setitem__(self.DOCS_STEMMED, set())
+        # For holding a list of all the stems
+        self.__setitem__(self.DOCS_STEMMED, list())
+        
+        # # For holding a set of all the stems; unique values
+        self.__setitem__(self.DOCS_STEMMED_UNIQ, set())
         
         # For holding unique pairs of words being of some edit distance
         self.__setitem__(self.DOCS_WORDS_BY_EDIT_DISTANCE, set())
@@ -224,20 +228,29 @@ class collection(dict):
         # If pos is "_"
         return self[self.DOCS_WORDS]
         
-    def getDocsStems(self):
+    def getDocsStems(self, uniq=False):
         """
+        @param uniq: Defaults to False and indicates we want not-uniqe stems.
+                     Otherwise True can be used.
         @return: Set of all stems found in the documents.
         """
-        if len(self[self.DOCS_STEMMED]) == 0:
+        var = self.DOCS_STEMMED
+        if uniq == True:
+            var = self.DOCS_STEMMED_UNIQ
+        
+        if len(self[var]) == 0:
             for doc in self.getDocs(): 
                 for stem in doc.getStems():
-                    self[self.DOCS_STEMMED].add(stem)
+                    if uniq == True:
+                        self[var].add(stem)
+                    else:
+                        self[var].append(stem)
             """
             Like this it was much more efficient (less method calls):    
             for word in self.getDocsWords():
                 self[self.DOCS_STEMMED].add(germanStemmer().stem(word))
             """
-        return self[self.DOCS_STEMMED]
+        return self[var]
            
     def docsTextFreqDist(self):
         """

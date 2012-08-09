@@ -8,6 +8,19 @@ from os.path import exists
 
 from settings import getHashFile, getDefaultEncoding
 
+class dict_from_file(dict):
+    """
+    This class represents a file as a dict, reading in all values pairwise,
+    on each line.
+    """
+    def __init__(self, filename):
+        dict.__init__(self)
+        f = open(filename, "r", getDefaultEncoding())
+        for line in f.readlines():
+            pair = line.split()
+            self[pair[0]] = pair[1]
+        f.close()
+        
 class hashFile(file):
     """
     This class is a file class, specifically representing an hashsums file.
@@ -48,7 +61,7 @@ class hashDict(dict):
         for pair in self.items():
             f.write(' '.join(map(str, pair)) + '\n')
         f.close()    
-            
+           
 def normalize_word(word_to_normalize):
     """
     This function helps to normalize words in order to make

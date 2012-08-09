@@ -227,11 +227,15 @@ def getMailBodyWordsFile(pos='_'):
     
     return MAILBODY_WORDS_FILE
 
-def getMailBodyStemsFile(): 
+def getMailBodyStemsFile(measure=""): 
     """
+    @pos measure: If a special measure is saved in this file. Something that
+                  makes sense to be stored along with the nouns is their 
+                  "IDF" values.
     @return: String with file path to hold the unique stems encountered
+             (along with other info)
     """
-    return MAILBODY_STEMS_FILE
+    return MAILBODY_STEMS_FILE + measure
 
 def getMailBodyWordsByEditDistanceFile(
     editDistance=getDefaultEditDistanceFilenameSuffix()):
@@ -252,10 +256,7 @@ def getMailBodyTopWordsFile():
 
 def getNounsFile(measure=""):
     """
-    @pos measure: If a special measure is saved in this file. Something that
-                  makes sense to be stored along with the nouns is their 
-                  "IDF" values.
-    @return: String with file path to store nouns (along with other info)
+    @return: String with file path to store nouns
     """
     return NOUNS_FILE + measure
 

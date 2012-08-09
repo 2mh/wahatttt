@@ -63,6 +63,7 @@ class document(dict):
     WORDS = "words"
     NOUNS = "nouns"
     STEMS = "stems"
+    STEMS_UNIQ = "stems_uniq"
     WORDS_BY_EDIT_DISTANCE = "words_by_edit_distance"
     TOP_WORDS = "top_words"
     TEXT_FREQ_DIST = "text_freq_dist"
@@ -161,7 +162,10 @@ class document(dict):
         self[self.NOUNS] = list()
         
         # For holding (unique) stems
-        self[self.STEMS] = set()
+        self[self.STEMS_UNIQ] = set()
+        
+        # For holding stems
+        self[self.STEMS] = list()
         
         # For holding pairs of words distanced by some edits, in a set
         self[self.WORDS_BY_EDIT_DISTANCE] = set()
@@ -345,14 +349,23 @@ class document(dict):
         # In case param pos is '_' (all words)            
         return self[self.WORDS]
 
-    def getStems(self):
+    def getStems(self, uniq=False):
         """
+        @param uniq: Defaults to False, i. e. returns not-unique stems.
+                     Can be changed by providing True. Optional setting.
         @return: Set of stems found upon the words. Create once.
         """
-        if len(self[self.STEMS]) == 0:
+        var = self.STEMS
+        if uniq == True:
+            var = self.STEMS_UNIQ
+        
+        if len(self[var]) == 0:
             for word in self.getWords():
-                self[self.STEMS].add(germanStemmer().stem(word))
-        return self[self.STEMS]
+                if uniq == True:
+                    self[var].add(germanStemmer().stem(word))
+                else:
+                    self[var].append(germanStemmer().stem(word))
+        return self[var]
     
     """
     WORDS_BY_EDIT_DISTANCE = "words_by_edit_distance"
