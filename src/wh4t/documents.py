@@ -122,9 +122,10 @@ class collection(dict):
     
     def getDocs(self): 
         """
-        @return: List of all documents in this collection
+        @return: List of all documents in this collection, sorted by
+                 name (ASCII encoding order)
         """
-        return self[self.DOC_LIST]
+        return sorted(self[self.DOC_LIST], key=lambda doc: doc.getId())
     
     def getDocsFileSize(self):
         """
