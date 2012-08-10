@@ -28,6 +28,9 @@ DEFAULT_SOURCE_WORD_LEN_FOR_EDIT_DISTANCING = 0
 # distance contains.
 DEFAULT_EDIT_DISTANCE_FILENAME_SUFFIX = ""
 
+# Number of clusters to create (for now used for the neuronal clustering)
+DEFAULT_NUMBER_OF_CLUSTERS = 4
+
 ##########################
 # Paths to folders / files
 ##########################
@@ -140,6 +143,12 @@ def getDefaultSourceWordLenForEditDistancing():
     @return: Default int number for queries being made by edit distance.
     """
     return DEFAULT_SOURCE_WORD_LEN_FOR_EDIT_DISTANCING
+
+def getDefaultNumberOfClusters():
+    """
+    @return: Returns number of clusters to create
+    """
+    return DEFAULT_NUMBER_OF_CLUSTERS
 
 ##########################################################################
 # Getters for file names, needed in other classes, to read or write files.
