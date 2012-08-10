@@ -361,10 +361,14 @@ class document(dict):
         
         if len(self[var]) == 0:
             for word in self.getWords():
+                # Below argument "german" for compatibility reasons w/ older
+                # versions of NTLK
                 if uniq == True:
-                    self[var].add(germanStemmer().stem(word))
+                    self[var].add(germanStemmer("german").stem(word))
+                    pass
                 else:
-                    self[var].append(germanStemmer().stem(word))
+                    self[var].append(germanStemmer("german").stem(word))
+                    pass
         return self[var]
     
     """
@@ -406,7 +410,8 @@ class document(dict):
         try:
             f = open(folder + self[self.DOC_ID], "r", getDefaultEncoding())
             content = f.readlines()
-            sha512_sum = sha512("".join(content)).hexdigest()
+            sha512_sum = sha512("".join(content). \
+                                encode(getDefaultEncoding())).hexdigest()
             f.close()
         except IOError:
             pass
@@ -454,7 +459,7 @@ class document(dict):
         folder = self.getFolderByKey(key)
         
         doc_id = self[self.DOC_ID]
-        doc_as_str = "\n".join(self[key])
+        doc_as_str = "\n".join(self[key]).encode(getDefaultEncoding())
         sha512_sum = ""
         if (hashsum == True):
             hash_dict = hashDict() 

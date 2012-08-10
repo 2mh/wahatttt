@@ -182,7 +182,7 @@ def main():
         print "TF*IDF matrix seems available: ", get_tfidf_matrix_file()
         
     # XXX: Classification code follows here.
-    process_project(get_tfidf_matrix_file())
+    # process_project(get_tfidf_matrix_file())
     
     """ To be removed eventually
     # Do primary component analysis on all raw material & show it visually
