@@ -90,7 +90,7 @@ java version "1.6.0_18"
 OpenJDK Runtime Environment (IcedTea6 1.8.13) (6b18-1.8.13-0+squeeze1)
 OpenJDK 64-Bit Server VM (build 14.0-b16, mixed mode)
 
-$ python -V # Using nltk-2.0.1rc4, progressbar
+$ python -V # Using nltk-2.0.1rc4 and some other libraries (to be listed)
 Python 2.6.6
 
 
@@ -111,8 +111,8 @@ Neural clustering:
 -------------------
 Invoke the following commands:
 
-git clone https://github.com/2mh/wahatttt.git
-cd wahatttt/src
+create_nouns_file.sh
+cd ../src/
 javac GrabFitug.java
 java GrabFitug
-./
+./wh4tnnClassificator.py
