@@ -8,6 +8,7 @@ Some parts heavily based upon code (under the BSDL) available here:
 """
 from codecs import open
 from os.path import exists
+from sys import stdout
 import random
 import colorsys
 
@@ -55,24 +56,33 @@ def write_tfidf_file(xmlCollection, nltkTextCollection):
     @param nltkTextCollection: NLTK TextCollection of all the stems
     """
     idf_file =  getMailBodyStemsFile(measure="_idf")
-    
+
     if not exists(idf_file):
         write_idf_file(xmlCollection, nltkTextCollection)
 
     idf_dict = dict_from_file(idf_file)
-    
+
+    high_tfidf_stems = set()
     f = open(get_tfidf_matrix_file(), "w", getDefaultEncoding())
     for doc in xmlCollection.getDocs():
         docStems = doc.getStems()
         col = TextCollection("")
-       
-        print doc.getId()
+
+        stdout.write(doc.getId())
         idf_row = ""
+        stdout.write(" (")
         for docStem in sorted(xmlCollection.getDocsStems(uniq=True)):
             tf = col.tf(docStem, docStems)
-            idf_row += str(tf*float(idf_dict[docStem])) + " "
+            tfidf = tf*float(idf_dict[docStem])
+            if (tfidf > 0.05): # XXX: Testing purposes
+                stdout.write(docStem + ", ")
+                high_tfidf_stems.add(docStem)
+            idf_row += str(tfidf) + " "
         f.write(idf_row + "\n")
+        stdout.write(")\n")
     f.close()
+    print "List length of high value tf*idf terms:", len(high_tfidf_stems)
+
     
 def write_idf_file(xmlCollection, nltkTextCollection):
     """

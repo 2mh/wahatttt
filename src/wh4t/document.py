@@ -15,7 +15,8 @@ from nltk import PunktWordTokenizer as tokenizer
 from nltk.stem.snowball import GermanStemmer as germanStemmer
 from hashlib import sha512
 
-from library import normalize_word, rreplace, hashDict, clean_iterable
+from library import normalize_word, rreplace, hashDict, clean_iterable, \
+                    split_term
 from settings import getMailFolder, getDefaultEncoding, getWordsFolder
 
 class document(dict):
@@ -28,7 +29,7 @@ class document(dict):
     This class is a dict -- it parses the XML files and stores all of its 
     values in terms of key-value-pairs.
     """
-    
+
     ############################################################
     # Attributes parsed
     # - The only (important) attributes used are mail id numbers
@@ -305,8 +306,16 @@ class document(dict):
                     or not match("[a-z]{1}-", t) == None \
                     or t.find("--") >= 0 or t.find("..") >= 0:
                         toAdd = False             
-                    if (toAdd == True):    
-                        self[self.WORDS].append(normalize_word(t))
+                    if (toAdd == True):
+                        # Normalize words; remove noise
+                        t = normalize_word(t)
+                        # Extract words from compounds; add them to list
+                        if match("[a-zA-Z]+[-,.][a-zA-Z]+", t):
+                            t_list = split_term(t)
+                            for sub_t in t_list:
+                                self[self.WORDS].append(sub_t)
+                        else:
+                            self[self.WORDS].append(t)
                     else: # toAdd is False
                         toAdd = True
                 self.writeFile(self.WORDS)

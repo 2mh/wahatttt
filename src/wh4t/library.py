@@ -5,6 +5,7 @@
 """
 from codecs import open
 from os.path import exists
+from re import sub
 
 from settings import getHashFile, getDefaultEncoding
 
@@ -69,10 +70,22 @@ def normalize_word(word_to_normalize):
     @return: Normalized word as str type
     """
     
-    # Transform Umlauts
-    return word_to_normalize.replace(u"Ä","Ae").replace(u"Ö","Oe"). \
+    # Transform umlauts to ASCII
+    word = word_to_normalize.replace(u"Ä","Ae").replace(u"Ö","Oe"). \
         replace(u"Ü","Ue").replace(u"ä","ae").replace(u"ö","oe"). \
         replace(u"ü","ue").replace(u"ß","ss")
+    # Remove interpunctuation at the end, and probably other symbols
+    word = sub("[-,.#]$", "", word)
+    return word
+
+def split_term(term):
+    """
+    This function splits a term into several words, e. g.
+    "Diktatur-Kontrolle" will become ["Diktatur", "Kontrolle"]
+    @param term:  A term to split being a string
+    @return List with splitted words
+    """
+    return sub("[,-.]", "#", term).split("#")
         
 def rreplace(s, old, new, occurrence):
     """
