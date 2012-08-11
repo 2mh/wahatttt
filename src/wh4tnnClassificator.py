@@ -47,6 +47,17 @@ def get_nltk_text_collection(xmlCollection):
         
     return TextCollection(nltkTextCollectionList)
 
+def get_cluster_stems(stems, idf_dict):
+    """
+    This function removes most frequent and all very rare stems (single
+    occurrence), to improve clustering results.
+    @param stems: List of stems to be filtered
+    @param idf_dict: Dictionary containing the idf values to filter after
+    @return: List with out-filtered stems
+    """
+    return [stem for stem in stems
+            if idf_dict[stem] > 2.0 or not max(idf_dict[stem])]
+
 def write_tfidf_file(xmlCollection, nltkTextCollection):
     """
     Writes a tf*idf matrix file with all tf*idf values for each document,
@@ -55,28 +66,35 @@ def write_tfidf_file(xmlCollection, nltkTextCollection):
     @param xmlCollection: Collection of XML documents, type collection
     @param nltkTextCollection: NLTK TextCollection of all the stems
     """
-    idf_file =  getMailBodyStemsFile(measure="_idf")
+    idf_file = getMailBodyStemsFile(measure="_idf")
 
     if not exists(idf_file):
         write_idf_file(xmlCollection, nltkTextCollection)
 
     idf_dict = dict_from_file(idf_file)
-
     high_tfidf_stems = set()
+    
+    # Remove most frequent (idf<2) / stop stems (or qualifying as such), 
+    # and most rare stems (max(idf)), as they are of no help to 
+    # separate / make up clusters
+    collection_stems = \
+        get_cluster_stems(list(xmlCollection.getDocsStems(uniq=True)), 
+                          idf_dict)
+    
     f = open(get_tfidf_matrix_file(), "w", getDefaultEncoding())
     for doc in xmlCollection.getDocs():
-        docStems = doc.getStems()
+        doc_stems = get_cluster_stems(doc.getStems(), idf_dict)
         col = TextCollection("")
-
+        
         stdout.write(doc.getId())
         idf_row = ""
         stdout.write(" (")
-        for docStem in sorted(xmlCollection.getDocsStems(uniq=True)):
-            tf = col.tf(docStem, docStems)
-            tfidf = tf*float(idf_dict[docStem])
+        for stem in sorted(collection_stems):
+            tf = col.tf(stem, doc_stems)
+            tfidf = tf*float(idf_dict[stem])
             if (tfidf > 0.05): # XXX: Testing purposes
-                stdout.write(docStem + ", ")
-                high_tfidf_stems.add(docStem)
+                stdout.write(stem + ", ")
+                high_tfidf_stems.add(stem)
             idf_row += str(tfidf) + " "
         f.write(idf_row + "\n")
         stdout.write(")\n")
@@ -192,7 +210,7 @@ def main():
         print "TF*IDF matrix seems available: ", get_tfidf_matrix_file()
         
     # XXX: Classification code follows here.
-    process_project(get_tfidf_matrix_file())
+    # process_project(get_tfidf_matrix_file())
     
     """ To be removed eventually
     # Do primary component analysis on all raw material & show it visually

@@ -87,7 +87,7 @@ def split_term(term):
     @param term:  A term to split being a string
     @return List with splitted words
     """
-    return sub("[,-.]+", "#", term).split("#") # Split also "Dr.-Ing"
+    return sub("[,-.&|]+", "#", term).split("#") # Split also "Dr.-Ing"
         
 def rreplace(s, old, new, occurrence):
     """
