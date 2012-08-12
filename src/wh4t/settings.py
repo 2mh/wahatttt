@@ -110,7 +110,7 @@ NOUNS_FILE = WH4T_RES_DIR + "nouns.txt"
 HASH_FILE = WH4T_BASE_DIR + "hashsums.txt"
 
 # Version of the wahatttt system as a whole; as of 1.0 it'll be usable
-VERSION = "0.5"
+VERSION = "0.64"
 
 #################
 # General getters

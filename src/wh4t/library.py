@@ -19,7 +19,7 @@ class dict_from_file(dict):
         f = open(filename, "r", getDefaultEncoding())
         for line in f.readlines():
             pair = line.split()
-            self[pair[0]] = pair[1]
+            self[pair[0]] = float(pair[1])
         f.close()
         
 class hashFile(file):
@@ -74,11 +74,9 @@ def normalize_word(word_to_normalize):
     word = word_to_normalize.replace(u"Ä","Ae").replace(u"Ö","Oe"). \
         replace(u"Ü","Ue").replace(u"ä","ae").replace(u"ö","oe"). \
         replace(u"ü","ue").replace(u"ß","ss")
-    # Remove citations
-    word = word.replace(u"«","").replace(u"»","")
-    # Remove interpunctuation at the end, and probably other symbols
-    word = sub("[-,.#]$", "", word)
-    return word
+    # Remove stuff around words, like citation symbols, interpunctation
+    # and return word
+    return sub("\W+$", "", sub("^\W+", "", word))
 
 def split_term(term):
     """

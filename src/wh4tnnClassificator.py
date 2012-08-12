@@ -54,9 +54,11 @@ def get_cluster_stems(stems, idf_dict):
     @param stems: List of stems to be filtered
     @param idf_dict: Dictionary containing the idf values to filter after
     @return: List with out-filtered stems
-    """
+    """ 
+    max_val = max(idf_dict.itervalues()).as_integer_ratio()
     return [stem for stem in stems
-            if idf_dict[stem] > 2.0 or not max(idf_dict[stem])]
+            if idf_dict[stem] > 4.0 
+            and not idf_dict[stem].as_integer_ratio() == max_val]
 
 def write_tfidf_file(xmlCollection, nltkTextCollection):
     """
@@ -74,16 +76,18 @@ def write_tfidf_file(xmlCollection, nltkTextCollection):
     idf_dict = dict_from_file(idf_file)
     high_tfidf_stems = set()
     
+    collection_stems = list(xmlCollection.getDocsStems(uniq=True))
+    print "Length of collection, all stems:", len(collection_stems)
+    
     # Remove most frequent (idf<2) / stop stems (or qualifying as such), 
     # and most rare stems (max(idf)), as they are of no help to 
     # separate / make up clusters
-    collection_stems = \
-        get_cluster_stems(list(xmlCollection.getDocsStems(uniq=True)), 
-                          idf_dict)
+    collection_stems = get_cluster_stems(collection_stems, idf_dict)
+    print "Length of collection, cluster stems:", len(collection_stems)
     
     f = open(get_tfidf_matrix_file(), "w", getDefaultEncoding())
     for doc in xmlCollection.getDocs():
-        doc_stems = get_cluster_stems(doc.getStems(), idf_dict)
+        doc_stems = doc.getStems()
         col = TextCollection("")
         
         stdout.write(doc.getId())
@@ -91,8 +95,16 @@ def write_tfidf_file(xmlCollection, nltkTextCollection):
         stdout.write(" (")
         for stem in sorted(collection_stems):
             tf = col.tf(stem, doc_stems)
+    
+            # Reweight tf values, to get more classifcation words
+            # and compensate for the very different document sizes available
+            # Caution: Simplistic boolean tf variation
+            if tf > 0.0:
+                tf = 1.0
+            # If nothing applies: tf is 0.0
+                
             tfidf = tf*float(idf_dict[stem])
-            if (tfidf > 0.05): # XXX: Testing purposes
+            if (tfidf > 0.0):
                 stdout.write(stem + ", ")
                 high_tfidf_stems.add(stem)
             idf_row += str(tfidf) + " "

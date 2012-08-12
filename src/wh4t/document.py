@@ -304,22 +304,22 @@ class document(dict):
                     or not match("[ \*_\]\^\\\\!$\"\'%` ]+.*", t) == None \
                     or not match("[ &*\(\)+\#,-.:;?+\\@\[ ]+.*", t) == None \
                     or not match("[a-z]{1}-", t) == None \
-                    or t.find("--") >= 0 or t.find("..") >= 0 \
-                    or len(t) == 1: # Sort out single symbols
+                    or t.find("--") >= 0 or t.find("..") >= 0:
                         toAdd = False             
                     if (toAdd == True):
                         # Normalize words; remove noise
                         t = normalize_word(t)
                         # Extract words from compounds; add them to list
-                        if match("[a-zA-Z]+[-,.][a-zA-Z]+", t):
+                        if match("[a-zA-Z]+[-,.&|]+[a-zA-Z]+", t):
                             t_list = split_term(t)
                             for sub_t in t_list:
-                                # Terms may become void; avoid adding them
-                                if not len(sub_t) == 0:
+                                # Terms may become void / short; avoid 
+                                # adding them
+                                if len(sub_t) > 1:
                                     self[self.WORDS].append(sub_t)
                         else:
                             # As above
-                            if not len(t) == 0:
+                            if len(t) > 1:
                                 self[self.WORDS].append(t)
                     else: # toAdd is False
                         toAdd = True
