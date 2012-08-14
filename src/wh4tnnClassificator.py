@@ -57,7 +57,7 @@ def get_cluster_stems(stems, idf_dict):
     """ 
     max_val = max(idf_dict.itervalues()).as_integer_ratio()
     return [stem for stem in stems
-            if idf_dict[stem] > 6.5
+            if idf_dict[stem] > 2.0
             and not idf_dict[stem].as_integer_ratio() == max_val]
 
 def write_tfidf_file(xmlCollection, nltkTextCollection):
@@ -69,6 +69,8 @@ def write_tfidf_file(xmlCollection, nltkTextCollection):
     @param nltkTextCollection: NLTK TextCollection of all the stems
     """
     idf_file = getMailBodyStemsFile(measure="_idf")
+    avg_words_per_doc = len(xmlCollection.getDocsWords()) / \
+                        len(xmlCollection.getDocs())
 
     if not exists(idf_file):
         write_idf_file(xmlCollection, nltkTextCollection)
@@ -98,9 +100,14 @@ def write_tfidf_file(xmlCollection, nltkTextCollection):
     
             # Reweight tf values, to get more classifcation words
             # and compensate for the very different document sizes available
-            # Caution: Simplistic boolean tf variation
+            # Idea: Accounts for average document length, but also for
+            # the number of times a word effictively occurs in a specific
+            # document; other variations can be thought of (using log) or
+            # maximal tf values
+            # Note: The clustering works better with (in general) smaller
+            # values
             if tf > 0.0:
-                tf = 1.0
+                tf = 1.0 / avg_words_per_doc * tf
             # If nothing applies: tf is 0.0
                 
             tfidf = tf*float(idf_dict[stem])
@@ -221,8 +228,8 @@ def main():
     else:
         print "TF*IDF matrix seems available: ", get_tfidf_matrix_file()
         
-    # XXX: Classification code follows here.
-    # process_project(get_tfidf_matrix_file())
+    # Classification process starts here.
+    process_project(get_tfidf_matrix_file())
     
     """ To be removed eventually
     # Do primary component analysis on all raw material & show it visually
