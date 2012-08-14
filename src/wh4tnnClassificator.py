@@ -57,7 +57,7 @@ def get_cluster_stems(stems, idf_dict):
     """ 
     max_val = max(idf_dict.itervalues()).as_integer_ratio()
     return [stem for stem in stems
-            if idf_dict[stem] > 4.0 
+            if idf_dict[stem] > 6.5
             and not idf_dict[stem].as_integer_ratio() == max_val]
 
 def write_tfidf_file(xmlCollection, nltkTextCollection):

@@ -27,10 +27,11 @@ def project_items(data, W, W_subgroups, indices):
     location = np.dot(data, W.T)    
     value = np.max(abs(location), 1)
     cluster_mapping = np.argmax(abs(location), 1)
-    print "cluster_mapping: ", cluster_mapping
+    #print "cluster_mapping: ", cluster_mapping
     print [np.sum(cluster_mapping == i) for i in range(n_clusters)]
-    print "Indices: ", indices
+    #print "Indices: ", indices
     
+    """
     clusterList = list()
     for i in range(n_clusters):
         clusterList.append(cluster_mapping == i)
@@ -43,6 +44,7 @@ def project_items(data, W, W_subgroups, indices):
         indexList.append(ind)
     for i, ind in enumerate(indexList):
         print "Indices of cluster ", i, ": ", ind
+    """
     
     for i in range(n_clusters):
         if sum(cluster_mapping == i) > 2:
