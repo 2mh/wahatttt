@@ -131,6 +131,8 @@ def main():
     stemmed_text = xmlCollection.getDocsStems()
     print "Total number of stems: " + \
     str(len(stemmed_text))
+    print "Avg number of stems: " + \
+    str(len(stemmed_text)/no_of_docs)
     printLine()
     print "-- Get number of unique stems ..."
     stemmed_uniq_text = xmlCollection.getDocsStems(uniq=True)
