@@ -16,7 +16,7 @@ from nltk.stem.snowball import GermanStemmer as germanStemmer
 from hashlib import sha512
 
 from library import normalize_word, rreplace, hashDict, clean_iterable, \
-                    split_term
+                    split_term, en_to_de_dict
 from settings import getMailFolder, getDefaultEncoding, getWordsFolder
 
 class document(dict):
@@ -264,13 +264,14 @@ class document(dict):
         # Lower case list and return set
         return set(map(lambda x:x.lower(), self[self.TYPES]))
     
-    def getWords(self, pos='_', reference_nouns=None):
+    def getWords(self, pos='_', reference_nouns=None, trans=False):
         """
         @param pos: It's possible to say which words we want. ATM only '_'
                 (all words; that's the default) or 'n' (nouns) are supported.
         @param reference_nouns: Optional parameter (together with pos) to
                                indicate which reference nouns (object nouns)
                                to use.
+        @param trans: Translate foreign-language words
         @return: Return words (determined by surface forms) that seem to be 
                  of linguistic nature, and thus "real" words. Words in
                  this sense are built out of the tokens, which also include
@@ -360,13 +361,18 @@ class document(dict):
                 
             return self[self.NOUNS]
                
-        # In case param pos is '_' (all words)            
+        # In case param pos is '_' (all words)        
+        
+        if trans == True:
+            self.translate_words() # XXX: Does nothing so far.
+        
         return self[self.WORDS]
 
-    def getStems(self, uniq=False):
+    def getStems(self, uniq=False, trans=False):
         """
         @param uniq: Defaults to False, i. e. returns not-unique stems.
                      Can be changed by providing True. Optional setting.
+        @param trans: Get stems after translation of foreign-language words
         @return: Set of stems found upon the words. Create once.
         """
         var = self.STEMS
@@ -374,7 +380,7 @@ class document(dict):
             var = self.STEMS_UNIQ
         
         if len(self[var]) == 0:
-            for word in self.getWords():
+            for word in self.getWords(trans=trans):
                 # Below argument "german" for compatibility reasons w/ older
                 # versions of NTLK
                 if uniq == True:
@@ -522,3 +528,10 @@ class document(dict):
         This is important when changes occurred during processing.
         """
         self[self.HASH_SUMS] = hashDict()
+        
+    def translate_words(self):
+        """
+        Translate words using (for now) an en-de-bidix.
+        """
+        # XXX: Nothing happens so far; efficient solution msut be found.
+        

@@ -10,9 +10,9 @@ from wh4t.nouns import nouns
 from wh4t.library import en_to_de_dict
 
 d = en_to_de_dict()
-print len(d)
 for eng_w, deu_w in d.items():
     print eng_w, " -> ", deu_w
+print len(d)
 
 
 """

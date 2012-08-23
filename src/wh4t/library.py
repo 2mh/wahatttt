@@ -83,7 +83,9 @@ class en_to_de_dict(dict):
                             and len(p_elem.find("r").getchildren()) == 1]
         for p_elem in p_elems_filtered:
             # key: english word; val: german word
-            self[p_elem.find("r").text] = p_elem.find("l").text
+            # in lower-case & normalized writing
+            self[p_elem.find("r").text.lower()] = \
+                normalize_word(p_elem.find("l").text.lower())
            
 def normalize_word(word_to_normalize):
     """
