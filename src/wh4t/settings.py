@@ -109,6 +109,11 @@ NOUNS_FILE = WH4T_RES_DIR + "nouns.txt"
 # reusing material w/o the need for regeneration.
 HASH_FILE = WH4T_BASE_DIR + "hashsums.txt"
 
+# This file is a bidictionary from the Apertium Free RBMT system from 
+# the German to English language, used here to increase relatedness 
+# between words. This file is held in an XML format.
+DE_EN_BIDIX_FILE = WH4T_RES_DIR + "apertium-de-en.de-en.dix"
+
 # Version of the wahatttt system as a whole; as of 1.0 it'll be usable
 VERSION = "0.64"
 
@@ -286,6 +291,12 @@ def get_tfidf_matrix_file():
              all documents
     """
     return TFIDF_MATRIX
+
+def get_de_en_bidix_file():
+    """
+    @return: String with file path to de-en bidictionary file.
+    """
+    return DE_EN_BIDIX_FILE 
 
 ###################################
 # Simple printer / helper functions

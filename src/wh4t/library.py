@@ -7,7 +7,9 @@ from codecs import open
 from os.path import exists
 from re import sub
 
-from settings import getHashFile, getDefaultEncoding
+from xml.etree import cElementTree as ET
+
+from settings import getHashFile, getDefaultEncoding, get_de_en_bidix_file
 
 class dict_from_file(dict):
     """
@@ -61,7 +63,27 @@ class hashDict(dict):
         f = hashFile(mode="w")
         for pair in self.items():
             f.write(' '.join(map(str, pair)) + '\n')
-        f.close()    
+        f.close()
+        
+class en_to_de_dict(dict):
+    """
+    This dict provides a primitive dictionary from English to
+    German words, w/o ambiguities (in turn w/o any special
+    differentiation) used to increase semantic relatedness between
+    the different documents we have.
+    """
+    def __init__(self):
+        dict.__init__(self)
+        de_en_bidix_file = get_de_en_bidix_file()
+        xml_file_handler = ET.parse(de_en_bidix_file)
+        p_elems = xml_file_handler.findall(".//p")
+        # Only get (both-sided) single word 1:1 mappings
+        p_elems_filtered = [p_elem for p_elem in p_elems
+                            if len(p_elem.find("l").getchildren()) == 1
+                            and len(p_elem.find("r").getchildren()) == 1]
+        for p_elem in p_elems_filtered:
+            # key: english word; val: german word
+            self[p_elem.find("r").text] = p_elem.find("l").text
            
 def normalize_word(word_to_normalize):
     """

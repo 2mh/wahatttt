@@ -7,7 +7,15 @@
 from wh4t.documents import collection
 from wh4t.settings import printLine
 from wh4t.nouns import nouns
+from wh4t.library import en_to_de_dict
 
+d = en_to_de_dict()
+print len(d)
+for eng_w, deu_w in d.items():
+    print eng_w, " -> ", deu_w
+
+
+"""
 # Program starts here
 xmlDocuments = collection()
 xmlDocument = xmlDocuments.getDoc(51) # Get a specific doc number for tests
@@ -35,4 +43,4 @@ printLine()
 print "Print stems: "
 print xmlDocument.getStems()
 printLine()
-
+"""
