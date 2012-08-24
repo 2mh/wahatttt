@@ -38,10 +38,10 @@ xmlCollection.writeWordsByEditDistanceFile(editDistance=editDistance)
 xmlCollection.writeDocsTopWordsFile(numberOfWords=numberOfTopWords)
 print "Top words written to disk."
 
-# XXX: BIG FUCK UP ####################################### FIX FIX FIX #######
+# XXX: BIG FUCK UP ################################## FIX FIX FIX #####
 
-# Print idf, tf and tf-idf values for the term "CCC", in document no. 42 - 
-# for testing.
+# Print idf, tf and tf-idf values for the term "CCC", in document
+# no. 42 - for testing.
 textCollection = TextCollection(xmlCollection.getDocsWords())
 print "idf: " + str(textCollection.idf("CCC"))
 print "tf: " + str(textCollection.tf("CCC", 

@@ -31,9 +31,9 @@ class symbols(dict):
 
     def _createSymbolsDict(self):
         """
-        Opens a file (for now) with all text available and stores its symbols
-        as keys (for each of whom a determined attribute is stored as value).
-        Meant as internal method.
+        Opens a file (for now) with all text available and stores its
+        symbols as keys (for each of whom a determined attribute is stored
+        as value). Meant as internal method.
         """     
         f = open(getMailBodyRawFile(), "r", encoding=getDefaultEncoding())
         
@@ -42,7 +42,7 @@ class symbols(dict):
         for sym in f.read():
             symSet.add(sym)
             
-        # For each symbol (key) determine an attribute to store in this 
+        # For each symbol (key) determine an attribute to store in this
         # instance
         for sym in symSet:
             symObj = self._classifySymbol(sym) 
@@ -72,8 +72,9 @@ class symbols(dict):
     
     def _classifySymbol(self, symbol):
         """
-        @return: For each symbol this (internal) method returns this symbol
-                 as key together with its attribute (set) as value.
+        @return: For each symbol this (internal) method returns this
+                 symbol as key together with its attribute (set) as
+                 value.
         """
     
         # Categories where symbols (most specifically) may belong to

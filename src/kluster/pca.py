@@ -3,7 +3,8 @@
 #
 # Kluster - A clustering Web Service
 #
-# Copyright (C) 2011 Thomas Niederberger and individual contributors (see AUTHORS).
+# Copyright (C) 2011 Thomas Niederberger and individual 
+# contributors (see AUTHORS).
 # 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -16,7 +17,8 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, 
+# see <http://www.gnu.org/licenses/>.
 
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -50,7 +52,8 @@ class Pca(object):
         # remove means from original data
         noMeansData = data - mean(data, 0)
     
-        loc = transpose(dot(transpose(vec[:, eigInd]), transpose(noMeansData)))
+        loc = transpose(dot(transpose(vec[:, eigInd]), 
+                            transpose(noMeansData)))
         return loc
     
     def generateTagMatrix(self, tagLines, separator=',', minMentions = 3):
@@ -78,7 +81,8 @@ class Pca(object):
         relevantIndizes = []
         for tag, pair in tagCounts.iteritems():
             if pair.count >= minMentions:
-                logger.debug(tag + " (" + str(pair.index) + "): " + str(pair.count))
+                logger.debug(tag + " (" + str(pair.index) + "): " + \
+                             str(pair.count))
                 relevantIndizes.append(pair.index)
                 
         sciMatrix = zeros((lineCounter, len(relevantIndizes)), int)

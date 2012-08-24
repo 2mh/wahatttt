@@ -99,8 +99,8 @@ class collection(dict):
         # To hold all nouns found, in a list (for frequency analysis)
         self.__setitem__(self.DOCS_NOUNS, list())
         
-        # Initializes a nouns object (is a list) of reference nouns we use 
-        # to find nouns in the collection
+        # Initializes a nouns object (is a list) of reference nouns 
+        # we use to find nouns in the collection
         self.__setitem__(self.DOCS_REF_NOUNS, nouns())
         
         # Read in all documents
@@ -129,8 +129,8 @@ class collection(dict):
     
     def getDocsFileSize(self):
         """
-        @return: Size of all files (in bytes) of the collection, including
-                all (meta) data
+        @return: Size of all files (in bytes) of the collection, 
+                 including all (meta) data
         """
         folderTotalSize = 0
         for doc in self.getDocs():
@@ -158,8 +158,8 @@ class collection(dict):
     
     def getDocsTokens(self):
         """
-        @return: A list of all tokens found in the collection and ordered
-                 as is. Ensure to get the tokens once only.
+        @return: A list of all tokens found in the collection and 
+                 ordered as is. Ensure to get the tokens once only.
         """
         if len(self[self.DOCS_TOKENIZED]) == 0:
             for doc in self.getDocs():
@@ -173,8 +173,8 @@ class collection(dict):
         @param lower: If set to True returns lowered types, otherwise
                       mixed-case types are the result.
         @return: A set of all types (=unique tokens) found in the
-                 collection; types always get created again. Always create
-                 set once, both mixed- lower-cased.
+                 collection; types always get created again. Always 
+                 create set once, both mixed- lower-cased.
         """
         # It's enough to check mixed-types 
         if len(self[self.DOCS_TYPED]) == 0:
@@ -193,8 +193,8 @@ class collection(dict):
         """
         Return all words, or a subset of them (for now: nouns).
         @param pos: Can be '_' (all words) or 'n' (nouns only).
-        @return: Return words (look up document.py for more info how that
-                 comes). Do that once only.
+        @return: Return words (look up document.py for more info how 
+                 that comes). Do that once only.
         """
         if len(self[self.DOCS_WORDS]) == 0:
             for doc in self.getDocs():
@@ -220,7 +220,8 @@ class collection(dict):
                             if not match("^[^a-zäöü]", nc) == None]
                 for word in nouns_candidates:
                     cnt += 1
-                    print str(cnt) + " of " + str(len(nouns_candidates))
+                    print str(cnt) + " of " + \
+                        str(len(nouns_candidates))
                     if word in self[self.DOCS_REF_NOUNS]:
                         self[self.DOCS_NOUNS].append(word)
                 """
@@ -231,8 +232,8 @@ class collection(dict):
         
     def getDocsStems(self, uniq=False):
         """
-        @param uniq: Defaults to False and indicates we want not-uniqe stems.
-                     Otherwise True can be used.
+        @param uniq: Defaults to False and indicates we want 
+                     not-uniqe stems. Otherwise True can be used.
         @return: Set of all stems found in the documents.
         """
         var = self.DOCS_STEMMED
@@ -264,9 +265,9 @@ class collection(dict):
     
     def getDocsTopWords(self, numberOfWords=getDefaultNumberOfTopWords()):
         """
-        @param numberOfWords: int indicating how many top words 
-                              (by frequency) we want to gather; optional
-        @return: Dictionary of top words along with its frequencies 
+        @param numberOfWords: int indicating how many top words  (by
+                              frequency) we want to gather; optional
+        @return: Dictionary of top words along with its frequencies
         """
         if len(self[self.DOCS_TOP_WORDS]) == 0:
             self[self.DOCS_TOP_WORDS] = \
@@ -277,15 +278,17 @@ class collection(dict):
         wordLen=getDefaultSourceWordLenForEditDistancing(),
         numberOfMostFreq=getDefaultNumberOfTopWords):
         """
-        @param editDistance: int indicating for which edit distance words
-                             should be checked
-        @param wordLen: int indicating of which length source words to be
-                        checked against (all) other words should be; optional
+        @param editDistance: int indicating for which edit distance 
+                             words should be checked
+        @param wordLen: int indicating of which length source words
+                        to be checked against (all) other words 
+                        should be; optional
         @param numberOfMostFreq: The (int) number of how many top words
-                                 by frequency should be retrieved; optional
-        @return: A set with all pairs of words distanced by a certain amount
-                 of edits (in some subset by the above parameters); this
-                 set is created once.
+                                 by frequency should be retrieved; 
+                                 optional
+        @return: A set with all pairs of words distanced by a certain
+                 amount of edits (in some subset by the above 
+                 parameters); this set is created once.
         """
         if len(self[self.DOCS_WORDS_BY_EDIT_DISTANCE]) == 0:
             
@@ -337,9 +340,10 @@ class collection(dict):
         Write documents on a per-file basis in its raw content, or 
         write this content collectively in one file alone.
         XXX: Later replace writeDocsRawFile() method above.
-        @param in_one_file: If set to True writes all content in one file
-                            only, otherwise write every document in its own
-                            file. Defaults to latter behaviour.
+        @param in_one_file: If set to True writes all content in
+                            one file
+                            only, otherwise write every document in
+                            its own file. Defaults to latter behaviour.
         """
         if in_one_file == True:
             self.writeDocsRawFile()
@@ -353,7 +357,8 @@ class collection(dict):
     
     def writeDocsTokenFile(self):
         """
-        Write all files' tokens into a file, as list, in the appearing order.
+        Write all files' tokens into a file, as list, in the 
+        appearing order.
         """
         f = open(getMailBodyTokensFile(), "w", encoding=getDefaultEncoding())
         for token in self.getDocsTokens():
@@ -362,10 +367,11 @@ class collection(dict):
     
     def writeDocsTypesFile(self, lower=False):
         """
-        Write all files' types (=unique tokens) into a file, line by line.
-        @param lower: Optional parameter; default value here is False. When
-                      set to True the types will all be printed lower case,
-                      usually resulting in a smaller list.
+        Write all files' types (=unique tokens) into a file, line by 
+        line.
+        @param lower: Optional parameter; default value here is False.
+                      When set to True the types will all be printed
+                      lower case, usually resulting in a smaller list.
         """
         f = open(getMailBodyTypesFile(lower), "w",
                  encoding=getDefaultEncoding())
@@ -377,7 +383,8 @@ class collection(dict):
         """
         Write all words of all files into a file, one word per line, in
         the given order. Can also write only a subset of words.
-        @param pos: Writes all words for value '_', and nouns for value 'n'.
+        @param pos: Writes all words for value '_', and nouns for value
+                    'n'.
         """
         f = open(getMailBodyWordsFile(pos=pos), "w", 
                  encoding=getDefaultEncoding())      
@@ -397,9 +404,10 @@ class collection(dict):
     def writeDocsTopWordsFile(self,
                               numberOfWords=getDefaultNumberOfTopWords()):
         """
-        Write the most frequent words into a file, ordered by descending
-        frequency and with indication (seperated by three tabulators) of
-        the absolute frequency number (in all documents of the collection).
+        Write the most frequent words into a file, ordered by
+        descending frequency and with indication (seperated by three
+        tabulators) of the absolute frequency number (in all documents
+        of the collection).
         """
         fileName = getMailBodyTopWordsFile()
         f = open(fileName, "w", getDefaultEncoding())
@@ -410,11 +418,12 @@ class collection(dict):
     def writeWordsByEditDistanceFile(self,
         editDistance=getDefaultEditDistanceFilenameSuffix):
         """
-        This method writes a file with sets of words distanced by a certain
-        amount of edits, eventually adding a special suffix to the filename.
+        This method writes a file with sets of words distanced by a
+        certain amount of edits, eventually adding a special suffix
+        to the filename.
         @param: If (for distinguishing reasons) a special suffix should
-                be appended to the default filename, this can be specified
-                here as value of type str.
+                be appended to the default filename, this can be
+                specified here as value of type str.
         """
         fileName = \
             getMailBodyWordsByEditDistanceFile(editDistance=editDistance)

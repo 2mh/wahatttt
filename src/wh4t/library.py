@@ -14,8 +14,8 @@ from settings import getHashFile, getDefaultEncoding, \
 
 class dict_from_file(dict):
     """
-    This class represents a file as a dict, reading in all values pairwise,
-    on each line.
+    This class represents a file as a dict, reading in all values 
+    pairwise, on each line.
     """
     def __init__(self, filename):
         dict.__init__(self)
@@ -27,7 +27,8 @@ class dict_from_file(dict):
         
 class hashFile(file):
     """
-    This class is a file class, specifically representing an hashsums file.
+    This class is a file class, specifically representing an 
+    hashsums file.
     It's used to encapsulate specifics about its name and existence.
     """
     def __init__(self, mode="r"):
@@ -90,7 +91,8 @@ class en_to_de_dict(dict):
                 
 class synsets(list):
     """
-    This list holds synsets, i. e. words semantically grouped with each other.
+    This list holds synsets, i. e. words semantically grouped with
+    each other.
     """
     def __init__(self):
         list.__init__(self)
@@ -108,7 +110,8 @@ class synsets(list):
             
     def _clean_synset(self, synset):
         """
-        Internal method which removes certain expressions from a synset.
+        Internal method which removes certain expressions from
+        a synset.
         @param: Synset (as list)
         @return: A clean synset (as list)
         """
@@ -151,7 +154,8 @@ def rreplace(s, old, new, occurrence):
     """
     From public domain source by "mg.", 2010: 
     * http://stackoverflow.com/questions/2556108/
-      rreplace-how-to-replace-the-last-occurence-of-an-expression-in-a-string
+      rreplace-how-to-replace-the-last-occurence-of-an
+      -expression-in-a-string
     
     Replaces a string from right to left (reverse) by allowing for
     specification of how many occurrences should be replaced.

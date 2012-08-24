@@ -19,23 +19,25 @@ DEFAULT_ENCODING = "UTF-8"
 # not further specified. This is used in different contexts.
 DEFAULT_NUMBER_OF_TOP_WORDS = 42
 
-# This int is the default number for how long source words used to check
-# against others -- by the measure of edit distance -- should be. 0 is 
-# implemented to mean "of any length".
+# This int is the default number for how long source words used to 
+# check against others -- by the measure of edit distance -- 
+# should be. 0 is implemented to mean "of any length".
 DEFAULT_SOURCE_WORD_LEN_FOR_EDIT_DISTANCING = 0
 
-# That's the default suffix a filename with word pairs in within some edit 
-# distance contains.
+# That's the default suffix a filename with word pairs in within 
+# some edit distance contains.
 DEFAULT_EDIT_DISTANCE_FILENAME_SUFFIX = ""
 
-# Number of clusters to create (for now used for the neuronal clustering)
+# Number of clusters to create (for now used for the neuronal 
+# clustering)
 DEFAULT_NUMBER_OF_CLUSTERS = 4
 
 ##########################
 # Paths to folders / files
 ##########################
 
-# The project's base path relative to the position of this settings file.
+# The project's base path relative to the position of this 
+# settings file.
 WH4T_BASE_DIR = abspath(join(curdir, pardir)) + sep
 
 # The project's (freely available linguistic) resources directory
@@ -47,7 +49,8 @@ WH4T_WORDS_DIR = WH4T_BASE_DIR + "words" + sep
 # A directory where nouns are hold, per document; file by file
 WH4T_NOUNS_DIR = WH4T_BASE_DIR + "nouns" + sep
 
-# XML file containing info about broken XML files, if any (hopefully not).
+# XML file containing info about broken XML files, if any
+# (hopefully not).
 INVALID_XML_FILE_NAME = WH4T_BASE_DIR + "wh4tinvalidXml.xml"
 
 # Text file with all (body) content available, in raw form.
@@ -60,7 +63,8 @@ MAILBODY_LIN_FILE = WH4T_BASE_DIR + "mailBodyLinFile"
 # Text file with list of all symbols used in the mail body
 MAILBODY_SYMBOLS_FILE = WH4T_BASE_DIR + "mailBodySymbolsFile"
 
-# File with list of all tokens used, from the raw text (in the given order)
+# File with list of all tokens used, from the raw text
+# (in the given order)
 MAILBODY_TOKENS_FILE = WH4T_BASE_DIR + "mailBodyTokensFile"
 
 # File with list of all unique tokens (=types) used
@@ -82,21 +86,21 @@ MAILBODY_WORDS_BY_EDIT_DISTANCE_FILE = WH4T_BASE_DIR + \
 # File with list of all stems used in mail body, on a unique-basis
 MAILBODY_STEMS_FILE = WH4T_BASE_DIR + "mailBodyStemsFile"
 
-# File with a list of top words in the collection, along with its frequency 
-# in absolute numbers.
+# File with a list of top words in the collection, along with its
+# frequency in absolute numbers.
 MAILBODY_TOP_WORDS_FILE = WH4T_BASE_DIR + "mailBodyTopWordsFile"
 
-# For each (increasingly alphabetical ordered stem) hold the tf*idf values
-# on a per-document basis -- one document per line (in increasingly
-# alphabetical order of the document's name)
+# For each (increasingly alphabetical ordered stem) hold the tf*idf
+# values on a per-document basis -- one document per line
+# (in increasingly alphabetical order of the document's name)
 TFIDF_MATRIX = WH4T_BASE_DIR + "tfidf_stems_matrix"
 
 # Path to the directory with the input data in XML format 
 # (as of now: only FITUG-mails)
 MAIL_FOLDER_XML = WH4T_BASE_DIR + "fitug_xml" + sep
 
-# Path to mail folder with all messages delimited by '\n' (for each content
-# unit)
+# Path to mail folder with all messages delimited by '\n' (for each 
+# content unit)
 MAIL_FOLDER_LINE = WH4T_BASE_DIR + "fitug_line" + sep
 
 # Nouns file, containing nouns, found at the Apertium project:
@@ -104,9 +108,9 @@ MAIL_FOLDER_LINE = WH4T_BASE_DIR + "fitug_line" + sep
 # apertium-de-en/"
 NOUNS_FILE = WH4T_RES_DIR + "nouns.txt"
 
-# This file is used to hold SHA512 hash sums of different generated material, 
-# in order to avoid generating files over and over again, and to allow for
-# reusing material w/o the need for regeneration.
+# This file is used to hold SHA512 hash sums of different generated
+# material, in order to avoid generating files over and over again,
+# and to allow for reusing material w/o the need for regeneration.
 HASH_FILE = WH4T_BASE_DIR + "hashsums.txt"
 
 # This file is a bidictionary from the Apertium Free RBMT system from 
@@ -127,7 +131,8 @@ VERSION = "0.64"
 def getOwnInfo(callingFile):
     """
     @return: A string indicating this software package, the filename --
-             specific to the calling file object -- and the version number.
+             specific to the calling file object -- and the version 
+             number.
     """
     progName = sub(".py", "", basename(callingFile))
     infoStr = "wahatttt" + " v" + VERSION+" - " + sub("wh4t", "", progName)
@@ -158,15 +163,16 @@ def getDefaultNumberOfClusters():
     """
     return DEFAULT_NUMBER_OF_CLUSTERS
 
-##########################################################################
-# Getters for file names, needed in other classes, to read or write files.
+#######################################################################
+# Getters for file names, needed in other classes, to read or write 
+# files.
 # See definitions section for more information on its intended content.
-##########################################################################
+#######################################################################
     
 def getMailFolder(contentFormat="XML"): 
     """
-    @param: If type's "CSV" return mail folder where mails in CSV format 
-            lie
+    @param: If type's "CSV" return mail folder where mails in CSV 
+            format lie
     @return: String with mail folder path of the input data
     """
     if contentFormat == "line":
@@ -177,8 +183,8 @@ def getMailFolder(contentFormat="XML"):
 
 def getWordsFolder(pos='_'):
     """
-    @param: If pos is 'n' return a path to store nouns, otherwise to store
-            words in general.
+    @param: If pos is 'n' return a path to store nouns, otherwise to 
+            store words in general.
     @return: Return a path as string to store words by document
     """
     if (pos == 'n'): 
@@ -230,10 +236,11 @@ def getMailBodyTokensFile():
 
 def getMailBodyTypesFile(lower=False):
     """
-    @param lower: Indicate if tokens file shall contain only lower case
-                  letters (=True), otherwise file shall be in mixed cases
-    @return: String with file path to the file feat. types (=unique tokens),
-                  either mixed or only lower cased
+    @param lower: Indicate if tokens file shall contain only 
+                  lower case letters (=True), otherwise file shall
+                  be in mixed cases
+    @return: String with file path to the file feat. types (=unique
+             tokens), either mixed or only lower cased
     """ 
     if lower == False:
         return MAILBODY_TYPES_FILE
@@ -251,9 +258,9 @@ def getMailBodyWordsFile(pos='_'):
 
 def getMailBodyStemsFile(measure=""): 
     """
-    @pos measure: If a special measure is saved in this file. Something that
-                  makes sense to be stored along with the nouns is their 
-                  "IDF" values.
+    @pos measure: If a special measure is saved in this file. 
+                  Something that makes sense to be stored along 
+                  with the nouns is their "IDF" values.
     @return: String with file path to hold the unique stems encountered
              (along with other info)
     """
@@ -264,8 +271,8 @@ def getMailBodyWordsByEditDistanceFile(
     """
     @param: Positive integer specifying of which edit distance the word
             pairs are
-    @return: String with file path to store pairs of words edit-distanced 
-             by a specified length
+    @return: String with file path to store pairs of words 
+             edit-distanced by a specified length
     """
     fileName = MAILBODY_WORDS_BY_EDIT_DISTANCE_FILE
     return fileName + str(editDistance)
@@ -313,13 +320,15 @@ def get_synsets_file():
 
 def printLine(): 
     """
-    To create semi-graphical lines used to seperate output on the terminal
+    To create semi-graphical lines used to seperate output on the 
+    terminal
     """
     print 78*"*"
 
 def printOK(): 
     """
-    To indicate on the terminal something went OK, e. g. creation of a file
+    To indicate on the terminal something went OK, e. g. creation of a
+    file
     """
     print(" -- OK")
     

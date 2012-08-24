@@ -22,14 +22,16 @@ def main():
     This program makes a first exploration of all the input
     material we have, it prints out information like:
     - How big the input folder is (bytes)
-    - How many raw text material is available (bytes), i. e. w/o meta-data
+    - How many raw text material is available (bytes), i. e. 
+      w/o meta-data
     - How many symbols are used 
     - How many tokens, words, stems etc. are available
     
     TBD: 
-    - Add params to this program or make it more user-friendly / interactive.
-    - Add more outcome, probably not only quantitative, but also qualitative
-      information.
+    - Add params to this program or make it more user-friendly /
+      interactive.
+    - Add more outcome, probably not only quantitative, but also
+      qualitative information.
     - Put some of the (verbose) text into other classes.
     """
        
@@ -37,7 +39,8 @@ def main():
     
     no_of_docs = 0
     
-    # Print total file size (=folder size) information of the input material
+    # Print total file size (=folder size) information of the 
+    # input material
     xmlCollection = collection()
     no_of_docs = len(xmlCollection.getDocs())
     print "-- Calculating total file size ..."
@@ -45,8 +48,8 @@ def main():
         " bytes"
     printLine()
     
-    # Print total raw text material information, being body text of messages 
-    # w/o meta-data
+    # Print total raw text material information, being body text
+    # of messages w/o meta-data
     raw_size = xmlCollection.getDocsRawSize()
     print "-- Calculating raw size of text ..."
     print "Total raw size: " + str(raw_size) + " bytes"
@@ -71,8 +74,8 @@ def main():
     print "Total number of unique symbols: " + str(syms.getNumberOfSymbols())
     printLine()
     
-    # Print total numbers of tokens available; separation is done by means
-    # of the Natural Language Toolkit (NLTK)
+    # Print total numbers of tokens available; separation is done 
+    # by means of the Natural Language Toolkit (NLTK)
     # Problematic here: There are lots of non-linguistic tokens being
     # created, like URLs, at this stage.
     # That's why these tokens here are denoted as being "raw".
@@ -84,8 +87,8 @@ def main():
     str(len(tokenized_text)/no_of_docs)
     printLine()
     
-    # - Print total number of unique tokens (=types); also here, lots of
-    #   "non-linguistic" types are preserved, ATM.
+    # - Print total number of unique tokens (=types); also here, lots 
+    #   of "non-linguistic" types are preserved, ATM.
     # - Print also these raw types in lower case.
     print "-- Get types ..."
     typed_text = xmlCollection.getDocsTypes()

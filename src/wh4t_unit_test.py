@@ -26,7 +26,8 @@ print len(s)
 """
 # Program starts here
 xmlDocuments = collection()
-xmlDocument = xmlDocuments.getDoc(51) # Get a specific doc number for tests
+# Get a specific doc number for tests
+xmlDocument = xmlDocuments.getDoc(51)
 
 # Print raw content, tokens and then types (mixed- and lowercase)
 printLine()

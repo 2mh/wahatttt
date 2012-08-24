@@ -2,7 +2,9 @@
 # coding: UTF-8
 
 # released under bsd licence
-# see LICENCE file or http://www.opensource.org/licenses/bsd-license.php for details
+# see LICENCE file or 
+# http://www.opensource.org/licenses/bsd-license.php 
+# for details
 # Institute of Applied Simulation (ZHAW)
 # Author Thomas Niederberger
 
@@ -16,7 +18,8 @@ def project_items(data, W, W_subgroups, indices):
 
         
     Returns:
-        a three element tuple containing x, y coordinates and a cluster id for each element.
+        a three element tuple containing x, y coordinates and a cluster
+        id for each element.
     """
     n_clusters = W.shape[0]
     n_records = data.shape[0]
@@ -40,7 +43,8 @@ def project_items(data, W, W_subgroups, indices):
 
     indexList = list()
     for cluster in clusterList:
-        ind = [i for i, elem in enumerate(cluster.tolist()) if elem == True]
+        ind = [i for i, elem in enumerate(cluster.tolist()) \
+               if elem == True]
         indexList.append(ind)
     for i, ind in enumerate(indexList):
         print "Indices of cluster ", i, ": ", ind
@@ -48,18 +52,28 @@ def project_items(data, W, W_subgroups, indices):
     
     for i in range(n_clusters):
         if sum(cluster_mapping == i) > 2:
-            #(singular_values_dontcare, sub_cluster_location, eigenvec_dontcare) = pca(data[cluster_mapping == i, :], 2)
-            sub_cluster_location = np.dot(data[cluster_mapping == i, :], W_subgroups[i].T)
-            sub_locations[cluster_mapping == i, :] = a_side * sub_cluster_location / (np.max(sub_cluster_location) - np.min(sub_cluster_location))
+            # (singular_values_dontcare, sub_cluster_location, 
+            # eigenvec_dontcare) = pca(data[cluster_mapping == i, :], 2)
+            sub_cluster_location = np.dot(data[cluster_mapping == i, :], 
+                                          W_subgroups[i].T)
+            sub_locations[cluster_mapping == i, :] = \
+                a_side * sub_cluster_location / \
+                (np.max(sub_cluster_location) - np.min(sub_cluster_location))
         elif sum(cluster_mapping == i) > 0:
             sub_locations[cluster_mapping == i, :] = 0
-    x = (np.cos(cluster_mapping * 2 * np.pi / (n_clusters)) + sub_locations[:, 0])
-    y = (np.sin(cluster_mapping * 2 * np.pi / (n_clusters)) + sub_locations[:, 1])
+    x = (np.cos(cluster_mapping * 2 * np.pi / (n_clusters)) + \
+         sub_locations[:, 0])
+    y = (np.sin(cluster_mapping * 2 * np.pi / (n_clusters)) + \
+         sub_locations[:, 1])
     return (x, y, cluster_mapping)
 
-def learn_weights(data, W, W_subgroups, n_clusters, iterations, learning_rate, visual_learning_rate, n_visual_dimensions=2, gamma=3.0):
-    W = hebbian_learning(data, W, n_clusters, iterations, learning_rate, gamma)
-    #print np.sum(W.T * reference_vectors, 0) / np.power(np.sum(np.power(W, 2), 1), 0.5)
+def learn_weights(data, W, W_subgroups, n_clusters, iterations, 
+                  learning_rate, visual_learning_rate, 
+                  n_visual_dimensions=2, gamma=3.0):
+    W = hebbian_learning(data, W, n_clusters, iterations, 
+                         learning_rate, gamma)
+    #print np.sum(W.T * reference_vectors, 0) / \
+    #        np.power(np.sum(np.power(W, 2), 1), 0.5)
 
     #cluster
     location = np.dot(data, W.T)    
@@ -69,10 +83,14 @@ def learn_weights(data, W, W_subgroups, n_clusters, iterations, learning_rate, v
     for i in range(n_clusters):
         indeces = (cluster_mapping == i)
         if sum(indeces) > 2:
-            W_subgroups[i] = hebbian_learning(data[indeces, :], W_subgroups[i], n_visual_dimensions, 4, visual_learning_rate)
+            W_subgroups[i] = hebbian_learning(data[indeces, :], 
+                                              W_subgroups[i], 
+                                              n_visual_dimensions, 
+                                              4, visual_learning_rate)
     return (W, W_subgroups)
 
-def hebbian_learning(data, W = None, dimensions = 2, iterations = 100, learning_rate=decay_learning_rate(), gamma=1.0):
+def hebbian_learning(data, W = None, dimensions = 2, iterations = 100, 
+                     learning_rate=decay_learning_rate(), gamma=1.0):
     """Executes hebbian learning for the dataset data.
     
     Args:

@@ -26,9 +26,10 @@ def addInvalidDocs(fileName, excStr):
     """
     Add invalid documents by fileName and exception string to the above
     prepared file.
-    @param fileName: String of Filename of the invalid XML document found.
-    @param excStr: Exception string that lead to an error, including the
-                   position where the error was found.
+    @param fileName: String of Filename of the invalid XML document 
+                     found.
+    @param excStr: Exception string that lead to an error, including
+                   the position where the error was found.
     """
     invalidDoc = invalidXmlDoc.createElement("invalidDocument")
     invalidFileName = invalidXmlDoc.createTextNode(fileName)
@@ -47,7 +48,8 @@ def parseFile(fileName):
     parser.parse(fileName)
 
 # Program starts here
-# Throughpass all documents in globally defined mail folder (=input XML docs)
+# Throughpass all documents in globally defined mail folder 
+# (=input XML docs)
 if len(argv) == 1:
     argv.append(getMailFolder() + "*")
 for arg in argv[1:]:
@@ -55,14 +57,15 @@ for arg in argv[1:]:
         # If works, document is well-formed
         try:
             parseFile(fileName)
-        # If exception occurs, document is not well-formed; add to collection
-        # of invalid docs.
+        # If exception occurs, document is not well-formed; add to 
+        # collection of invalid docs.
         except Exception, e:
             addInvalidDocs(fileName, str(e))
             print fileName
             continue
         
-# Prepare XML file to write invalid input XML files of the collection into.
+# Prepare XML file to write invalid input XML files of the
+# collection into.
 invalidXmlFileHandler = open(getInvalidXmlFileName(), "w",
                              getDefaultEncoding())
 invalidXmlDoc = Doc()
@@ -70,7 +73,8 @@ invalidColl = invalidXmlDoc.createElement("invalidCollection")
 invalidXmlDoc.appendChild(invalidColl)
 invalidStat = defaultdict(int)
 
-# Check collection of invalid docs and effectively write XML invalid file.
+# Check collection of invalid docs and effectively write XML
+# invalid file.
 for err, no in invalidStat.items():
     print err + " : " + str(no)
 invalidXmlFileHandler.write(invalidXmlDoc.toprettyxml())

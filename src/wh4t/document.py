@@ -26,8 +26,8 @@ class document(dict):
     For the time being these documents are e-mail messages from the
     FTIUG debate@ mailing list.
 
-    This class is a dict -- it parses the XML files and stores all of its 
-    values in terms of key-value-pairs.
+    This class is a dict -- it parses the XML files and stores all of 
+    its values in terms of key-value-pairs.
     """
     
     ############################################################
@@ -38,10 +38,11 @@ class document(dict):
     MAIL_TAG_ID_ATTR = "id"
     IN_REPLY_TO_TAG_ID_ATTR = MAIL_TAG_ID_ATTR
     
-    #######################################################################
+    ###################################################################
     # Tags parsed
-    # - Tags used include such as <subj>, <author> or <content> (text body)
-    #######################################################################
+    # - Tags used include such as <subj>, <author> or <content> 
+    # (text body)
+    ###################################################################
 
     MAIL_TAG = "mail" # containing id attrib
     URL_TAG = "url" # mail resource at http location, in HTML
@@ -54,10 +55,10 @@ class document(dict):
     IN_REPLY_TO_TAG = "inReplyTo"
     CONTENT_TAG = "content"
     
-    ##################################################################
+    ###################################################################
     # Derived key-value pairs
     # - Derived pairs include tokenized text, stemmed text, words etc.
-    ##################################################################
+    ###################################################################
     
     TOKENS = "tokens"
     TYPES = "types"
@@ -70,10 +71,10 @@ class document(dict):
     TEXT_FREQ_DIST = "text_freq_dist"
     HASH_SUMS = "hashsums"
     
-    #################################################################
+    ###################################################################
     # Other key names, for now for storing the xml filename, and a
     # document id
-    #################################################################
+    ###################################################################
     
     XML_FILEPATH = "file"
     DOC_ID = "doc_id"
@@ -127,7 +128,8 @@ class document(dict):
         
         # Get id from mail in <inReplyTo> tag, but:
         # - Not all mails have its parent: <references>
-        # - However, thus who do have, do have -- ATM -- one reference only.
+        # - However, thus who do have, do have -- ATM -- one reference 
+        #   only.
         xmlRefElem = xmlMailElem.find(self.REF_TAG)
         
         # Check for existence of <references>
@@ -171,10 +173,12 @@ class document(dict):
         # For holding pairs of words distanced by some edits, in a set
         self[self.WORDS_BY_EDIT_DISTANCE] = set()
         
-        # For holding the most frequent words (with absolute frequency vals)
+        # For holding the most frequent words (with absolute 
+        # frequency vals)
         self[self.TOP_WORDS] = defaultdict()
         
-        # For holding an object to play with the frequency distribution
+        # For holding an object to play with the frequency 
+        # distribution
         self[self.TEXT_FREQ_DIST] = None
         
     ############################################################
@@ -245,7 +249,8 @@ class document(dict):
     
     def getTokens(self):
         """
-        @return: A list of all tokens found in the document; done by NLTK.
+        @return: A list of all tokens found in the document; done by 
+                 NLTK.
         """
         if len(self[self.TOKENS]) == 0:
             self[self.TOKENS] = tokenizer().tokenize(self.getRawContent())
@@ -266,20 +271,22 @@ class document(dict):
     
     def getWords(self, pos='_', reference_nouns=None, trans=False):
         """
-        @param pos: It's possible to say which words we want. ATM only '_'
-                (all words; that's the default) or 'n' (nouns) are supported.
-        @param reference_nouns: Optional parameter (together with pos) to
-                               indicate which reference nouns (object nouns)
-                               to use.
+        @param pos: It's possible to say which words we want. ATM 
+                    only '_' (all words; that's the default) or 'n' 
+                    (nouns) are supported.
+        @param reference_nouns: Optional parameter (together with pos) 
+                                to indicate which reference nouns 
+                                (object nouns) to use.
         @param trans: Translate foreign-language words
-        @return: Return words (determined by surface forms) that seem to be 
-                 of linguistic nature, and thus "real" words. Words in
-                 this sense are built out of the tokens, which also include
-                 lots of programming code in different languages or other
-                 surfaces, which don't seem to be natural language -- like
-                 PGP signatures or similar.
+        @return: Return words (determined by surface forms) that seem 
+                 to be of linguistic nature, and thus "real" words.
+                 Words in this sense are built out of the tokens, which 
+                 also include lots of programming code in different
+                 languages or other surfaces, which don't seem to be
+                 natural language -- like PGP signatures or similar.
                  This construction is carried out one time only.
-        XXX: This part my change heavily. Also: The regexps are ugly hacks.
+        XXX: This part my change heavily. Also: The regexps are ugly 
+             hacks.
         """
         doc_id = self[self.DOC_ID]
         hashsums_dict = self[self.HASH_SUMS]
@@ -350,7 +357,8 @@ class document(dict):
                 
                 if len(self[self.NOUNS]) == 0:
                     noun_candidates = [nc for nc in self[self.WORDS] 
-                                       if not match("^[^a-zäöü]", nc) == None]
+                                       if not 
+                                           match("^[^a-zäöü]", nc) == None]
                     for word in noun_candidates:
                         if word in reference_nouns \
                         or not match("^[A-Z]{2,}", word) == None:
@@ -371,8 +379,10 @@ class document(dict):
     def getStems(self, uniq=False, trans=False):
         """
         @param uniq: Defaults to False, i. e. returns not-unique stems.
-                     Can be changed by providing True. Optional setting.
-        @param trans: Get stems after translation of foreign-language words
+                     Can be changed by providing True. Optional 
+                     setting.
+        @param trans: Get stems after translation of foreign-language 
+                      words
         @return: Set of stems found upon the words. Create once.
         """
         var = self.STEMS
@@ -381,8 +391,8 @@ class document(dict):
         
         if len(self[var]) == 0:
             for word in self.getWords(trans=trans):
-                # Below argument "german" for compatibility reasons w/ older
-                # versions of NTLK
+                # Below argument "german" for compatibility reasons 
+                # w/ older versions of NTLK
                 if uniq == True:
                     self[var].add(germanStemmer("german").stem(word))
                     pass
@@ -397,9 +407,9 @@ class document(dict):
     TEXT_FREQ_DIST = "text_freq_dist"
     """
     
-    #################################################################
+    ###################################################################
     # Other getters, not relying on data in an instance of this class
-    #################################################################
+    ###################################################################
     
     def getFileSize(self):
         """
@@ -416,12 +426,14 @@ class document(dict):
     
     def getFile(self, key, hashsum=True):
         """
-        @param key: Specifies which data to look at, e. g. "NOUNS" (str).
-        @param hashsum: If True (default) return not only file's contents, but
-                     also hashsum, otherwise return only file content.
+        @param key: Specifies which data to look at, e. g. "NOUNS" 
+                   (str).
+        @param hashsum: If True (default) return not only file's 
+                        contents, but also hashsum, otherwise return 
+                        only file content.
         @return: Hashsum (str) of this document's data in some context
-                 specified by param key. If no file available returns None
-                 values.
+                 specified by param key. If no file available returns 
+                 None values.
         """
         sha512_sum = None
         content = None
@@ -471,10 +483,11 @@ class document(dict):
     def writeFile(self, key, hashsum=True):
         """
         Writes a file (name: document name) to a specified folder.
-        @param key: Specifies which data to write, based on the key of the
-                    data stored in in this object, e. g. "WORDS" or "NOUNS".
-        @param hashsum: Defaults to True and is used to write an hashsum of
-                     the file to an hashfile.
+        @param key: Specifies which data to write, based on the 
+                    key of the data stored in in this object, 
+                    e. g. "WORDS" or "NOUNS".
+        @param hashsum: Defaults to True and is used to write an 
+                        hashsum of the file to an hashfile.
         """
         folder = self.getFolderByKey(key)
         
@@ -501,18 +514,20 @@ class document(dict):
 
     def writeContent(self, contentFormat="line", contentType="raw"):
         """
-        Write files in different possible formats and content types to a 
-        folder on disk.
-        @param contentFormat: If "line" writes content unit line per line.
-        @param contentType: If "raw", write tokens as is; other values like
-                            "words" may (become) possible.
+        Write files in different possible formats and content types to 
+        a folder on disk.
+        @param contentFormat: If "line" writes content unit line per 
+                             line.
+        @param contentType: If "raw", write tokens as is; other values
+                            like "words" may (become) possible.
         """
         d = getMailFolder(contentFormat=contentFormat)
         if not exists(d):
             print "Folder " + d + " not availabe. Create it."
             makedirs(d)
 
-        # For now only "raw" contentType exists, and "line" contentFormat
+        # For now only "raw" contentType exists, and "line" 
+        # contentFormat
         f = open(d + self[self.DOC_ID], "w",
                  getDefaultEncoding())       
         for t in self.getTokens():
@@ -533,5 +548,5 @@ class document(dict):
         """
         Translate words using (for now) an en-de-bidix.
         """
-        # XXX: Nothing happens so far; efficient solution msut be found.
-        
+        # XXX: Nothing happens so far; efficient solution must be 
+        # found.

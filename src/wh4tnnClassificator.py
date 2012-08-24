@@ -52,7 +52,8 @@ def get_cluster_stems(stems, idf_dict):
     This function removes most frequent and all very rare stems (single
     occurrence), to improve clustering results.
     @param stems: List of stems to be filtered
-    @param idf_dict: Dictionary containing the idf values to filter after
+    @param idf_dict: Dictionary containing the idf values to filter
+                     after
     @return: List with out-filtered stems
     """ 
     max_val = max(idf_dict.itervalues()).as_integer_ratio()
@@ -62,9 +63,9 @@ def get_cluster_stems(stems, idf_dict):
 
 def write_tfidf_file(xmlCollection, nltkTextCollection):
     """
-    Writes a tf*idf matrix file with all tf*idf values for each document,
-    row by row. The columns represent the (alphabetically ordered) stems
-    available in the whole collection.
+    Writes a tf*idf matrix file with all tf*idf values for each 
+    document, row by row. The columns represent the (alphabetically
+    ordered) stems available in the whole collection.
     @param xmlCollection: Collection of XML documents, type collection
     @param nltkTextCollection: NLTK TextCollection of all the stems
     """
@@ -81,9 +82,9 @@ def write_tfidf_file(xmlCollection, nltkTextCollection):
     collection_stems = list(xmlCollection.getDocsStems(uniq=True))
     print "Length of collection, all stems:", len(collection_stems)
     
-    # Remove most frequent (idf<2) / stop stems (or qualifying as such), 
-    # and most rare stems (max(idf)), as they are of no help to 
-    # separate / make up clusters
+    # Remove most frequent (idf<2) / stop stems (or qualifying 
+    # as such), and most rare stems (max(idf)), as they are of no 
+    # help to separate / make up clusters
     collection_stems = get_cluster_stems(collection_stems, idf_dict)
     print "Length of collection, cluster stems:", len(collection_stems)
     
@@ -99,13 +100,14 @@ def write_tfidf_file(xmlCollection, nltkTextCollection):
             tf = col.tf(stem, doc_stems)
     
             # Reweight tf values, to get more classifcation words
-            # and compensate for the very different document sizes available
+            # and compensate for the very different document sizes 
+            # available
             # Idea: Accounts for average document length, but also for
-            # the number of times a word effictively occurs in a specific
-            # document; other variations can be thought of (using log) or
-            # maximal tf values
-            # Note: The clustering works better with (in general) smaller
-            # values
+            # the number of times a word effictively occurs in a 
+            # specific document; other variations can be thought of 
+            # (using log) or maximal tf values
+            # Note: The clustering works better with (in general)
+            # smaller values
             if tf > 0.0:
                 tf = 1.0 / avg_words_per_doc * tf
             # If nothing applies: tf is 0.0
@@ -175,10 +177,16 @@ def iterate(data, n_clusters, n_visual_dimensions, indices):
         #learn_data = data[0:item_index, :] #simulate a growing dataset
         learn_data = data
 
-        (W, W_subgroups) = learn_weights(learn_data, W, W_subgroups, n_clusters, learn_iterations, learning_rate, visual_learning_rate)
-        (x, y, cluster_mapping) = project_items(learn_data, W, W_subgroups, indices)
+        (W, W_subgroups) = learn_weights(learn_data, W, W_subgroups, 
+                                         n_clusters, learn_iterations, 
+                                         learning_rate, 
+                                         visual_learning_rate)
+        (x, y, cluster_mapping) = project_items(learn_data, W, 
+                                                W_subgroups, 
+                                                indices)
         #rescale "circle" visualization
-        visual_location = np.zeros((learn_data.shape[0], n_visual_dimensions))
+        visual_location = np.zeros((learn_data.shape[0], 
+                                    n_visual_dimensions))
         visual_location[:, 0] = 500 + 300 * x
         visual_location[:, 1] = 700 + 300 * y
         
@@ -186,7 +194,9 @@ def iterate(data, n_clusters, n_visual_dimensions, indices):
         #plot(range(len(singular_values)), np.sqrt(singular_values))
         fig.delaxes(subplot)
         subplot = fig.add_subplot(111)
-        scatter(np.array(np.real(visual_location[:, 0])), np.array(np.real(visual_location[:, 1])), c=colors[cluster_mapping, :])
+        scatter(np.array(np.real(visual_location[:, 0])), 
+                np.array(np.real(visual_location[:, 1])), 
+                c=colors[cluster_mapping, :])
         subplot.axis([0, 1200, 0, 1200])
         draw()
         canvas = gcf().canvas
@@ -209,10 +219,10 @@ def process_project(tfidf_file):
 def main():
     """ 
     This program is a start to do text classification upon the 
-    "Hebbian Principal Compontent Clustering" neuronal method, as proposed by 
-    Niederberger/Stoop/Christen/Ott in 2012.
-    For sample source code (available under the BSDL), look at the project
-    machine learning scripts, available at: 
+    "Hebbian Principal Compontent Clustering" neuronal method,
+    as proposed by  Niederberger/Stoop/Christen/Ott in 2012.
+    For sample source code (available under the BSDL), look at
+    the project machine learning scripts, available at: 
     https://github.com/IAS-ZHAW/machine_learning_scripts
     """
     printOwnInfo(__file__)
@@ -235,7 +245,8 @@ def main():
     # Do primary component analysis on all raw material & show it visually
     pca = Pca()
     d = getMailFolder(contentFormat="line")
-    for line_file in listdir(d)[:42]: # For now only a subset can be processed
+    # For now only a subset can be processed
+    for line_file in listdir(d)[:42]:
         pca.load_line(d + line_file)
     pca.show()
     """
