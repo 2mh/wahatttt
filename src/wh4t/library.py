@@ -5,11 +5,12 @@
 """
 from codecs import open
 from os.path import exists
-from re import sub
+from re import sub, match
 
 from xml.etree import cElementTree as ET
 
-from settings import getHashFile, getDefaultEncoding, get_de_en_bidix_file
+from settings import getHashFile, getDefaultEncoding, \
+                     get_de_en_bidix_file, get_synsets_file
 
 class dict_from_file(dict):
     """
@@ -86,6 +87,41 @@ class en_to_de_dict(dict):
             # in lower-case & normalized writing
             self[p_elem.find("r").text.lower()] = \
                 normalize_word(p_elem.find("l").text.lower())
+                
+class synsets(list):
+    """
+    This list holds synsets, i. e. words semantically grouped with each other.
+    """
+    def __init__(self):
+        list.__init__(self)
+        synsets_file = get_synsets_file()
+        f = open(synsets_file, "r", getDefaultEncoding())
+        lines = f.readlines()
+        f.close()
+        
+        for line in lines:
+            if line[0] == "#":
+                continue
+            synset = self._clean_synset(line.split(";"))
+            if len(synset) >= 2:
+                self.append(synset)
+            
+    def _clean_synset(self, synset):
+        """
+        Internal method which removes certain expressions from a synset.
+        @param: Synset (as list)
+        @return: A clean synset (as list)
+        """
+        clean_synset = list()
+        lang_levels = ["umgangssprachlich", "derb", "vulgär", 
+                       "fachsprachlich", "gehoben"]
+        for word in synset:
+            for lang_level in lang_levels:
+                word = sub(" \("+lang_level+"\)", "", word)
+            if match(".*[ \(\)].*", word) == None:
+                clean_synset.append(normalize_word(word.lower()))
+                
+        return clean_synset
            
 def normalize_word(word_to_normalize):
     """

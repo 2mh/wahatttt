@@ -7,13 +7,21 @@
 from wh4t.documents import collection
 from wh4t.settings import printLine
 from wh4t.nouns import nouns
-from wh4t.library import en_to_de_dict
+from wh4t.library import en_to_de_dict, synsets
 
+"""
 d = en_to_de_dict()
 for eng_w, deu_w in d.items():
     print eng_w, " -> ", deu_w
 print len(d)
+"""
 
+s = synsets()
+
+for synset in s:
+    print str(synset)
+
+print len(s)
 
 """
 # Program starts here
