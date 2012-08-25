@@ -15,8 +15,8 @@ from progressbar import ProgressBar
 
 from wh4t.documents import Collection
 from wh4t.nouns import Nouns
-from wh4t.settings import print_line
-from wh4t.settings import get_stems_file, get_def_enc
+from wh4t.settings import print_line, get_stems_file, get_def_enc, \
+                          print_own_info
 
 def main():
     """
@@ -24,6 +24,7 @@ def main():
     the documents upon the nouns employed.
     XXX: Work-in-progress
     """
+    print_own_info(__file__)
     
     """    
     xmldocs = Collection()

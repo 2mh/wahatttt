@@ -12,6 +12,9 @@ from re import sub
 # Default values
 ################
 
+# Version of the wahatttt system as a whole; as of 1.0 it'll be usable
+VERSION = "0.71"
+
 # Ensure everything's using one encoding only (here: UTF-8).
 DEFAULT_ENCODING = "UTF-8"
 
@@ -116,9 +119,6 @@ DE_EN_BIDIX_FILE = PROJ_RES_DIR + "apertium-de-en.de-en.dix"
 # This file contains synsets; it's from 
 SYNSETS_FILE = PROJ_RES_DIR + "openthesaurus.txt"
 
-# Version of the wahatttt system as a whole; as of 1.0 it'll be usable
-VERSION = "0.64"
-
 #################
 # General getters
 #################
@@ -130,6 +130,7 @@ def get_own_info(calling_file):
              number.
     """
     prog_name = sub(".py", "", basename(calling_file))
+    prog_name = sub("_", "", prog_name, 1)
     info_string = "wahatttt" + " v" + VERSION+" - " + sub("wh4t", 
                                                           "", 
                                                           prog_name)

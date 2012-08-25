@@ -13,7 +13,7 @@ import random
 import colorsys
 
 from nltk.text import TextCollection
-from progressbar import ProgressBar as progressbar
+from progressbar import ProgressBar
 from matplotlib.pyplot import figure, ion, title, scatter, draw, gcf, np
 
 # from kluster.pca import Pca # To be removed eventually
@@ -37,7 +37,7 @@ def get_nltk_text_collection(xmlcollection):
     print "Creating NLTK text collection ... "
     xmlcollection_list = xmlcollection.get_docs()
     
-    pb = progressbar(maxval=len(xmlcollection_list)).start()
+    pb = ProgressBar(maxval=len(xmlcollection_list)).start()
     cnt = 0
     for doc in xmlcollection_list:
         cnt += 1
@@ -131,7 +131,7 @@ def write_idf_file(xmlcollection, nltk_textcollection):
     print "Calculating idf values for all stems ..."
     all_stems = xmlcollection.get_stems(uniq=True)
     idfset = set()
-    pb = progressbar(maxval=len(all_stems)).start()
+    pb = ProgressBar(maxval=len(all_stems)).start()
     cnt = 0
     for word in all_stems:
         cnt += 1

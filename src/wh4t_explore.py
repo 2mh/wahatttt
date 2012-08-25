@@ -36,8 +36,6 @@ def main():
        
     print_own_info(__file__)
     
-    no_of_docs = 0
-    
     # Print total file size (=folder size) information of the 
     # input material
     xmldocs = Collection()
@@ -174,7 +172,7 @@ def main():
     print_line()
     
     # Print the 42 most frequent words -- Zipf's law turns true ;-)
-    print "Top 42 words: "
+    print "Top 42 words (most frequent): "
     for stem in xmldocs.get_freqdist().keys()[:42]: 
         print stem
     print_line()
