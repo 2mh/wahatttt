@@ -45,11 +45,11 @@ PROJ_BASE_DIR = abspath(join(curdir, pardir)) + sep
 # The project's (freely available linguistic) resources directory
 PROJ_RES_DIR = PROJ_BASE_DIR + "resources" + sep
 
-# A directory where words are hold, per document; file by file
+# Directories where words, nouns or stems are hold, per document and
+# file by file
 PROJ_WORDS_DIR = PROJ_BASE_DIR + "words_dir" + sep
-
-# A directory where nouns are hold, per document; file by file
 PROJ_NOUNS_DIR = PROJ_BASE_DIR + "nouns_dir" + sep
+PROJ_STEMS_DIR = PROJ_BASE_DIR + "stems_dir" + sep
 
 # XML file containing info about broken XML files, if any
 # (hopefully not).
@@ -188,6 +188,15 @@ def get_wordsdir(pos='_'):
         return PROJ_NOUNS_DIR
     # Default
     return PROJ_WORDS_DIR
+
+def get_stemsdir():
+    """
+    Return stems directory path
+    
+    @return: String with dir path
+    
+    """
+    return PROJ_STEMS_DIR
 
 def get_invalid_xml_filename(): 
     """

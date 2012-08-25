@@ -16,7 +16,7 @@ from hashlib import sha512
 
 from library import normalize_word, rreplace, clean_iterable, split_term, \
                     HashDict
-from settings import get_mailfolder, get_def_enc, get_wordsdir
+from settings import get_mailfolder, get_def_enc, get_wordsdir, get_stemsdir
 
 class document(dict):
     """
@@ -290,7 +290,7 @@ class document(dict):
         doc_id = self[self.DOC_ID]
         hashsums_dict = self[self.HASHSUMS]
         w, w_hash  = self.get_file(self.WORDS)
-        folder = self.get_folder_by_key(self.WORDS)      
+        folder = self._get_folder_by_key(self.WORDS)      
          
         if self[self.HASHSUMS] == 0 \
         or w_hash == None \
@@ -347,7 +347,7 @@ class document(dict):
             # XXX: May be possible to do faster.
             
             n, n_hash = self.get_file(self.NOUNS)
-            folder = self.get_folder_by_key(self.NOUNS)
+            folder = self._get_folder_by_key(self.NOUNS)
                 
             if n_hash is None \
             or ''.join(hashsums_dict.keys()).find(folder + doc_id) < 0 \
@@ -398,6 +398,7 @@ class document(dict):
                 else:
                     self[var].append(Stemmer("german").stem(word))
                     pass
+            self.write_file(self.STEMS)
         return self[var]
     
     """
@@ -437,7 +438,7 @@ class document(dict):
         sha512sum = None
         content = None
         
-        folder = self.get_folder_by_key(key)
+        folder = self._get_folder_by_key(key)
         try:
             f = open(folder + self[self.DOC_ID], "r", get_def_enc())
             content = f.readlines()
@@ -452,16 +453,22 @@ class document(dict):
         # Otherwise: Return a tuple
         return content, sha512sum
     
-    def get_folder_by_key(self, key):
+    def _get_folder_by_key(self, key):
         """
+        Internal method to return the right folder to store linguistic
+        material.
+        
         @param key: Key indicating which folder we want, e. g. "NOUNS"
-        @return: str being folder path, based on a key value passed
+        @return: str being folder path, based on the key value passed.
+        
         """
         folder = ""
         if key == self.WORDS:
             folder = get_wordsdir()
         elif key == self.NOUNS:
             folder = get_wordsdir(pos='n')
+        elif key == self.STEMS:
+            folder = get_stemsdir()
         # More folder variations to add
         return folder
     
@@ -488,7 +495,7 @@ class document(dict):
         @param hashsum: Defaults to True and is used to write an 
                         hashsum of the file to an hashfile.
         """
-        folder = self.get_folder_by_key(key)
+        folder = self._get_folder_by_key(key)
         
         doc_id = self[self.DOC_ID]
         doc_as_str = "\n".join(self[key]).encode(get_def_enc())
