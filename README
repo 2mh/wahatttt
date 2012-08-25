@@ -104,7 +104,7 @@ cd wahatttt/resources
 cd ../src/
 javac GrabFitug.java
 java GrabFitug
-./wh4tXmlChecker.py
+./wh4t_xml_checker.py
 ./wh4t_explore.py
 
 Neural clustering:
@@ -117,4 +117,4 @@ create_nouns_file.sh
 cd ../src/
 javac GrabFitug.java
 java GrabFitug
-./wh4tnnClassificator.py
+./wh4t_nn_classificator.py
