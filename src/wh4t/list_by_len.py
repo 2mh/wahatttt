@@ -8,15 +8,15 @@
 class ListByLen(list):
     """    
     It's used like the following:
-    import listByLen
-    regularList = list(["a","wuff","miau","yeah","koffer",
+    from list_by_len import ListByLen
+    regularlist = list(["a","wuff","miau","yeah","koffer",
                         "hamsterföderation","hamsterföderative"])
-    print regularList
+    print regularlist
     ['a', 'wuff', 'miau', 'yeah', 'koffer', 'hamsterf\xc3\xb6deration',
      'hamsterf\xc3\xb6derative']
 
-    newList = ListByLen(regularList)[1:4]
-    print newList
+    newlist = ListByLen(regularlist)[1:4]
+    print newlist
     ['a', 'wuff', 'miau', 'yeah']
     """    
     def __getitem__(self, length):
