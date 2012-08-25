@@ -4,19 +4,19 @@
 @author Hernani Marques <h2m@access.uzh.ch>, 2012
 """
 
-from wh4t.documents import collection
-from wh4t.settings import printLine
-from wh4t.nouns import nouns
-from wh4t.library import en_to_de_dict, synsets
+from wh4t.documents import Collection
+from wh4t.settings import print_line
+from wh4t.nouns import Nouns
+from wh4t.library import EnToDeDict, Synsets
 
 """
-d = en_to_de_dict()
+d = EnToDeDict()
 for eng_w, deu_w in d.items():
     print eng_w, " -> ", deu_w
 print len(d)
 """
 
-s = synsets()
+s = Synsets()
 
 for synset in s:
     print str(synset)
@@ -25,31 +25,31 @@ print len(s)
 
 """
 # Program starts here
-xmlDocuments = collection()
+xmldocuments = Collection()
 # Get a specific doc number for tests
-xmlDocument = xmlDocuments.getDoc(51)
+xmldocument = xmldocuments.get_doc(51)
 
 # Print raw content, tokens and then types (mixed- and lowercase)
-printLine()
+print_line()
 print "Print raw content: "
-print xmlDocument.getRawContent()
-printLine()
+print xmldocument.get_rawcontent()
+print_line()
 print "Print tokens: "
-print xmlDocument.getTokens()
-printLine()
+print xmldocument.get_tokens()
+print_line()
 print "Print types (mixed-case): "
-print xmlDocument.getTypes()
-printLine()
+print xmldocument.get_types()
+print_line()
 print "Print types (lower-case): "
-print xmlDocument.getTypes(lower=True)
-printLine()
+print xmldocument.get_types(lower=True)
+print_line()
 print "Print words: "
-print xmlDocument.getWords()
-printLine()
+print xmldocument.get_words()
+print_line()
 print "Print nouns: "
-print xmlDocument.getWords(pos='n', reference_nouns=nouns())
-printLine()
+print xmldocument.get_words(pos='n', ref_nouns=Nouns())
+print_line()
 print "Print stems: "
-print xmlDocument.getStems()
-printLine()
+print xmldocument.get_stems()
+print_line()
 """

@@ -17,70 +17,69 @@ from xml.sax.handler import ContentHandler
 from xml.sax import make_parser
 from xml.dom.minidom import Document as Doc
 
-from wh4t.settings import printOwnInfo, getDefaultEncoding, \
-                          getInvalidXmlFileName, getMailFolder
+from wh4t.settings import print_own_info, get_def_enc, \
+                          get_invalid_xml_filename, get_mailfolder
 
-printOwnInfo(__file__)
+print_own_info(__file__)
 
-def addInvalidDocs(fileName, excStr):
+def add_invalid_docs(filename, excStr):
     """
-    Add invalid documents by fileName and exception string to the above
+    Add invalid documents by filename and exception string to the above
     prepared file.
-    @param fileName: String of Filename of the invalid XML document 
+    @param filename: String of Filename of the invalid XML document 
                      found.
     @param excStr: Exception string that lead to an error, including
                    the position where the error was found.
     """
-    invalidDoc = invalidXmlDoc.createElement("invalidDocument")
-    invalidFileName = invalidXmlDoc.createTextNode(fileName)
-    errStr = sub(fileName + ":", "", excStr)
-    invalidDoc.setAttribute("error", errStr)
-    invalidDoc.appendChild(invalidFileName)
-    invalidColl.appendChild(invalidDoc)
-    invalidStat[sub("[0-9:]*\s", "", errStr)] += 1
+    invalid_doc = invalid_xmldoc.createElement("invalid_document")
+    invalid_doc_filename = invalid_xmldoc.createTextNode(filename)
+    errstring = sub(filename + ":", "", excStr)
+    invalid_doc.setAttribute("error", errstring)
+    invalid_doc.appendChild(invalid_doc_filename)
+    invalid_xmldocs.appendChild(invalid_doc)
+    invalidstat[sub("[0-9:]*\s", "", errstring)] += 1
 
-def parseFile(fileName):
+def parseFile(filename):
     """
     Parse XML document by filename
     """
     parser = make_parser()
     parser.setContentHandler(ContentHandler())
-    parser.parse(fileName)
+    parser.parse(filename)
 
 # Program starts here
 # Throughpass all documents in globally defined mail folder 
 # (=input XML docs)
 if len(argv) == 1:
-    argv.append(getMailFolder() + "*")
+    argv.append(get_mailfolder() + "*")
 for arg in argv[1:]:
-    for fileName in glob(arg):
+    for filename in glob(arg):
         # If works, document is well-formed
         try:
-            parseFile(fileName)
+            parseFile(filename)
         # If exception occurs, document is not well-formed; add to 
         # collection of invalid docs.
         except Exception, e:
-            addInvalidDocs(fileName, str(e))
-            print fileName
+            add_invalid_docs(filename, str(e))
+            print filename
             continue
         
 # Prepare XML file to write invalid input XML files of the
 # collection into.
-invalidXmlFileHandler = open(getInvalidXmlFileName(), "w",
-                             getDefaultEncoding())
-invalidXmlDoc = Doc()
-invalidColl = invalidXmlDoc.createElement("invalidCollection")
-invalidXmlDoc.appendChild(invalidColl)
-invalidStat = defaultdict(int)
+invalid_xml_filehandler = open(get_invalid_xml_filename(), "w", get_def_enc())
+invalid_xmldoc = Doc()
+invalid_xmldocs = invalid_xmldoc.createElement("invalid_xmldocsection")
+invalid_xmldoc.appendChild(invalid_xmldocs)
+invalidstat = defaultdict(int)
 
 # Check collection of invalid docs and effectively write XML
 # invalid file.
-for err, no in invalidStat.items():
+for err, no in invalidstat.items():
     print err + " : " + str(no)
-invalidXmlFileHandler.write(invalidXmlDoc.toprettyxml())
-invalidXmlFileHandler.close()
-if len(invalidStat.values()) == 0:
-    print "No XML errors found in " + getMailFolder()
+invalid_xml_filehandler.write(invalid_xmldoc.toprettyxml())
+invalid_xml_filehandler.close()
+if len(invalidstat.values()) == 0:
+    print "No XML errors found in " + get_mailfolder()
 else:
     print "XML file with detailed error info written to " \
-        + getInvalidXmlFileName()
+        + get_invalid_xml_filename()

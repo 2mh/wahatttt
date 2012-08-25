@@ -5,7 +5,7 @@
 @author Hernani Marques <h2m@access.uzh.ch>, 2012 (some adaptions)
 """
 
-class listByLen(list):
+class ListByLen(list):
     """    
     It's used like the following:
     import listByLen
@@ -15,7 +15,7 @@ class listByLen(list):
     ['a', 'wuff', 'miau', 'yeah', 'koffer', 'hamsterf\xc3\xb6deration',
      'hamsterf\xc3\xb6derative']
 
-    newList = listByLen(regularList)[1:4]
+    newList = ListByLen(regularList)[1:4]
     print newList
     ['a', 'wuff', 'miau', 'yeah']
     """    
@@ -23,7 +23,7 @@ class listByLen(list):
         """
         @return: [ i for i in self if len(i) == length]
         """ 
-        return listByLen( ( i for i in self if len(i) == length ) )
+        return ListByLen( ( i for i in self if len(i) == length ) )
         
     def __getslice__(self, start, end):
         """
@@ -31,7 +31,7 @@ class listByLen(list):
         @param end: End of subset of list we want.
         @return: List (subset) from a given start to the end.
         """   
-        a = listByLen()
+        a = ListByLen()
         for length in range(start, end + 1):
             a.extend(self[length])
         return a

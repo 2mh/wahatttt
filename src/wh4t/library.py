@@ -9,42 +9,42 @@ from re import sub, match
 
 from xml.etree import cElementTree as ET
 
-from settings import getHashFile, getDefaultEncoding, \
+from settings import get_hash_file, get_def_enc, \
                      get_de_en_bidix_file, get_synsets_file
 
-class dict_from_file(dict):
+class DictFromFile(dict):
     """
     This class represents a file as a dict, reading in all values 
     pairwise, on each line.
     """
     def __init__(self, filename):
         dict.__init__(self)
-        f = open(filename, "r", getDefaultEncoding())
+        f = open(filename, "r", get_def_enc())
         for line in f.readlines():
             pair = line.split()
             self[pair[0]] = float(pair[1])
         f.close()
         
-class hashFile(file):
+class HashFile(file):
     """
     This class is a file class, specifically representing an 
     hashsums file.
     It's used to encapsulate specifics about its name and existence.
     """
     def __init__(self, mode="r"):
-        hashFile = getHashFile()
+        hash_file = get_hash_file()
         
-        if not exists(hashFile):
+        if not exists(hash_file):
             print "Hash file doesn't exist."
-            print "Create: " + hashFile
+            print "Create: " + hash_file
             try:
-                open(hashFile, "w", getDefaultEncoding()).close()
+                open(hash_file, "w", get_def_enc()).close()
             except Exception, e:
                 print str(e)
         
-        file.__init__(self, hashFile, mode)
+        file.__init__(self, hash_file, mode)
    
-class hashDict(dict):
+class HashDict(dict):
     """
     This class is a dict class, used to handle the hash file above.
     Each entry in the hash file can be accessed through an object of
@@ -52,7 +52,7 @@ class hashDict(dict):
     """
     def __init__(self):
         dict.__init__(self)
-        f = hashFile()
+        f = HashFile()
         for line in f.readlines():
             pair = line.split()
             self[pair[0]] = pair[1]
@@ -62,12 +62,12 @@ class hashDict(dict):
         """
         This method saves the contents of this class to disk.
         """
-        f = hashFile(mode="w")
+        f = HashFile(mode="w")
         for pair in self.items():
             f.write(' '.join(map(str, pair)) + '\n')
         f.close()
         
-class en_to_de_dict(dict):
+class EnToDeDict(dict):
     """
     This dict provides a primitive dictionary from English to
     German words, w/o ambiguities (in turn w/o any special
@@ -89,7 +89,7 @@ class en_to_de_dict(dict):
             self[p_elem.find("r").text.lower()] = \
                 normalize_word(p_elem.find("l").text.lower())
                 
-class synsets(list):
+class Synsets(list):
     """
     This list holds synsets, i. e. words semantically grouped with
     each other.
@@ -97,7 +97,7 @@ class synsets(list):
     def __init__(self):
         list.__init__(self)
         synsets_file = get_synsets_file()
-        f = open(synsets_file, "r", getDefaultEncoding())
+        f = open(synsets_file, "r", get_def_enc())
         lines = f.readlines()
         f.close()
         
@@ -169,10 +169,10 @@ def rreplace(s, old, new, occurrence):
     li = s.rsplit(old, occurrence)
     return new.join(li)
 
-def clean_iterable(toClean):
+def clean_iterable(iter_to_clean):
     """
-    @param toClean: An iterable whose elements should be freed from 
+    @param iter_to_clean: An iterable whose elements should be freed from 
                     whitespaces.
     @return: Return iterable freed from whitespaces.
     """
-    return map(lambda s : s.strip(), toClean)
+    return map(lambda s : s.strip(), iter_to_clean)

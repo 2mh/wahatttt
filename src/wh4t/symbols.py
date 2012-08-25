@@ -6,10 +6,9 @@
 
 from codecs import open
 
-from settings import getMailBodySymbolsFile, getDefaultEncoding, \
-                     getMailBodyRawFile
+from settings import get_symbols_file, get_def_enc, get_raw_file
 
-class symbols(dict):
+class Symbols(dict):
     """
     This class stores all symbols available in the document collection,
     as keys. The corresponding values represent attributes, which these
@@ -27,50 +26,49 @@ class symbols(dict):
         At instantiation all available symbols get created.
         """
         dict.__init__(self)
-        self._createSymbolsDict()
+        self._create_symbols_dict()
 
-    def _createSymbolsDict(self):
+    def _create_symbols_dict(self):
         """
         Opens a file (for now) with all text available and stores its
         symbols as keys (for each of whom a determined attribute is stored
         as value). Meant as internal method.
         """     
-        f = open(getMailBodyRawFile(), "r", encoding=getDefaultEncoding())
+        f = open(get_raw_file(), "r", encoding=get_def_enc())
         
         # Get unique symbols first
-        symSet = set()
+        symset = set()
         for sym in f.read():
-            symSet.add(sym)
+            symset.add(sym)
             
         # For each symbol (key) determine an attribute to store in this
         # instance
-        for sym in symSet:
-            symObj = self._classifySymbol(sym) 
-            self.__setitem__(sym, symObj.get(sym))
+        for sym in symset:
+            symobj = self._classify_symbol(sym) 
+            self.__setitem__(sym, symobj.get(sym))
     
         f.close()
      
-    def writeSymbolsFile(self):
+    def write_symbols(self):
         """ 
         Writes a file with all the symbols (i. e. this class's keys)
         in order.
         """
-        f = open(getMailBodySymbolsFile(), "w", 
-                 encoding=getDefaultEncoding())
+        f = open(get_symbols_file(), "w", encoding=get_def_enc())
              
         for symbol in sorted(self.keys(), reverse=True):
             f.write(symbol)
             
         f.close()
              
-    def getNumberOfSymbols(self): 
+    def get_no_of_symbols(self): 
         """
         @return: The number of unique symbols (stored in this class)
                  available.
         """
         return len(self)
     
-    def _classifySymbol(self, symbol):
+    def _classify_symbol(self, symbol):
         """
         @return: For each symbol this (internal) method returns this
                  symbol as key together with its attribute (set) as
@@ -88,26 +86,26 @@ class symbols(dict):
         MONEY = "money" # E. g. "$" or "£"
         UNDEF = "undefined" # For everything lasting
         
-        symbolClass = set()
+        symbol_class = set()
         
         # Assign a symbol its symbolic class(es)
         if symbol.isalpha():
-            symbolClass.add(ALPHA)
+            symbol_class.add(ALPHA)
         if symbol.isdigit():
-            symbolClass.add(DIGIT)
+            symbol_class.add(DIGIT)
         if symbol in u"'\"`,.:»«-´;?![]()":
-            symbolClass.add(PUNCT)
+            symbol_class.add(PUNCT)
         if symbol in u"+-*/=:^{}[]()!><|·%":
-            symbolClass.add(MATH)
+            symbol_class.add(MATH)
         if symbol in u"#+-*=_/\\^[](){}:$!~><|@&%":
-            symbolClass.add(COMP)    
+            symbol_class.add(COMP)    
         if symbol in u" \t\n":
-            symbolClass.add(WHITE)
+            symbol_class.add(WHITE)
         if symbol in u"£$":
-            symbolClass.add(MONEY)
+            symbol_class.add(MONEY)
         if symbol in u"§©":
-            symbolClass.add(LAW)
-        if len(symbolClass) == 0:
-            symbolClass.add(UNDEF)
+            symbol_class.add(LAW)
+        if len(symbol_class) == 0:
+            symbol_class.add(UNDEF)
         
-        return {symbol:symbolClass}
+        return {symbol:symbol_class}

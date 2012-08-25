@@ -6,10 +6,10 @@
 
 from codecs import open
 
-from settings import getNounsFile, getDefaultEncoding
+from settings import get_nouns_file, get_def_enc
 from library import normalize_word
 
-class nouns(list):
+class Nouns(list):
     """
     This class holds a list of nouns for the German language, freely
     available from the Apertium RBMT project.
@@ -21,13 +21,13 @@ class nouns(list):
         """
         list.__init__(self)
         
-        f = open(getNounsFile(), "r" ,getDefaultEncoding())
+        f = open(get_nouns_file(), "r" ,get_def_enc())
         for noun in f.readlines():
             self.append(normalize_word(noun.strip()))
             
         f.close()
     
-    def getNouns(self):
+    def get_nouns(self):
         """
         @return: Returns all nouns stored.
         """

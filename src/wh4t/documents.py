@@ -8,23 +8,21 @@ from codecs import open
 from os import listdir
 from collections import defaultdict
 
-from nltk.probability import FreqDist as freqdist
+from nltk.probability import FreqDist
 from nltk.metrics import edit_distance
-from progressbar import ProgressBar as progressbar
+from progressbar import ProgressBar
 
 from document import document
-from listByLen import listByLen
-from settings import getMailFolder, getMailBodyTokensFile, \
-                     getDefaultEncoding, getMailBodyTypesFile, \
-                     getMailBodyRawFile, getMailBodyWordsFile, \
-                     getMailBodyStemsFile, \
-                     getMailBodyWordsByEditDistanceFile, \
-                     getMailBodyTopWordsFile, getDefaultNumberOfTopWords, \
-                     getDefaultSourceWordLenForEditDistancing, \
-                     getDefaultEditDistanceFilenameSuffix
-from nouns import nouns
+from listByLen import ListByLen
+from settings import get_mailfolder, get_tokens_file, get_def_enc, \
+                     get_types_file, get_raw_file, get_words_file, \
+                     get_stems_file, get_words_by_editdistance_file, \
+                     get_topwords_file, get_def_no_of_topwords, \
+                     get_def_len_for_editdistancing, \
+                     get_def_editdistance_filename_suffix
+from nouns import Nouns
 
-class collection(dict):
+class Collection(dict):
     """
     This class is to hold a collection of documents, which
     are of type document. This class is a dict in order to
@@ -40,19 +38,19 @@ class collection(dict):
     ############################################################
     
     DOC_LIST = "doc_list"
-    DOCS_TEXT = "docs_text"
-    DOCS_TOKENIZED = "docs_tokenized"
-    DOCS_TYPED = "docs_typed"
-    DOCS_TYPED_LOWERED = "docs_typed_lowered"
-    DOCS_WORDS = "docs_words"
-    DOCS_STEMMED = "docs_stemmed"
-    DOCS_STEMMED_UNIQ = "docs_stemmed_uniq"
-    DOCS_WORDS_BY_EDIT_DISTANCE = "docs_words_by_edit_distance"
-    DOCS_TOP_WORDS = "docs_top_words"
-    DOCS_TEXT_FREQ_DIST = "docs_text_freq_dist"    
-    DOCS_NOUNS = "docs_nouns"
-    DOCS_REF_NOUNS = "docs_ref_nouns" 
-    DOCS_NUMBER = "docs_number"
+    TEXT = "text"
+    TOKENS = "tokens"
+    TYPES = "types"
+    TYPES_LOWERED = "types_lowered"
+    WORDS = "words"
+    STEMS = "stems"
+    STEMS_UNIQ = "stems_uniq"
+    WORDS_BY_EDITDISTANCE = "words_by_edit_distance"
+    TOPWORDS = "topwords"
+    TEXT_FREQDIST = "text_freqdist"    
+    NOUNS = "nouns"
+    REF_NOUNS = "ref_nouns" 
+    DOCS_COUNT = "docs_count"
         
     def __init__(self):
         """
@@ -65,110 +63,110 @@ class collection(dict):
         self.__setitem__(self.DOC_LIST, list())
 
         # For holding the collection's raw text
-        self.__setitem__(self.DOCS_TEXT, str())
+        self.__setitem__(self.TEXT, str())
         
         # For holding all of the text tokenized by NLTK
-        self.__setitem__(self.DOCS_TOKENIZED, list())
+        self.__setitem__(self.TOKENS, list())
         
         # For holding the types of the collection
-        self.__setitem__(self.DOCS_TYPED, set())
+        self.__setitem__(self.TYPES, set())
         
         # For holding the lowered types of the collection
-        self.__setitem__(self.DOCS_TYPED_LOWERED, set())
+        self.__setitem__(self.TYPES_LOWERED, set())
         
         # For holding a list of all the words, i. e. the cleaned
         # tokens; the words are not necessarily unique 
-        self.__setitem__(self.DOCS_WORDS, list())
+        self.__setitem__(self.WORDS, list())
         
         # For holding a list of all the stems
-        self.__setitem__(self.DOCS_STEMMED, list())
+        self.__setitem__(self.STEMS, list())
         
         # # For holding a set of all the stems; unique values
-        self.__setitem__(self.DOCS_STEMMED_UNIQ, set())
+        self.__setitem__(self.STEMS_UNIQ, set())
         
         # For holding unique pairs of words being of some edit distance
-        self.__setitem__(self.DOCS_WORDS_BY_EDIT_DISTANCE, set())
+        self.__setitem__(self.WORDS_BY_EDITDISTANCE, set())
         
         # For holding a specified amount of most frequent words, along
         # with each frequency as absolute number.
-        self.__setitem__(self.DOCS_TOP_WORDS, defaultdict())
+        self.__setitem__(self.TOPWORDS, defaultdict())
         
         # To hold an object with the frequencies of all words
-        self.__setitem__(self.DOCS_TEXT_FREQ_DIST, None)
+        self.__setitem__(self.TEXT_FREQDIST, None)
         
         # To hold all nouns found, in a list (for frequency analysis)
-        self.__setitem__(self.DOCS_NOUNS, list())
+        self.__setitem__(self.NOUNS, list())
         
         # Initializes a nouns object (is a list) of reference nouns 
         # we use to find nouns in the collection
-        self.__setitem__(self.DOCS_REF_NOUNS, nouns())
+        self.__setitem__(self.REF_NOUNS, Nouns())
         
         # Read in all documents
         # XXX: This part may change in its behaviour soon
-        filesList = listdir(getMailFolder())
-        for xmlFileName in filesList:
-            xmlDocument = document(getMailFolder() + xmlFileName)
-            self[self.DOC_LIST].append(xmlDocument)
+        fileslist = listdir(get_mailfolder())
+        for xml_filename in fileslist:
+            xmldoc = document(get_mailfolder() + xml_filename)
+            self[self.DOC_LIST].append(xmldoc)
             
         # Store number of files found
-        self.__setitem__(self.DOCS_NUMBER, len(filesList))
+        self.__setitem__(self.DOCS_COUNT, len(fileslist))
         
-    def getDoc(self, pos): 
+    def get_doc(self, pos): 
         """
         @param pos: The position (int) of the document in the list.
         @return: A specific document (of type document)
         """
         return self[self.DOC_LIST][pos]
     
-    def getDocs(self): 
+    def get_docs(self): 
         """
         @return: List of all documents in this collection, sorted by
                  name (ASCII encoding order)
         """
-        return sorted(self[self.DOC_LIST], key=lambda doc: doc.getId())
+        return sorted(self[self.DOC_LIST], key=lambda doc: doc.get_id())
     
-    def getDocsFileSize(self):
+    def get_filesize(self):
         """
         @return: Size of all files (in bytes) of the collection, 
                  including all (meta) data
         """
-        folderTotalSize = 0
-        for doc in self.getDocs():
-            folderTotalSize += doc.getFileSize()
-        return folderTotalSize
+        dir_totsize = 0
+        for doc in self.get_docs():
+            dir_totsize += doc.get_filesize()
+        return dir_totsize
     
-    def getDocsRawSize(self):
+    def get_rawsize(self):
         """
         @return: Size of only the body content parts of the collection
         """
-        folderNetSize = 0
-        for doc in self.getDocs():
-            folderNetSize += doc.getRawLen()
-        return folderNetSize
+        dir_netsize = 0
+        for doc in self.get_docs():
+            dir_netsize += doc.get_rawlen()
+        return dir_netsize
     
-    def getDocsText(self):
+    def get_text(self):
         """
         @return: Return as a string all the documents' body content, in
                  the given raw form; do the retrieval only once
         """
-        if len(self[self.DOCS_TEXT]) == 0:
-            for doc in self.getDocs():
-                self[self.DOCS_TEXT] += doc.getRawContent()      
-        return self[self.DOCS_TEXT]
+        if len(self[self.TEXT]) == 0:
+            for doc in self.get_docs():
+                self[self.TEXT] += doc.get_rawcontent()      
+        return self[self.TEXT]
     
-    def getDocsTokens(self):
+    def get_tokens(self):
         """
         @return: A list of all tokens found in the collection and 
                  ordered as is. Ensure to get the tokens once only.
         """
-        if len(self[self.DOCS_TOKENIZED]) == 0:
-            for doc in self.getDocs():
-                for token in doc.getTokens():
-                    self[self.DOCS_TOKENIZED].append(token)
+        if len(self[self.TOKENS]) == 0:
+            for doc in self.get_docs():
+                for token in doc.get_tokens():
+                    self[self.TOKENS].append(token)
                     
-        return self[self.DOCS_TOKENIZED]
+        return self[self.TOKENS]
         
-    def getDocsTypes(self, lower=False):
+    def get_types(self, lower=False):
         """
         @param lower: If set to True returns lowered types, otherwise
                       mixed-case types are the result.
@@ -177,195 +175,195 @@ class collection(dict):
                  create set once, both mixed- lower-cased.
         """
         # It's enough to check mixed-types 
-        if len(self[self.DOCS_TYPED]) == 0:
-            for doc in self.getDocs():
-                for token in doc.getTypes(lower=False):
-                    self[self.DOCS_TYPED].add(token)
-                for token in doc.getTypes(lower=True):
-                    self[self.DOCS_TYPED_LOWERED].add(token)
+        if len(self[self.TYPES]) == 0:
+            for doc in self.get_docs():
+                for token in doc.get_types(lower=False):
+                    self[self.TYPES].add(token)
+                for token in doc.get_types(lower=True):
+                    self[self.TYPES_LOWERED].add(token)
         
         if (lower==False):
-            return self[self.DOCS_TYPED]
+            return self[self.TYPES]
         # If lower==True
-        return self[self.DOCS_TYPED_LOWERED]
+        return self[self.TYPES_LOWERED]
         
-    def getDocsWords(self, pos='_'):
+    def get_words(self, pos='_'):
         """
         Return all words, or a subset of them (for now: nouns).
         @param pos: Can be '_' (all words) or 'n' (nouns only).
         @return: Return words (look up document.py for more info how 
                  that comes). Do that once only.
         """
-        if len(self[self.DOCS_WORDS]) == 0:
-            for doc in self.getDocs():
-                for word in doc.getWords():
-                    self[self.DOCS_WORDS].append(word)
+        if len(self[self.WORDS]) == 0:
+            for doc in self.get_docs():
+                for word in doc.get_words():
+                    self[self.WORDS].append(word)
         
         # When nouns are required; XXX: (still) somewhat slow
         if (pos == 'n'):
-            if len(self[self.DOCS_NOUNS]) == 0:
+            if len(self[self.NOUNS]) == 0:
                 cnt = 0
-                pb = progressbar(maxval=self[self.DOCS_NUMBER]).start()
-                for doc in self.getDocs():
+                pb = ProgressBar(maxval=self[self.DOCS_COUNT]).start()
+                for doc in self.get_docs():
                     cnt += 1; pb.update(cnt)
-                    for noun in doc.getWords(pos='n',
-                                reference_nouns=self[self.DOCS_REF_NOUNS]):
-                        self[self.DOCS_NOUNS].append(noun)
+                    for noun in doc.get_words(pos='n',
+                                ref_nouns=self[self.REF_NOUNS]):
+                        self[self.NOUNS].append(noun)
                 pb.finish()
                 
                 """ Alternative code to find the nouns over all
                     all the words, instead of a per-document basis.
                 
-                nouns_candidates = [nc for nc in self[self.DOCS_WORDS] \
+                nouns_candidates = [nc for nc in self[self.WORDS] \
                             if not match("^[^a-zäöü]", nc) == None]
                 for word in nouns_candidates:
                     cnt += 1
                     print str(cnt) + " of " + \
                         str(len(nouns_candidates))
-                    if word in self[self.DOCS_REF_NOUNS]:
-                        self[self.DOCS_NOUNS].append(word)
+                    if word in self[self.REF_NOUNS]:
+                        self[self.NOUNS].append(word)
                 """
-            return self[self.DOCS_NOUNS]
+            return self[self.NOUNS]
         
         # If pos is "_"
-        return self[self.DOCS_WORDS]
+        return self[self.WORDS]
         
-    def getDocsStems(self, uniq=False):
+    def get_stems(self, uniq=False):
         """
         @param uniq: Defaults to False and indicates we want 
                      not-uniqe stems. Otherwise True can be used.
         @return: Set of all stems found in the documents.
         """
-        var = self.DOCS_STEMMED
+        var = self.STEMS
         if uniq == True:
-            var = self.DOCS_STEMMED_UNIQ
+            var = self.STEMS_UNIQ
         
         if len(self[var]) == 0:
-            for doc in self.getDocs(): 
-                for stem in doc.getStems():
+            for doc in self.get_docs(): 
+                for stem in doc.get_stems():
                     if uniq == True:
                         self[var].add(stem)
                     else:
                         self[var].append(stem)
             """
             Like this it was much more efficient (less method calls):    
-            for word in self.getDocsWords():
-                self[self.DOCS_STEMMED].add(germanStemmer().stem(word))
+            for word in self.get_words():
+                self[self.STEMS].add(germanStemmer().stem(word))
             """
         return self[var]
            
-    def docsTextFreqDist(self):
+    def get_freqdist(self):
         """
         @return: FreqDist object (of NLTK) allowing to get frequencies
         """
-        if self[self.DOCS_TEXT_FREQ_DIST] == None:
-            self[self.DOCS_TEXT_FREQ_DIST] = freqdist(self.getDocsWords())
+        if self[self.TEXT_FREQDIST] == None:
+            self[self.TEXT_FREQDIST] = FreqDist(self.get_words())
             
-        return self[self.DOCS_TEXT_FREQ_DIST]
+        return self[self.TEXT_FREQDIST]
     
-    def getDocsTopWords(self, numberOfWords=getDefaultNumberOfTopWords()):
+    def get_topwords(self, no_of_words=get_def_no_of_topwords()):
         """
-        @param numberOfWords: int indicating how many top words  (by
+        @param no_of_words: int indicating how many top words  (by
                               frequency) we want to gather; optional
         @return: Dictionary of top words along with its frequencies
         """
-        if len(self[self.DOCS_TOP_WORDS]) == 0:
-            self[self.DOCS_TOP_WORDS] = \
-                self.docsTextFreqDist().items()[:numberOfWords]
-        return self[self.DOCS_TOP_WORDS]
+        if len(self[self.TOPWORDS]) == 0:
+            self[self.TOPWORDS] = \
+                self.get_freqdist().items()[:no_of_words]
+        return self[self.TOPWORDS]
     
-    def getWordsByEditDistance(self, editDistance,
-        wordLen=getDefaultSourceWordLenForEditDistancing(),
-        numberOfMostFreq=getDefaultNumberOfTopWords):
+    def get_words_by_editdistance(self, editdistance,
+        wordlen=get_def_len_for_editdistancing(),
+        no_of_most_freq=get_def_no_of_topwords()):
         """
-        @param editDistance: int indicating for which edit distance 
+        @param editdistance: int indicating for which edit distance 
                              words should be checked
-        @param wordLen: int indicating of which length source words
+        @param wordlen: int indicating of which length source words
                         to be checked against (all) other words 
                         should be; optional
-        @param numberOfMostFreq: The (int) number of how many top words
+        @param no_of_most_freq: The (int) number of how many top words
                                  by frequency should be retrieved; 
                                  optional
         @return: A set with all pairs of words distanced by a certain
                  amount of edits (in some subset by the above 
                  parameters); this set is created once.
         """
-        if len(self[self.DOCS_WORDS_BY_EDIT_DISTANCE]) == 0:
+        if len(self[self.WORDS_BY_EDITDISTANCE]) == 0:
             
-            wordsList = self.docsTextFreqDist().keys()[:numberOfMostFreq]
-            referenceWordsList = self.getDocsTypes()
+            words_list = self.get_freqdist().keys()[:no_of_most_freq]
+            ref_words_list = self.get_types()
             
-            if not wordLen == 0:
-                wordsList = listByLen(wordsList)[wordLen:wordLen]
+            if not wordlen == 0:
+                words_list = ListByLen(words_list)[wordlen:wordlen]
             
-            wordsListLen = len(wordsList)
-            print "Length of words list: " + str(wordsListLen)
+            words_listlen = len(words_list)
+            print "Length of words list: " + str(words_listlen)
             cnt = 0
-            for word1 in wordsList:
-                lenWord1 = len(word1)
-                startLen = lenWord1 - editDistance
-                endLen = lenWord1 + editDistance
-                referenceWordsList = \
-                    listByLen(referenceWordsList)[startLen:endLen]
-                referenceWordsListLen = len(referenceWordsList)
+            for word1 in words_list:
+                len_word1 = len(word1)
+                start_len = len_word1 - editdistance
+                end_len = len_word1 + editdistance
+                ref_words_list = \
+                    ListByLen(ref_words_list)[start_len:end_len]
+                ref_word_listlen = len(ref_words_list)
                 print "Length of reference words list: " + \
-                    str(referenceWordsListLen)
+                    str(ref_word_listlen)
                 cnt += 1
-                print "Progress: " + str(float(cnt) / wordsListLen * 100 ) \
-                 + " %"
-                for word2 in referenceWordsList:
-                    if edit_distance(word1, word2) == editDistance:
-                        self[self.DOCS_WORDS_BY_EDIT_DISTANCE].add((word1,
+                print "Progress: " + str(float(cnt) /
+                                         words_listlen * 100 ) + " %"
+                for word2 in ref_words_list:
+                    if edit_distance(word1, word2) == editdistance:
+                        self[self.WORDS_BY_EDITDISTANCE].add((word1,
                                                                     word2))
                 print "Number of forms found, up to now: " + \
-                    str(len(self[self.DOCS_WORDS_BY_EDIT_DISTANCE]))         
+                    str(len(self[self.WORDS_BY_EDITDISTANCE]))         
                     
-        return self[self.DOCS_WORDS_BY_EDIT_DISTANCE]
+        return self[self.WORDS_BY_EDITDISTANCE]
     
     #######################################################
     # Writer methods, i. e. methods to write files to disk.
     #######################################################
     
-    def writeDocsRawFile(self):
+    def _write_raw(self):
         """
         Write raw text of <content> (of all mails) into a file, in the
-        (alphabetical) order the files appear listed.
+        (alphabetical) order the files appear listed. Used internally.
         """
-        f = open(getMailBodyRawFile(), "w", encoding=getDefaultEncoding())
-        f.write(self.getDocsText())
+        f = open(get_raw_file(), "w", encoding=get_def_enc())
+        f.write(self.get_text())
         f.close()
         
-    def writeRawText(self, in_one_file=False):
+    def write_raw_text(self, in_one_file=False):
         """
         Write documents on a per-file basis in its raw content, or 
         write this content collectively in one file alone.
-        XXX: Later replace writeDocsRawFile() method above.
+        XXX: Later replace write_raw() method above.
         @param in_one_file: If set to True writes all content in
                             one file
                             only, otherwise write every document in
                             its own file. Defaults to latter behaviour.
         """
         if in_one_file == True:
-            self.writeDocsRawFile()
+            self._write_raw()
         else:
             print "Write documents' raw content units line by line ..."
-            for doc in self.getDocs():
-                doc.writeContent()
+            for doc in self.get_docs():
+                doc.write_content()
             print "... all " \
-                + str(len(listdir(getMailFolder(contentFormat="line")))) \
+                + str(len(listdir(get_mailfolder(content_format="line")))) \
                 + " documents written."
     
-    def writeDocsTokenFile(self):
+    def write_tokens(self):
         """
         Write all files' tokens into a file, as list, in the 
         appearing order.
         """
-        f = open(getMailBodyTokensFile(), "w", encoding=getDefaultEncoding())
-        for token in self.getDocsTokens():
+        f = open(get_tokens_file(), "w", encoding=get_def_enc())
+        for token in self.get_tokens():
             f.write(token + "\n")
         f.close()
     
-    def writeDocsTypesFile(self, lower=False):
+    def write_types(self, lower=False):
         """
         Write all files' types (=unique tokens) into a file, line by 
         line.
@@ -373,50 +371,47 @@ class collection(dict):
                       When set to True the types will all be printed
                       lower case, usually resulting in a smaller list.
         """
-        f = open(getMailBodyTypesFile(lower), "w",
-                 encoding=getDefaultEncoding())
-        for t in self.getDocsTypes(lower):
+        f = open(get_types_file(lower), "w", encoding=get_def_enc())
+        for t in self.get_types(lower):
             f.write(t + "\n")
         f.close()
     
-    def writeDocsWordsFile(self, pos='_'):
+    def write_words(self, pos='_'):
         """
         Write all words of all files into a file, one word per line, in
         the given order. Can also write only a subset of words.
         @param pos: Writes all words for value '_', and nouns for value
                     'n'.
         """
-        f = open(getMailBodyWordsFile(pos=pos), "w", 
-                 encoding=getDefaultEncoding())      
-        for token in self.getDocsWords(pos=pos):
+        f = open(get_words_file(pos=pos), "w", encoding=get_def_enc())      
+        for token in self.get_words(pos=pos):
             f.write(token + "\n")
         f.close()
     
-    def writeStemsFile(self):
+    def write_stems(self):
         """
         Write all (unique) stems into a file; one per line.
         """
-        f = open(getMailBodyStemsFile(), "w", encoding=getDefaultEncoding())
-        for stem in self.getDocsStems():
+        f = open(get_stems_file(), "w", encoding=get_def_enc())
+        for stem in self.get_stems():
             f.write(stem + "\n")
         f.close()
         
-    def writeDocsTopWordsFile(self,
-                              numberOfWords=getDefaultNumberOfTopWords()):
+    def write_topwords(self, no_of_words=get_def_no_of_topwords()):
         """
         Write the most frequent words into a file, ordered by
         descending frequency and with indication (seperated by three
         tabulators) of the absolute frequency number (in all documents
         of the collection).
         """
-        fileName = getMailBodyTopWordsFile()
-        f = open(fileName, "w", getDefaultEncoding())
-        for word, freq in self.getDocsTopWords(numberOfWords=numberOfWords):
+        filename = get_topwords_file()
+        f = open(filename, "w", get_def_enc())
+        for word, freq in self.get_topwords(no_of_words=no_of_words):
             f.write(word + "\t\t\t" + str(freq) + "\n")
         f.close()
    
-    def writeWordsByEditDistanceFile(self,
-        editDistance=getDefaultEditDistanceFilenameSuffix):
+    def write_words_by_editdistance(self,
+        editdistance=get_def_editdistance_filename_suffix):
         """
         This method writes a file with sets of words distanced by a
         certain amount of edits, eventually adding a special suffix
@@ -425,10 +420,9 @@ class collection(dict):
                 be appended to the default filename, this can be
                 specified here as value of type str.
         """
-        fileName = \
-            getMailBodyWordsByEditDistanceFile(editDistance=editDistance)
-        f = open(fileName, "w", getDefaultEncoding())
-        for word1, word2 in self[self.DOCS_WORDS_BY_EDIT_DISTANCE]:
+        filename = get_words_by_editdistance_file(editdistance=editdistance)
+        f = open(filename, "w", get_def_enc())
+        for word1, word2 in self[self.WORDS_BY_EDITDISTANCE]:
             f.write(word1 + "\t" + word2 + "\n")
         f.close()
-        print "File " + fileName + " written to disk."
+        print "File " + filename + " written to disk."

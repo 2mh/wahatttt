@@ -11,13 +11,13 @@ from re import match
 from codecs import open
 
 from xml.etree import cElementTree as ET
-from nltk import PunktWordTokenizer as tokenizer
-from nltk.stem.snowball import GermanStemmer as germanStemmer
+from nltk import PunktWordTokenizer as Tokenizer
+from nltk.stem.snowball import GermanStemmer as Stemmer
 from hashlib import sha512
 
-from library import normalize_word, rreplace, hashDict, clean_iterable, \
-                    split_term, en_to_de_dict
-from settings import getMailFolder, getDefaultEncoding, getWordsFolder
+from library import normalize_word, rreplace, clean_iterable, split_term, \
+                    HashDict
+from settings import get_mailfolder, get_def_enc, get_wordsdir
 
 class document(dict):
     """
@@ -69,7 +69,7 @@ class document(dict):
     WORDS_BY_EDIT_DISTANCE = "words_by_edit_distance"
     TOP_WORDS = "top_words"
     TEXT_FREQ_DIST = "text_freq_dist"
-    HASH_SUMS = "hashsums"
+    HASHSUMS = "hashsums"
     
     ###################################################################
     # Other key names, for now for storing the xml filename, and a
@@ -83,70 +83,70 @@ class document(dict):
     # The object gets instantiated here
     ###################################
     
-    def __init__(self, xmlFilePath):
+    def __init__(self, xml_filepath):
         """
-        @param xmlFilePath: The path to the xml file we want to parse
+        @param xml_filepath: The path to the xml file we want to parse
         Upon initialization all the tags and (important) attributes are
         read and stored in the object's itself (is a dict).
         """
         dict.__init__(self)
         
-        self[self.XML_FILEPATH] = xmlFilePath
-        xmlFileHandler = ET.parse(xmlFilePath)
+        self[self.XML_FILEPATH] = xml_filepath
+        xml_file_handler = ET.parse(xml_filepath)
         
         # A document id, based on the (unique) file name
         self[self.DOC_ID] = rreplace(basename(self[self.XML_FILEPATH]),
                             ".xml", "", 1)
         
-        # Populate self[self.HASH_SUMS] with hashsums
-        self.loadHashsums()
+        # Populate self[self.HASHSUMS] with hashsums
+        self._load_hashsums()
         
         ################################################
         # Initialize items with material directly parsed
         #################################################
         
         # Get <mail> node
-        xmlMailElem = xmlFileHandler.find(self.MAIL_TAG)
+        xml_mail_elem = xml_file_handler.find(self.MAIL_TAG)
         
         # Store id attribute of <mail>
-        self[self.MAIL_TAG] = xmlMailElem.get(self.MAIL_TAG_ID_ATTR)
+        self[self.MAIL_TAG] = xml_mail_elem.get(self.MAIL_TAG_ID_ATTR)
    
         # Store text of <url> tag
-        self[self.URL_TAG] = xmlMailElem.find(self.URL_TAG).text    
+        self[self.URL_TAG] = xml_mail_elem.find(self.URL_TAG).text    
          
         # Store text of <subj> tag
-        self[self.SUBJ_TAG] = xmlMailElem.find(self.SUBJ_TAG).text
+        self[self.SUBJ_TAG] = xml_mail_elem.find(self.SUBJ_TAG).text
         
         # Store text of <author> tag
-        self[self.AUTHOR_TAG] = xmlMailElem.find(self.AUTHOR_TAG).text
+        self[self.AUTHOR_TAG] = xml_mail_elem.find(self.AUTHOR_TAG).text
         
         # Store text of <email> tag
-        self[self.EMAIL_TAG] = xmlMailElem.find(self.EMAIL_TAG).text
+        self[self.EMAIL_TAG] = xml_mail_elem.find(self.EMAIL_TAG).text
         
         # Store text of <date> tag
-        self[self.DATE_TAG] = xmlMailElem.find(self.DATE_TAG).text     
+        self[self.DATE_TAG] = xml_mail_elem.find(self.DATE_TAG).text     
         
         # Get id from mail in <inReplyTo> tag, but:
         # - Not all mails have its parent: <references>
         # - However, thus who do have, do have -- ATM -- one reference 
         #   only.
-        xmlRefElem = xmlMailElem.find(self.REF_TAG)
+        xml_ref_elem = xml_mail_elem.find(self.REF_TAG)
         
         # Check for existence of <references>
         # At the end: Store id attribute of <inReplyToTag> in object 
         # itself, if the <references> tag does, in fact, exit.
-        if (xmlRefElem) == None:
+        if xml_ref_elem is None:
             self[self.IN_REPLY_TO_TAG] = None
         else:
-            xmlInReplyToElem = \
-            xmlMailElem.find(self.REF_TAG).find(self.IN_REPLY_TO_TAG)
+            xml_in_reply_to_elem = \
+            xml_mail_elem.find(self.REF_TAG).find(self.IN_REPLY_TO_TAG)
         
             self[self.IN_REPLY_TO_TAG] = \
-            xmlInReplyToElem.get(self.IN_REPLY_TO_TAG_ID_ATTR)
+            xml_in_reply_to_elem.get(self.IN_REPLY_TO_TAG_ID_ATTR)
         
         # Store text of <content> tag (=mail body) 
         self[self.CONTENT_TAG] = \
-            xmlFileHandler.find(self.CONTENT_TAG).text
+            xml_file_handler.find(self.CONTENT_TAG).text
             
         ###############################################################
         # Initialize items for later use, like tokens, words lists/sets
@@ -185,46 +185,46 @@ class document(dict):
     # Getters for the values stored in an instance of this class
     ############################################################
     
-    def getId(self): 
+    def get_id(self): 
         """
         @return: String with mail id
         """
         return self[self.MAIL_TAG]
     
-    def getUrl(self): 
+    def get_url(self): 
         """
         @return: String with url pointing to the web,
                  where the original mail (in HTML) can be found
         """
         return self[self.URL_TAG]
     
-    def getSubj(self): 
+    def get_subj(self): 
         """
         @return: String with mail subject
         """
         return self[self.SUBJ_TAG]
     
-    def getAuthor(self): 
+    def get_author(self): 
         """
         @return: String with sender's name
         """
         return self[self.AUTHOR_TAG]
     
-    def getEmail(self): 
+    def get_email(self): 
         """
         @return: String with the e-mail address;
                  it may contain the name again
         """
         return self[self.EMAIL_TAG]
         
-    def getDate(self): 
+    def get_date(self): 
         """
         @return: String with the date in a standardized
                  notation
         """
         return self[self.DATE_TAG]
     
-    def getInReplyToId(self): 
+    def get_in_reply_to_id(self): 
         """
         @return: String with mail id of the message this document
                  is referring to; caution: may be None, e. g. if
@@ -233,48 +233,48 @@ class document(dict):
         """
         return self[self.IN_REPLY_TO_TAG] 
     
-    def getRawContent(self): 
+    def get_rawcontent(self): 
         """
         @return: String with the raw content -- as originally found
                  in <content>
         """
         return self[self.CONTENT_TAG]
     
-    def getXmlFileName(self): 
+    def get_xml_filename(self): 
         """
         @return: The full absolute path to the XML file represented
                  in this object.
         """
         return self[self.XML_FILEPATH]
     
-    def getTokens(self):
+    def get_tokens(self):
         """
         @return: A list of all tokens found in the document; done by 
                  NLTK.
         """
         if len(self[self.TOKENS]) == 0:
-            self[self.TOKENS] = tokenizer().tokenize(self.getRawContent())
+            self[self.TOKENS] = Tokenizer().tokenize(self.get_rawcontent())
         return self[self.TOKENS]
     
-    def getTypes(self, lower=False):
+    def get_types(self, lower=False):
         """
         @param lower: To be set to True to get only lower case types.
         @return: A set of all types (=unique tokens) found in the
                  document; create this set one time only.
         """
         if len(self[self.TYPES]) == 0:
-            self[self.TYPES] = set(self.getTokens())
+            self[self.TYPES] = set(self.get_tokens())
         if(lower == False):
             return self[self.TYPES]
         # Lower case list and return set
         return set(map(lambda x:x.lower(), self[self.TYPES]))
     
-    def getWords(self, pos='_', reference_nouns=None, trans=False):
+    def get_words(self, pos='_', ref_nouns=None, trans=False):
         """
         @param pos: It's possible to say which words we want. ATM 
                     only '_' (all words; that's the default) or 'n' 
                     (nouns) are supported.
-        @param reference_nouns: Optional parameter (together with pos) 
+        @param ref_nouns: Optional parameter (together with pos) 
                                 to indicate which reference nouns 
                                 (object nouns) to use.
         @param trans: Translate foreign-language words
@@ -289,32 +289,32 @@ class document(dict):
              hacks.
         """
         doc_id = self[self.DOC_ID]
-        hashsums_dict = self[self.HASH_SUMS]
-        w, w_hash  = self.getFile(self.WORDS)
-        folder = self.getFolderByKey(self.WORDS)      
+        hashsums_dict = self[self.HASHSUMS]
+        w, w_hash  = self.get_file(self.WORDS)
+        folder = self.get_folder_by_key(self.WORDS)      
          
-        if self[self.HASH_SUMS] == 0 \
+        if self[self.HASHSUMS] == 0 \
         or w_hash == None \
         or ''.join(hashsums_dict.keys()).find(folder + doc_id) < 0 \
         or not \
             w_hash == hashsums_dict[folder + doc_id]:
             
-            nonWordSymbol = "0123456789<>=/"
-            toAdd = True
+            non_word_symbol = "0123456789<>=/"
+            istoadd = True
             
             if len(self[self.WORDS]) == 0:  
-                for t in self.getTokens():
-                    for s in nonWordSymbol:
+                for t in self.get_tokens():
+                    for s in non_word_symbol:
                         if s in t:
-                            toAdd = False
+                            istoadd = False
                             break
-                    if not match("[a-z]+\.[a-z]+", t) == None \
-                    or not match("[ \*_\]\^\\\\!$\"\'%` ]+.*", t) == None \
-                    or not match("[ &*\(\)+\#,-.:;?+\\@\[ ]+.*", t) == None \
-                    or not match("[a-z]{1}-", t) == None \
+                    if match("[a-z]+\.[a-z]+", t) is not None \
+                    or match("[ \*_\]\^\\\\!$\"\'%` ]+.*", t) is not None \
+                    or match("[ &*\(\)+\#,-.:;?+\\@\[ ]+.*", t) is not None \
+                    or match("[a-z]{1}-", t) is not None \
                     or t.find("--") >= 0 or t.find("..") >= 0:
-                        toAdd = False             
-                    if (toAdd == True):
+                        istoadd = False             
+                    if (istoadd == True):
                         # Normalize words; remove noise
                         t = normalize_word(t)
                         # Extract words from compounds; add them to list
@@ -329,41 +329,41 @@ class document(dict):
                             # As above
                             if len(t) > 1:
                                 self[self.WORDS].append(t)
-                    else: # toAdd is False
-                        toAdd = True
-                self.writeFile(self.WORDS)
+                    else: # istoadd is False
+                        istoadd = True
+                self.write_file(self.WORDS)
         else:
             self[self.WORDS] = clean_iterable(w)
         
         # By the very first run of the system a void hashsums file gets 
         # initialized.
         # After the above code, hashsums were created => let's reflect them.
-        if len(self[self.HASH_SUMS]) == 0: self.loadHashsums()
+        if len(self[self.HASHSUMS]) == 0: self._load_hashsums()
             
         # Return only nouns; do it once only
-        if pos == 'n' and not reference_nouns == None:
+        if pos == 'n' and ref_nouns is not None:
             # Approach by comparing against a nouns' list
             # and by considering words as nouns which start with
             # two upper case letters (being with high probability NEs).
             # XXX: May be possible to do faster.
             
-            n, n_hash = self.getFile(self.NOUNS)
-            folder = self.getFolderByKey(self.NOUNS)
+            n, n_hash = self.get_file(self.NOUNS)
+            folder = self.get_folder_by_key(self.NOUNS)
                 
-            if n_hash == None \
+            if n_hash is None \
             or ''.join(hashsums_dict.keys()).find(folder + doc_id) < 0 \
             or not n_hash == \
                 hashsums_dict[folder + doc_id]:
                 
                 if len(self[self.NOUNS]) == 0:
                     noun_candidates = [nc for nc in self[self.WORDS] 
-                                       if not 
-                                           match("^[^a-zäöü]", nc) == None]
+                                       if match("^[^a-zäöü]", nc) 
+                                       is not None]
                     for word in noun_candidates:
-                        if word in reference_nouns \
-                        or not match("^[A-Z]{2,}", word) == None:
+                        if word in ref_nouns \
+                        or match("^[A-Z]{2,}", word) is not None:
                             self[self.NOUNS].append(word.strip())
-                    self.writeFile(self.NOUNS)
+                    self.write_file(self.NOUNS)
             else:
                 self[self.NOUNS] = clean_iterable(n)
                 
@@ -372,11 +372,11 @@ class document(dict):
         # In case param pos is '_' (all words)        
         
         if trans == True:
-            self.translate_words() # XXX: Does nothing so far.
+            self._translate_words() # XXX: Does nothing so far.
         
         return self[self.WORDS]
 
-    def getStems(self, uniq=False, trans=False):
+    def get_stems(self, uniq=False, trans=False):
         """
         @param uniq: Defaults to False, i. e. returns not-unique stems.
                      Can be changed by providing True. Optional 
@@ -390,14 +390,14 @@ class document(dict):
             var = self.STEMS_UNIQ
         
         if len(self[var]) == 0:
-            for word in self.getWords(trans=trans):
+            for word in self.get_words(trans=trans):
                 # Below argument "german" for compatibility reasons 
                 # w/ older versions of NTLK
                 if uniq == True:
-                    self[var].add(germanStemmer("german").stem(word))
+                    self[var].add(Stemmer("german").stem(word))
                     pass
                 else:
-                    self[var].append(germanStemmer("german").stem(word))
+                    self[var].append(Stemmer("german").stem(word))
                     pass
         return self[var]
     
@@ -411,20 +411,20 @@ class document(dict):
     # Other getters, not relying on data in an instance of this class
     ###################################################################
     
-    def getFileSize(self):
+    def get_filesize(self):
         """
         @return: Return integer with file size of the xml document
         """
-        return getsize(self.getXmlFileName())
+        return getsize(self.get_xml_filename())
     
-    def getRawLen(self): 
+    def get_rawlen(self): 
         """
         @return: Returns raw content as string, which originally 
                  was found in <content> node
         """
-        return len(self.getRawContent())
+        return len(self.get_rawcontent())
     
-    def getFile(self, key, hashsum=True):
+    def get_file(self, key, hashsum=True):
         """
         @param key: Specifies which data to look at, e. g. "NOUNS" 
                    (str).
@@ -435,15 +435,15 @@ class document(dict):
                  specified by param key. If no file available returns 
                  None values.
         """
-        sha512_sum = None
+        sha512sum = None
         content = None
         
-        folder = self.getFolderByKey(key)
+        folder = self.get_folder_by_key(key)
         try:
-            f = open(folder + self[self.DOC_ID], "r", getDefaultEncoding())
+            f = open(folder + self[self.DOC_ID], "r", get_def_enc())
             content = f.readlines()
-            sha512_sum = sha512("".join(content). \
-                                encode(getDefaultEncoding())).hexdigest()
+            sha512sum = sha512("".join(content). \
+                                encode(get_def_enc())).hexdigest()
             f.close()
         except IOError:
             pass
@@ -451,18 +451,18 @@ class document(dict):
         if hashsum == False:
             return content
         # Otherwise: Return a tuple
-        return content, sha512_sum
+        return content, sha512sum
     
-    def getFolderByKey(self, key):
+    def get_folder_by_key(self, key):
         """
         @param key: Key indicating which folder we want, e. g. "NOUNS"
         @return: str being folder path, based on a key value passed
         """
         folder = ""
         if key == self.WORDS:
-            folder = getWordsFolder()
+            folder = get_wordsdir()
         elif key == self.NOUNS:
-            folder = getWordsFolder(pos='n')
+            folder = get_wordsdir(pos='n')
         # More folder variations to add
         return folder
     
@@ -470,7 +470,7 @@ class document(dict):
     # Methods to print content to the terminal
     ##########################################
     
-    def printRawContent(self): 
+    def print_rawcontent(self): 
         """
         Print the <content> part of the message to the terminal. 
         """        
@@ -480,7 +480,7 @@ class document(dict):
     # Methods to write files
     ########################
     
-    def writeFile(self, key, hashsum=True):
+    def write_file(self, key, hashsum=True):
         """
         Writes a file (name: document name) to a specified folder.
         @param key: Specifies which data to write, based on the 
@@ -489,16 +489,16 @@ class document(dict):
         @param hashsum: Defaults to True and is used to write an 
                         hashsum of the file to an hashfile.
         """
-        folder = self.getFolderByKey(key)
+        folder = self.get_folder_by_key(key)
         
         doc_id = self[self.DOC_ID]
-        doc_as_str = "\n".join(self[key]).encode(getDefaultEncoding())
-        sha512_sum = ""
+        doc_as_str = "\n".join(self[key]).encode(get_def_enc())
+        sha512sum = ""
         if (hashsum == True):
-            hash_dict = hashDict() 
-            sha512_sum = sha512(doc_as_str).hexdigest()
-            hash_dict[folder + doc_id] = sha512_sum
-            hash_dict.save()
+            hashdict = HashDict() 
+            sha512sum = sha512(doc_as_str).hexdigest()
+            hashdict[folder + doc_id] = sha512sum
+            hashdict.save()
         
         if not exists(folder): 
             print "Folder " + folder + " doesn't exist."
@@ -508,43 +508,42 @@ class document(dict):
             except Exception, e:
                 print str(e)
         
-        f = open(folder + doc_id, "w", getDefaultEncoding())
+        f = open(folder + doc_id, "w", get_def_enc())
         f.write(doc_as_str)
         f.close()
 
-    def writeContent(self, contentFormat="line", contentType="raw"):
+    def write_content(self, content_format="line", content_type="raw"):
         """
         Write files in different possible formats and content types to 
         a folder on disk.
-        @param contentFormat: If "line" writes content unit line per 
+        @param content_format: If "line" writes content unit line per 
                              line.
-        @param contentType: If "raw", write tokens as is; other values
+        @param content_type: If "raw", write tokens as is; other values
                             like "words" may (become) possible.
         """
-        d = getMailFolder(contentFormat=contentFormat)
+        d = get_mailfolder(content_format=content_format)
         if not exists(d):
             print "Folder " + d + " not availabe. Create it."
             makedirs(d)
 
-        # For now only "raw" contentType exists, and "line" 
-        # contentFormat
-        f = open(d + self[self.DOC_ID], "w",
-                 getDefaultEncoding())       
-        for t in self.getTokens():
+        # For now only "raw" content_type exists, and "line" 
+        # content_format
+        f = open(d + self[self.DOC_ID], "w", get_def_enc())       
+        for t in self.get_tokens():
             f.write(t + "\n")
         f.close()
         
     ##############
     # Misc methods
     ##############
-    def loadHashsums(self):
+    def _load_hashsums(self):
         """
         Simply read in the hashsumsfile (again) and save it here.
         This is important when changes occurred during processing.
         """
-        self[self.HASH_SUMS] = hashDict()
+        self[self.HASHSUMS] = HashDict()
         
-    def translate_words(self):
+    def _translate_words(self):
         """
         Translate words using (for now) an en-de-bidix.
         """
