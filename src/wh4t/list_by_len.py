@@ -1,4 +1,3 @@
-#! /usr/bin/python2.6
 # -*- coding: utf-8 -*-
 """
 @author Arian Sanusi <arian@sanusi.de>, 2012

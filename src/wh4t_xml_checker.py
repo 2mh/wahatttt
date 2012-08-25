@@ -1,4 +1,4 @@
-#! /usr/bin/python2.6
+#! /usr/bin/env python2.6
 # -*- coding: utf-8 -*-
 """
 Based upon (public domain) source, at URL:
@@ -22,18 +22,18 @@ from wh4t.settings import print_own_info, get_def_enc, \
 
 print_own_info(__file__)
 
-def add_invalid_docs(filename, excStr):
+def add_invalid_docs(filename, exceptstring):
     """
     Add invalid documents by filename and exception string to the above
     prepared file.
     @param filename: String of Filename of the invalid XML document 
                      found.
-    @param excStr: Exception string that lead to an error, including
+    @param exceptstring: Exception string that lead to an error, including
                    the position where the error was found.
     """
     invalid_doc = invalid_xmldoc.createElement("invalid_document")
     invalid_doc_filename = invalid_xmldoc.createTextNode(filename)
-    errstring = sub(filename + ":", "", excStr)
+    errstring = sub(filename + ":", "", exceptstring)
     invalid_doc.setAttribute("error", errstring)
     invalid_doc.appendChild(invalid_doc_filename)
     invalid_xmldocs.appendChild(invalid_doc)

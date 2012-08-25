@@ -1,5 +1,4 @@
-#!/usr/local/bin/python
-# coding: UTF-8
+# -*- coding: utf-8 -*-
 
 # released under bsd licence
 # see LICENCE file or 

@@ -1,4 +1,3 @@
-#! /usr/bin/python2.6
 # -*- coding: utf-8 -*-
 """
 Started upon (public domain) source: http://stackoverflow.com/questions/701704/how-do-you-convert-html-entities-to-unicode-and-vice-versa-in-python
@@ -7,14 +6,14 @@ Started upon (public domain) source: http://stackoverflow.com/questions/701704/h
 """
 
 from BeautifulSoup import BeautifulStoneSoup
-import src.wh4t.settings as w
+from src.wh4t.settings import print_own_info
 
-w.printOwnInfo(__file__)
+print_own_info(__file__)
 
 """
 So far: Simply concatenates text1 to text2, returning resulting string
 """
-def concatText(text1, text2): return text1 + text2
+def concattext(text1, text2): return text1 + text2
 
 """
 Converts text with HTML entites to Unicode characters, returning Unicode string
@@ -34,13 +33,13 @@ def UmlautToASCII(text):
     retText = "" # Will become Unicode string, as text is unicode 
     for char in text:
         if char == u'ä':
-    	   retText = concatText(retText, u"ae")
+    	   retText = concattext(retText, u"ae")
         elif char == u'ö':
-    	   retText = concatText(retText, u"oe")
+    	   retText = concattext(retText, u"oe")
         elif char == u'ü':
-    	   retText = concatText(retText, u"ue")
+    	   retText = concattext(retText, u"ue")
         else:
-    	   retText = concatText(retText, u"" + char)
+    	   retText = concattext(retText, u"" + char)
     return retText
     
 """
@@ -50,11 +49,11 @@ def unicodeToHTMLEntities(text):
     return text
 """
 
-textU = "&amp;, &reg;, &lt;, &gt;, &cent;, &pound;, &yen;, &euro;, &sect;, &copy; &auml;"
-textA = u"äadfsfsafsfsaü"
+text_u = "&amp;, &reg;, &lt;, &gt;, &cent;, &pound;, &yen;, &euro;, &sect;, &copy; &auml;"
+text_a = u"äadfsfsafsfsaü"
 
-uni = HTMLEntitiesToUnicode(textU)
-uml = UmlautToASCII(textA)
+uni = HTMLEntitiesToUnicode(text_u)
+uml = UmlautToASCII(text_a)
 # htmlent = unicodeToHTMLEntities(uni)
 
 print uni

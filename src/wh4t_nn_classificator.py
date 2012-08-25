@@ -1,4 +1,4 @@
-#! /usr/bin/python2.6
+#! /usr/bin/env python2.6
 # -*- coding: utf-8 -*-
 """
 Some parts heavily based upon code (under the BSDL) available here:
