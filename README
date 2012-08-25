@@ -117,4 +117,4 @@ create_nouns_file.sh
 cd ../src/
 javac GrabFitug.java
 java GrabFitug
-./wh4t_nn_classificator.py
+./wh4t_nn_classificator.py # Caution: May need several gigs of RAM
