@@ -6,144 +6,19 @@ Some parts heavily based upon code (under the BSDL) available here:
   blob/master/src/ml/atizo/atizo_clustering_sim.py
 @author Hernani Marques <h2m@access.uzh.ch>, 2012
 """
-from codecs import open
 from os.path import exists
-from sys import stdout
 import random
 import colorsys
 
-from nltk.text import TextCollection
-from progressbar import ProgressBar
 from matplotlib.pyplot import figure, ion, title, scatter, draw, gcf, np
 
 # from kluster.pca import Pca # To be removed eventually
 from kluster.util import decay_learning_rate, const_learning_rate
 from kluster.hebbian_clustering import project_items, learn_weights
-from wh4t.settings import print_own_info, get_stems_file, get_def_enc
+from wh4t.settings import print_own_info
 from wh4t.documents import Collection
-from wh4t.library import DictFromFile
-from wh4t.settings import get_tfidf_matrix_file
-from wh4t.settings import get_def_no_of_clusters
-
-def get_nltk_text_collection(xmlcollection):
-    """
-    @param xmlcollection: A collection of all (as of now) XML documents,
-                          of type collection.
-    @return: Retrieves an NLTK TextCollection with all stems from our 
-             document collection.
-    """
-    nltk_textcollectionList = list()
-    
-    print "Creating NLTK text collection ... "
-    xmlcollection_list = xmlcollection.get_docs()
-    
-    pb = ProgressBar(maxval=len(xmlcollection_list)).start()
-    cnt = 0
-    for doc in xmlcollection_list:
-        cnt += 1
-        pb.update(cnt)
-        nltk_textcollectionList.append(list(doc.get_stems()))
-        
-    return TextCollection(nltk_textcollectionList)
-
-def get_cluster_stems(stems, idf_dict):
-    """
-    This function removes most frequent and all very rare stems (single
-    occurrence), to improve clustering results.
-    @param stems: List of stems to be filtered
-    @param idf_dict: Dictionary containing the idf values to filter
-                     after
-    @return: List with out-filtered stems
-    """ 
-    max_val = max(idf_dict.itervalues()).as_integer_ratio()
-    return [stem for stem in stems
-            if idf_dict[stem] > 2.0
-            and not idf_dict[stem].as_integer_ratio() == max_val]
-
-def write_tfidf_file(xmlcollection, nltk_textcollection):
-    """
-    Writes a tf*idf matrix file with all tf*idf values for each 
-    document, row by row. The columns represent the (alphabetically
-    ordered) stems available in the whole collection.
-    @param xmlcollection: Collection of XML documents, type collection
-    @param nltk_textcollection: NLTK TextCollection of all the stems
-    """
-    idf_file = get_stems_file(measure="_idf")
-    avg_words_per_doc = len(xmlcollection.get_words()) / \
-                        len(xmlcollection.get_docs())
-
-    if not exists(idf_file):
-        write_idf_file(xmlcollection, nltk_textcollection)
-
-    idf_dict = DictFromFile(idf_file)
-    high_tfidf_stems = set()
-    
-    collection_stems = list(xmlcollection.get_stems(uniq=True))
-    print "Length of collection, all stems:", len(collection_stems)
-    
-    # Remove most frequent (idf<2) / stop stems (or qualifying 
-    # as such), and most rare stems (max(idf)), as they are of no 
-    # help to separate / make up clusters
-    collection_stems = get_cluster_stems(collection_stems, idf_dict)
-    print "Length of collection, cluster stems:", len(collection_stems)
-    
-    f = open(get_tfidf_matrix_file(), "w", get_def_enc())
-    for doc in xmlcollection.get_docs():
-        doc_stems = doc.get_stems()
-        col = TextCollection("")
-        
-        stdout.write(doc.get_id())
-        idf_row = ""
-        stdout.write(" (")
-        for stem in sorted(collection_stems):
-            tf = col.tf(stem, doc_stems)
-    
-            # Reweight tf values, to get more classifcation words
-            # and compensate for the very different document sizes 
-            # available
-            # Idea: Accounts for average document length, but also for
-            # the number of times a word effictively occurs in a 
-            # specific document; other variations can be thought of 
-            # (using log) or maximal tf values
-            # Note: The clustering works better with (in general)
-            # smaller values
-            if tf > 0.0:
-                tf = 1.0 / avg_words_per_doc * tf
-            # If nothing applies: tf is 0.0
-                
-            tfidf = tf*float(idf_dict[stem])
-            if (tfidf > 0.0):
-                stdout.write(stem + ", ")
-                high_tfidf_stems.add(stem)
-            idf_row += str(tfidf) + " "
-        f.write(idf_row + "\n")
-        stdout.write(")\n")
-    f.close()
-    print "List length of high value tf*idf terms:", len(high_tfidf_stems)
-
-    
-def write_idf_file(xmlcollection, nltk_textcollection):
-    """
-    Writes a (collection-wide) file with idf valus for each stem.
-    @param xmlcollection: Collection of XML documents, type collection
-    @param nltk_textcollection: NLTK TextCollection of all the stems
-    """
-    print "Calculating idf values for all stems ..."
-    all_stems = xmlcollection.get_stems(uniq=True)
-    idfset = set()
-    pb = ProgressBar(maxval=len(all_stems)).start()
-    cnt = 0
-    for word in all_stems:
-        cnt += 1
-        pb.update(cnt)
-        idf = nltk_textcollection.idf(word)
-        if idf > 0.0: 
-            idfset.add((idf, word))
-    
-    f = open(get_stems_file(measure="_idf"), "w", get_def_enc())
-    for pair in sorted(idfset, reverse=True): 
-        f.write(pair[1] + " " + str(pair[0]) + "\n")
-    f.close()
+from wh4t.library import write_tfidf_file, get_nltk_text_collection
+from wh4t.settings import get_tfidf_matrix_file, get_def_no_of_clusters
 
 def iterate(data, n_clusters, n_visual_dimensions, indices):
     # n_records = data.shape[0]
