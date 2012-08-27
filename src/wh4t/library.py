@@ -14,7 +14,6 @@ from xml.etree import cElementTree as ET
 from settings import get_hash_file, get_def_enc, get_stems_file, \
                      get_de_en_bidix_file, get_synsets_file, \
                      get_tfidf_matrix_file, get_def_idf_filter_val
-from src.wh4t.settings import STEMS_FILE
 
 class DictFromFile(dict):
     """
