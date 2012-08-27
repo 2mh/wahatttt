@@ -17,7 +17,8 @@ from kluster.util import decay_learning_rate, const_learning_rate
 from kluster.hebbian_clustering import project_items, learn_weights
 from wh4t.settings import print_own_info
 from wh4t.documents import Collection
-from wh4t.library import write_tfidf_file, get_nltk_text_collection
+from wh4t.library import write_tfidf_file, get_nltk_text_collection, \
+                         exists_tfidf_matrix
 from wh4t.settings import get_tfidf_matrix_file, get_def_no_of_clusters
 
 def iterate(data, n_clusters, n_visual_dimensions, indices):
@@ -73,8 +74,8 @@ def iterate(data, n_clusters, n_visual_dimensions, indices):
         canvas = gcf().canvas
         canvas.start_event_loop(timeout=0.010)
     
-def process_project(tfidf_file):
-    tfidf_matrix = np.genfromtxt(tfidf_file, delimiter=' ')
+def process_project(tfidf_matrix_file):
+    tfidf_matrix = np.genfromtxt(tfidf_matrix_file, delimiter=' ')
     
     print "TF*IDF matrix: "
     print tfidf_matrix
@@ -101,16 +102,9 @@ def main():
     # Read all text in
     xmlcollection = Collection()
     
-    # XXX: Better check with hashsums (to avoid corrupted content)
-    if not exists(get_tfidf_matrix_file()):
-        nltk_textcollection = get_nltk_text_collection(xmlcollection)
-        write_tfidf_file(xmlcollection, nltk_textcollection)
-        print "TF*IDF matrix written to: ", get_tfidf_matrix_file()
-    else:
-        print "TF*IDF matrix seems available: ", get_tfidf_matrix_file()
-        
-    # Classification process starts here.
-    process_project(get_tfidf_matrix_file())
+    if exists_tfidf_matrix(xmlcollection, create=True) is True:    
+        # Classification process starts here.
+        process_project(get_tfidf_matrix_file())
     
     """ To be removed eventually
     # Do primary component analysis on all raw material & show it visually

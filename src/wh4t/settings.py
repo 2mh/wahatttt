@@ -34,6 +34,15 @@ DEFAULT_EDITDISTANCE_FILENAME_SUFFIX = ""
 # clustering)
 DEFAULT_NUMBER_OF_CLUSTERS = 4
 
+# Up to which level the frequent terms should be filtered out
+# -- according to their IDF (inverse document frequency) values
+DEFAULT_IDF_FILTER_VALUE = 2.0
+
+# Number of terms which must match in order to cluster two documents.
+# With a number of 5 (empirically tested) for ~98.7% of the documents a
+# cluster with at least two documents can be constructed.
+DEFAULT_COMMON_TERMS_NUMBER = 5
+
 ##########################
 # Paths to folders / files
 ##########################
@@ -115,7 +124,7 @@ HASH_FILE = PROJ_BASE_DIR + "hashsums"
 # between words. This file is held in an XML format.
 DE_EN_BIDIX_FILE = PROJ_RES_DIR + "apertium-de-en.de-en.dix"
 
-# This file contains synsets; it's from 
+# This file contains synsets; derived from the OpenThesaurus project
 SYNSETS_FILE = PROJ_RES_DIR + "openthesaurus.txt"
 
 #################
@@ -313,6 +322,19 @@ def get_synsets_file():
     @return: String with file path to synsets file.
     """
     return SYNSETS_FILE
+
+def get_def_idf_filter_val():
+    """
+    @return: A float indicating a maximum IDF value tolerated
+    """
+    return DEFAULT_IDF_FILTER_VALUE
+
+def get_def_common_terms_no():
+    """
+    @return: Return number (int) of occurrences necessary to cluster
+             documents.
+    """
+    return DEFAULT_COMMON_TERMS_NUMBER
 
 ###################################
 # Simple printer / helper functions

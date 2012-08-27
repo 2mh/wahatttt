@@ -32,7 +32,7 @@ class document(dict):
     ############################################################
     # Attributes parsed
     # - The only (important) attributes used are mail id numbers
-    #############################################################
+    ############################################################
     
     MAIL_TAG_ID_ATTR = "id"
     IN_REPLY_TO_TAG_ID_ATTR = MAIL_TAG_ID_ATTR

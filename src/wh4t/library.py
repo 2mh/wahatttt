@@ -13,7 +13,8 @@ from xml.etree import cElementTree as ET
 
 from settings import get_hash_file, get_def_enc, get_stems_file, \
                      get_de_en_bidix_file, get_synsets_file, \
-                     get_tfidf_matrix_file
+                     get_tfidf_matrix_file, get_def_idf_filter_val
+from src.wh4t.settings import STEMS_FILE
 
 class DictFromFile(dict):
     """
@@ -182,8 +183,8 @@ def clean_iterable(iter_to_clean):
 
 def get_nltk_text_collection(xmlcollection):
     """
-    @param xmlcollection: A collection of all (as of now) XML documents,
-                          of type collection.
+    @param xmlcollection: A collection of all (as of now) XML 
+                          documents, of type collection.
     @return: Retrieves an NLTK TextCollection with all stems from our 
              document collection.
     """
@@ -212,7 +213,7 @@ def get_classification_stems(stems, idf_dict):
     """ 
     max_val = max(idf_dict.itervalues()).as_integer_ratio()
     return [stem for stem in stems
-            if idf_dict[stem] > 2.0
+            if idf_dict[stem] > get_def_idf_filter_val()
             and not idf_dict[stem].as_integer_ratio() == max_val]
 
 def write_tfidf_file(xmlcollection, nltk_textcollection):
@@ -257,7 +258,7 @@ def write_tfidf_file(xmlcollection, nltk_textcollection):
             # and compensate for the very different document sizes 
             # available
             # Idea: Accounts for average document length, but also for
-            # the number of times a word effictively occurs in a 
+            # the number of times a word effectively occurs in a 
             # specific document; other variations can be thought of 
             # (using log) or maximal tf values
             # Note: The clustering works better with (in general)
@@ -298,3 +299,72 @@ def write_idf_file(xmlcollection, nltk_textcollection):
     for pair in sorted(idfset, reverse=True): 
         f.write(pair[1] + " " + str(pair[0]) + "\n")
     f.close()
+    
+def exists_tfidf_matrix(xmlcollection, create=False):
+    """
+    This method checks for the existence of a TF*IDF matrix, and may
+    invoke its creation.
+    
+    @param create: Boolean optional value indicating if TF*IDF 
+                   matrix should be created if not already existent.
+                   Defaults to "no".
+    @param xmlcollection: It's possible to pass an object reference
+                          with the XML collection a TF*IDF matrix
+                          should be created for. Defaults to the full
+                          collection if nothing given AND a TF*IDF
+                          matrix is not present already.
+    @return: Boolean value being True or False, indicating if a TF*IDF 
+             matrix could be found or created.
+             
+    """
+    retval = False
+    
+    if not exists(get_tfidf_matrix_file()):
+        print "TF*IDF matrix seems not available."
+        if create is True:
+            nltk_textcollection = get_nltk_text_collection(xmlcollection)
+            write_tfidf_file(xmlcollection, nltk_textcollection)
+            print "TF*IDF matrix written to: ", get_tfidf_matrix_file()
+            retval = True
+    else:
+        print "TF*IDF matrix seems available: ", get_tfidf_matrix_file()
+        retval = True
+        
+    return retval
+
+def get_positional_index(tfidf_matrix_file):
+    """
+    Upon a TF*IDF matrix (with lots of zero positions) a positional
+    index is created, indicating which documents contain which terms
+    (by their position)
+    
+    @param tfidf_matrix_file: File path to the (already created) TF*IDF
+                              matrix.
+    @return: Nested lists representing for each document which terms
+             (by position) they contain.
+    """
+    pos_idx = list()
+    
+    f = open(tfidf_matrix_file, "r", get_def_enc())  
+    doc_count = 0
+    while True:
+        doc_line = f.readline()
+        # Leave loop when last document line is reached
+        if doc_line == "":
+            break
+        doc_count += 1
+        termscore_list = doc_line.split(" ")
+        termscore_list.pop() # Hack for now, because last elem is void
+        
+        idx = list() # To hold non-zero TF*IDF positions
+        termscore_count = 0
+        for termscore in termscore_list:
+            termscore_count += 1
+            if float(termscore) > 0.0:
+                idx.append(termscore_count)
+            
+        pos_idx.append(idx)
+    
+    f.close()
+    
+    return pos_idx
