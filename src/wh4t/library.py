@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @author Hernani Marques <h2m@access.uzh.ch>, 2012
+(if not noted someone else)
 """
 from codecs import open
 from os.path import exists
@@ -155,10 +156,6 @@ def split_term(term):
         
 def rreplace(s, old, new, occurrence):
     """
-    From public domain source by "mg.", 2010: 
-    * http://stackoverflow.com/questions/2556108/
-      rreplace-how-to-replace-the-last-occurence-of-an
-      -expression-in-a-string
     
     Replaces a string from right to left (reverse) by allowing for
     specification of how many occurrences should be replaced.
@@ -168,6 +165,12 @@ def rreplace(s, old, new, occurrence):
     @param occurrence: Number of substitutions (from right to left) to
                        carry out.
     @return: New string, after desired substitutions.
+    
+    From public domain source by "mg.", 2010: 
+    * http://stackoverflow.com/questions/2556108/
+      rreplace-how-to-replace-the-last-occurence-of-an
+      -expression-in-a-string
+    
     """
     li = s.rsplit(old, occurrence)
     return new.join(li)
@@ -367,3 +370,20 @@ def get_positional_index(tfidf_matrix_file):
     f.close()
     
     return pos_idx
+
+def filter_subsets(iter):
+    """
+    
+    Removes all (proper and not proper) subsets from an iterable.
+    
+    @param iter: An iterable, e. g. a list, to be cleaned.
+    @return: Filtered list
+    
+    From public domain source by "Triptych", 2009:
+    http://stackoverflow.com/questions/1318935/
+    python-list-filtering-remove-subsets-from-list-of-lists
+    @author: Triptych. http://stackoverflow.com/users/43089/triptych
+    
+    """
+    return [x for x in iter 
+            if not any(set(x) <= set(y) for y in iter if x is not y)]

@@ -41,7 +41,9 @@ DEFAULT_IDF_FILTER_VALUE = 2.0
 # Number of terms which must match in order to cluster two documents.
 # With a number of 5 (empirically tested) for ~98.7% of the documents a
 # cluster with at least two documents can be constructed.
-DEFAULT_COMMON_TERMS_NUMBER = 5
+# HOWEVER, because of (persisting) efficiency problems this number 
+# is set higher. This should be fixed soon.
+DEFAULT_COMMON_TERMS_NUMBER = 13
 
 ##########################
 # Paths to folders / files
