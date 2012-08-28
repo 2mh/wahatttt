@@ -86,17 +86,30 @@ def print_clusters(clusters, no_of_docs):
                        
     """
     set_of_docs_clustered = set()
+    cluster_sizes = list()
+    
     for docs, _ in clusters:
+        cluster_sizes.append(len(docs))
         for doc in docs:
-            set_of_docs_clustered.add(doc) 
+            set_of_docs_clustered.add(doc)
+    cluster_sizes = sorted(cluster_sizes)
+    
     rate_of_docs_clustered = float(len(set_of_docs_clustered)) / no_of_docs
     print "Lowest IDF value considered for terms:", \
           get_def_idf_filter_val()
     print "Number of feature terms used to cluster:", \
           get_def_common_terms_no() 
-    print "Number of clusters built:", len(clusters) 
+    print "Number of clusters built:", len(clusters)
+     
     print "Number of docs clustered:", len(set_of_docs_clustered), "/", \
                                        no_of_docs
+    print "Average cluster size:", \
+        sum(cluster_sizes) / float(len(cluster_sizes))
+    print "Median cluster size:", cluster_sizes[len(cluster_sizes)/2]
+    ten_biggest_clusters = sorted(cluster_sizes, reverse=True)[:10]
+    print "Ten biggest clusters:", ten_biggest_clusters
+    print "Coverage of ten biggest clusters over docs clustered:", \
+        sum(ten_biggest_clusters) / float(len(set_of_docs_clustered))
     print "Rate of docs clustered:", rate_of_docs_clustered
 
 def process_project(tfidf_matrix_file, xmlcollection):

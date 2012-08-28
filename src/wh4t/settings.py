@@ -43,7 +43,7 @@ DEFAULT_IDF_FILTER_VALUE = 4.2
 # cluster with at least two documents can be constructed, i. e. if
 # DEFAULT_IDF_FILTER_VALUE = 2.0. If higher, then much less is possible,
 # as more frequent terms get removed.
-DEFAULT_COMMON_TERMS_NUMBER = 5
+DEFAULT_COMMON_TERMS_NUMBER = 10
 
 ##########################
 # Paths to folders / files
