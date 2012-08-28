@@ -160,7 +160,7 @@ def print_clusters(clusters, no_of_docs):
         sum(cluster_sizes) / float(len(cluster_sizes))
     print "Median cluster size:", cluster_sizes[len(cluster_sizes)/2]
     ten_biggest_clusters = sorted(cluster_sizes, reverse=True)[:10]
-    print "Ten biggest clusters:", ten_biggest_clusters
+    print "Ten biggest cluster sizes:", ten_biggest_clusters
     print "Coverage of ten biggest clusters over docs clustered:", \
         sum(ten_biggest_clusters) / float(len(set_of_docs_clustered))
     print "Rate of docs clustered:", rate_of_docs_clustered
@@ -196,7 +196,7 @@ def process_project(tfidf_matrix_file, xmlcollection):
                 break
             
             terms2 = set(pos_idx[doc_idx2])
-            common_terms= terms1.intersection(terms2)
+            common_terms = terms1.intersection(terms2)
             soft_cluster_common_terms = \
                 soft_cluster_common_terms.union(common_terms)
             
