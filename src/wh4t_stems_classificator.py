@@ -6,15 +6,64 @@
 from progressbar import ProgressBar
 
 from wh4t.documents import Collection
+from wh4t.exception import VoidStructureError
 from wh4t.library import exists_tfidf_matrix, get_positional_index, \
                          filter_subsets
 from wh4t.settings import print_own_info, get_tfidf_matrix_file, \
                           get_def_common_terms_no, print_line, \
                           get_def_idf_filter_val
     
-# XXX: May become deprecated.
+def create_hard_clusters(soft_clusters, no_of_docs):
+    """
+    
+    """
+    if len(soft_clusters) == 0 or no_of_docs == 0:
+        raise VoidStructureError, \
+        "Please provide non-zero/empty values."
+    hard_clusters = list()
+    border_docs = set()
+    
+    for s_cluster in soft_clusters:
+        hard_clusters.append(s_cluster)
+    
+    no_clusters = len(hard_clusters)
+    max_idx = no_clusters - 1
+    idx1 = 0
+    for cluster1 in hard_clusters:
+        
+        # No more element to compare to
+        if idx1 == max_idx:
+            break
+        
+        idx2 = idx1 + 1
+        while True:
+            
+            # Last element already processed
+            if idx2 == no_clusters:
+                break
+            
+            # Continuously save document numbers which happen to appear
+            # in more than one cluster alone
+            border_docs = border_docs.union(set(cluster1[0]).
+                                        intersection(hard_clusters[idx2][0]))
+            idx2 += 1
+        
+        idx1 += 1
+
+    hard_clusters_tmp = hard_clusters
+    hard_clusters = list()
+    for h_cluster in hard_clusters_tmp:
+        h_cluster[0] = list(set(h_cluster[0]).difference(border_docs))
+        hard_clusters.append(h_cluster)
+    
+    # XXX / Caution: Associated terms not cleaned accordingly
+    return hard_clusters 
+
 def create_soft_clusters(doc_cluster_pairs):
     """
+    Caution: May become deprecated
+    
+    @param doc_cluster_pairs: Pairs clustered together 
     
     Transitively create soft-bordered cluster groups, which can be
     used to "see" which documents belong semantically -- 
@@ -85,6 +134,10 @@ def print_clusters(clusters, no_of_docs):
                        clustered consists of.
                        
     """
+    if len(clusters) == 0 or no_of_docs == 0:
+        raise VoidStructureError, \
+        "Please provide non-zero/empty values."
+    
     set_of_docs_clustered = set()
     cluster_sizes = list()
     
@@ -169,12 +222,14 @@ def process_project(tfidf_matrix_file, xmlcollection):
         
     # Print found cluster pairs
     # print_clusters(cluster_pairs, no_of_docs)
-    
     print_line()
-    
     soft_clusters = filter_subsets(soft_clusters, nested=True)
+    print "Soft clustering (statistics): "
     print_clusters(soft_clusters, no_of_docs)
-    
+    print_line()
+    print "Hard clustering (statistics): "
+    hard_clusters = create_hard_clusters(soft_clusters, no_of_docs)
+    print_clusters(hard_clusters, no_of_docs)
     # Create distinct clusters from pairs; pairs may overlap 
     # / may be transitive
     # soft_clusters = create_soft_clusters(doc_cluster_pairs)
