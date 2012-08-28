@@ -9,14 +9,10 @@ from wh4t.documents import Collection
 from wh4t.library import exists_tfidf_matrix, get_positional_index, \
                          filter_subsets
 from wh4t.settings import print_own_info, get_tfidf_matrix_file, \
-                          get_def_common_terms_no
-                          
-def print_soft_clusters(doc_cluster_pairs, no_of_docs):
-    """
-    XXX
-    """
-    pass
+                          get_def_common_terms_no, print_line, \
+                          get_def_idf_filter_val
     
+# XXX: May become deprecated.
 def create_soft_clusters(doc_cluster_pairs):
     """
     
@@ -74,29 +70,31 @@ def create_soft_clusters(doc_cluster_pairs):
     
     return soft_clusters
     
-def print_cluster_pairs(doc_cluster_pairs, no_of_docs):
+def print_clusters(clusters, no_of_docs):
     """
     
-    Prints pairs of documents by their numbers clustered together by
-    certain terms, also shown. Also shows how many documents could be
+    Prints documents by their numbers they were clustered together
+    because of common terms. Also shows how many documents could be
     clustered.
     
-    @param doc_cluster_pairs: A list containing document pair numbers
-                              clustered together upon a certain number
-                              of common terms (represented by their
-                              numbers, too).
+    @param clusters: A list containing document numbers
+                    clustered together upon a certain number
+                    of common terms (represented by their
+                    numbers, too).
     @param no_of_docs: The number (int) of documents the collection we
                        clustered consists of.
                        
     """
-    print len(doc_cluster_pairs)
     set_of_docs_clustered = set()
-    for pair in doc_cluster_pairs:
-        print pair
-        set_of_docs_clustered.add(pair[0][0])
-        set_of_docs_clustered.add(pair[0][1])
+    for docs, _ in clusters:
+        for doc in docs:
+            set_of_docs_clustered.add(doc) 
     rate_of_docs_clustered = float(len(set_of_docs_clustered)) / no_of_docs
-    print "Number of pairs built:", len(set_of_docs_clustered) 
+    print "Lowest IDF value considered for terms:", \
+          get_def_idf_filter_val()
+    print "Number of feature terms used to cluster:", \
+          get_def_common_terms_no() 
+    print "Number of clusters built:", len(clusters) 
     print "Number of docs clustered:", len(set_of_docs_clustered), "/", \
                                        no_of_docs
     print "Rate of docs clustered:", rate_of_docs_clustered
@@ -107,7 +105,8 @@ def process_project(tfidf_matrix_file, xmlcollection):
     """
     pos_idx = get_positional_index(tfidf_matrix_file)
     no_of_docs = len(xmlcollection.get_docs())
-    doc_cluster_pairs = list()
+    cluster_pairs = list() # In here create cluster pairs
+    soft_clusters = list() # In here create soft clusters
     
     doc_idx1 = 0
     max_doc_idx = no_of_docs - 1
@@ -115,12 +114,15 @@ def process_project(tfidf_matrix_file, xmlcollection):
         doc_idx2 = doc_idx1 + 1 # Do comparison as of next document
         terms1 = set(doc_line1)
         common_terms = set()
+        soft_cluster = set()
+        soft_cluster_common_terms = set()
         
         # Last document doesn't have other document to compare to;
         # break loop
         if(doc_idx1 == max_doc_idx):
             break
         
+        already_added = False
         while True:
             # Break loop if last document reached to compare to
             # already reached before
@@ -129,25 +131,40 @@ def process_project(tfidf_matrix_file, xmlcollection):
             
             terms2 = set(pos_idx[doc_idx2])
             common_terms= terms1.intersection(terms2)
+            soft_cluster_common_terms = \
+                soft_cluster_common_terms.union(common_terms)
             
             if len(common_terms) >= get_def_common_terms_no():
                 doc_no1 = doc_idx1 + 1
                 doc_no2 = doc_idx2 + 1
                 clustered_doc_pair = [doc_no1, doc_no2]
-                doc_cluster_pairs.append([clustered_doc_pair, common_terms])
+                
+                if already_added == False:
+                    soft_cluster.add(doc_no1)
+                    already_added = True
+                soft_cluster.add(doc_no2)
+
+                cluster_pairs.append([clustered_doc_pair, common_terms])
             
             doc_idx2 += 1
-                 
+           
+        if len(soft_cluster) > 0:
+            soft_clusters.append([tuple(sorted(soft_cluster)), 
+                                  tuple(sorted(soft_cluster_common_terms))])  
+            
         doc_idx1 += 1
         
     # Print found cluster pairs
-    print_cluster_pairs(doc_cluster_pairs, no_of_docs)
+    # print_clusters(cluster_pairs, no_of_docs)
     
-    # Create distinct clusters; pairs may overlap / may be transitive
-    soft_clusters = create_soft_clusters(doc_cluster_pairs)
+    print_line()
     
-    # Print hard clusters (built transitively)
-    print_soft_clusters(doc_cluster_pairs, no_of_docs)
+    soft_clusters = filter_subsets(soft_clusters, nested=True)
+    print_clusters(soft_clusters, no_of_docs)
+    
+    # Create distinct clusters from pairs; pairs may overlap 
+    # / may be transitive
+    # soft_clusters = create_soft_clusters(doc_cluster_pairs)
         
 def main():
     """

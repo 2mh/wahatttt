@@ -371,19 +371,44 @@ def get_positional_index(tfidf_matrix_file):
     
     return pos_idx
 
-def filter_subsets(iter):
+def filter_subsets(iter_, nested=False):
     """
     
-    Removes all (proper and not proper) subsets from an iterable.
+    Removes all (proper and not proper) subsets from an iterable,
+    that has a list of lists structure.
     
     @param iter: An iterable, e. g. a list, to be cleaned.
+    @param nested: If True we handle nested structures. Only the first
+                   list in a list is filtered, then the nested 
+                   structure is reconstructed.
     @return: Filtered list
     
-    From public domain source by "Triptych", 2009:
+    List comprehension from public domain source by "Triptych", 2009:
     http://stackoverflow.com/questions/1318935/
     python-list-filtering-remove-subsets-from-list-of-lists
     @author: Triptych. http://stackoverflow.com/users/43089/triptych
     
     """
-    return [x for x in iter 
-            if not any(set(x) <= set(y) for y in iter if x is not y)]
+    iter_orig = list()
+    
+    # If nested list of lists given, 
+    # prepare for filtering only first elements
+    if nested == True:
+        iter_orig = iter_
+        iter_ = list()
+        for elem in iter_orig:
+            iter_.append(elem[0])
+    
+    # Filter out all subsets
+    iter_ = [x for x in iter_ 
+            if not any(set(x) <= set(y) for y in iter_ if x is not y)]
+    
+    # Reconstruct neglected nested parts, after filtering
+    if nested == True:
+        iter_reconstructed = list()
+        for elem in iter_orig:
+            if elem[0] in iter_:
+                iter_reconstructed.append(elem)
+        return iter_reconstructed
+    
+    return iter_
