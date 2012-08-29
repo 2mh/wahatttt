@@ -481,9 +481,10 @@ def spawn_processes(f, iter_):
         for i in range(len(processes_list)):
             processes_list[i].join()
             
-        # Unite solution space; XXX: Still hangs here
+        # Unite solution space
         for i in range(len(queues_list)):
-            ret_iter.append(queues_list[i].get())
+            for elem in queues_list[i].get():
+                ret_iter.append(elem)
         
         return sorted(ret_iter)
         

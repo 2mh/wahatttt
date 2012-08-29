@@ -23,6 +23,7 @@ def main():
     """
     print_own_info(__file__)
     print spawn_processes(test_function, [1, 2, 3, 4, 5, 6, 7, 8, 9])
+    spawn_processes(translate_words, Collection().get_words())
     """
     print_line()
     en_to_de_dict_test()
@@ -34,14 +35,48 @@ def main():
     """
     
 def test_function(iter_, queue):
+    """
+    
+    @param iter_: 
+    @param queue: A Queue() object (from package multiprocessor)
+                  used here to put in the partial solution,
+                  needed for multiprocessing
+    
+    """
+    
     ret_iter = list()
     
     for i in iter_:
         val = i * i
         ret_iter.append(val)
-        
+    
+    queue.put(ret_iter)
     return ret_iter
     
+def translate_words(words, queue):
+    d_en_de = EnToDeDict()
+    words = set(words)
+    no_words = len(words)
+    word_no = 1
+    words_translated = 0
+    
+    # First replace English words by German ones
+    words_tmp = sorted(words.copy())
+    print "Start word-to-word translation (EN -> DE) ..."
+    pb = ProgressBar(maxval=no_words).start()
+    for word in words_tmp:
+        pb.update(word_no)
+        if word in sorted(d_en_de.keys()):
+            words.remove(word)
+            words.add(d_en_de[word])
+            print word, "->", d_en_de[word]
+            words_translated += 1
+        word_no += 1
+    print "Translation fulfilled (" + str(words_translated) \
+          + " translations)."
+          
+    queue.put(words)
+        
 def spellcheck_test():
     d = enchant.Dict("de_DE")
     d_en_de = EnToDeDict()
