@@ -5,6 +5,7 @@
 """
 from codecs import open
 from os.path import exists
+from multiprocessing import cpu_count, Process, Queue
 from re import sub, match
 from sys import stdout
 
@@ -412,3 +413,78 @@ def filter_subsets(iter_, nested=False):
         return iter_reconstructed
     
     return iter_
+
+def spawn_processes(f, iter_):
+    """
+    
+    This function creates various processes for
+    a function f which has an argument iter_
+    (an iterable) to process.
+    
+    It does it by creating smaller iterables and processing
+    them independently, then uniting the results.
+    
+    @f: A function f
+    @iter_: The argument of function f, being an iterable
+    """
+    cpu_count_ = cpu_count()
+    iter_size = len(iter_)
+    ret_iter = list()
+    max_processes = 1
+    
+    print "Orig iterable size:", iter_size
+    
+    if cpu_count > 2:
+        max_processes = cpu_count_ - 1
+        
+    if max_processes > 1:
+        iter_sizes = list()
+        processes_list = list()
+        queues_list = list()
+        base_iter_len = iter_size / max_processes
+        residual_val = iter_size % max_processes
+        
+        # Create iterable sizes
+        iter_count = 0
+        while True:
+            if (iter_count == max_processes):
+                break
+            iter_sizes.append(base_iter_len)
+            iter_count += 1
+        if residual_val > 0:
+            iter_sizes[0] += residual_val
+        print "Iterable sizes:", iter_sizes
+        
+        # Split iterables
+        iters_list = list()
+        start_pos = 0
+        end_pos = iter_sizes[0]
+        for idx_start in range(len(iter_sizes)):
+            idx_end = idx_start + 1
+            print start_pos, end_pos
+            iters_list.append(iter_[start_pos:end_pos])
+            start_pos += iter_sizes[idx_start]          
+
+            if (idx_end == len(iter_sizes)):
+                break
+            
+            end_pos += iter_sizes[idx_end]
+
+        # Launch processes
+        for i in range(len(iters_list)):
+            queues_list.append(Queue())
+            processes_list.append(Process(target=f, 
+                            args=(iters_list[i], queues_list[i])))
+            processes_list[i].start()
+        
+        # Wait for all processes to finish
+        for i in range(len(processes_list)):
+            processes_list[i].join()
+            
+        # Unite solution space; XXX: Still hangs here
+        for i in range(len(queues_list)):
+            ret_iter.append(queues_list[i].get())
+        
+        return sorted(ret_iter)
+        
+    return f(iter_)

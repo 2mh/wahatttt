@@ -9,13 +9,12 @@ from codecs import open
 import enchant
 from nltk.metrics import edit_distance
 from progressbar import ProgressBar
-from re import match
 
 from wh4t.documents import Collection
 from wh4t.settings import print_line, print_own_info, get_words_corr_file, \
      get_def_enc
 from wh4t.nouns import Nouns
-from wh4t.library import EnToDeDict, Synsets
+from wh4t.library import spawn_processes, EnToDeDict, Synsets
 
 def main():
     """ 
@@ -23,7 +22,7 @@ def main():
     
     """
     print_own_info(__file__)
-    spellcheck_test()
+    print spawn_processes(test_function, [1, 2, 3, 4, 5, 6, 7, 8, 9])
     """
     print_line()
     en_to_de_dict_test()
@@ -34,10 +33,38 @@ def main():
     print_line()
     """
     
+def test_function(iter_, queue):
+    ret_iter = list()
+    
+    for i in iter_:
+        val = i * i
+        ret_iter.append(val)
+        
+    return ret_iter
+    
 def spellcheck_test():
     d = enchant.Dict("de_DE")
+    d_en_de = EnToDeDict()
     words = set(Collection().get_words())
     no_words = len(words)
+    word_no = 1
+    words_translated = 0
+    
+    # First replace English words by German ones
+    words_tmp = sorted(words.copy())
+    print "Start word-to-word translation (EN -> DE) ..."
+    pb = ProgressBar(maxval=no_words).start()
+    for word in words_tmp:
+        pb.update(word_no)
+        if word in sorted(d_en_de.keys()):
+            words.remove(word)
+            words.add(d_en_de[word])
+            print word, "->", d_en_de[word]
+            words_translated += 1
+        word_no += 1
+    print "Translation fulfilled (" + str(words_translated) \
+          + " translations)."
+    
     no_corrected_words = 0
     no_words_ok = 0
     pb = ProgressBar(maxval=no_words).start()
@@ -61,11 +88,11 @@ def spellcheck_test():
                 # (2) Make sure the change happens not in the first
                 #     position; i. e. "haus" -> "Haus" is not what's
                 #     interesting
-                # (3) Also make sure that potential abbreviations like
-                #     "CCC" or "MR" don't get changed
+                # (3) Also make sure that words with length <= 5 don't
+                #     get changed
                 if edit_distance(word, word_corrected) == 1 and \
                    word[0] == word_corrected[0] and \
-                   match("[A-Z]{2,}", word) == None:
+                   len(word) > 5:
                     no_corrected_words += 1
                     print " [" + str(no_corrected_words) + ":", \
                           word, " -> ", word_corrected + "]"
