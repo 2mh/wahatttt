@@ -82,8 +82,12 @@ TYPES_FILE = PROJ_BASE_DIR + "types"
 # File with list of all unique tokens used in lowered form
 TYPES_LOWERED_FILE = PROJ_BASE_DIR + "types_lowercase"
 
-# File with list of all words (= cleaned tokens), in the given order
+# File with list of all words (=cleaned tokens), in the given order
 WORDS_FILE = PROJ_BASE_DIR + "words"
+
+# File with list of all corrected words (after controlled
+# spellchecking)
+WORDS_CORRECTED_FILE = PROJ_BASE_DIR + "words_corrected"
 
 # File with nouns in the collection, is a subset of nouns.
 NOUNS_FILE = PROJ_BASE_DIR + "nouns"
@@ -266,6 +270,12 @@ def get_words_file(pos='_'):
         return NOUNS_FILE
     
     return WORDS_FILE
+
+def get_words_corr_file():
+    """
+    @return: Returns file path to a file which lists corrected words.
+    """
+    return WORDS_CORRECTED_FILE
 
 def get_stems_file(measure=""): 
     """
