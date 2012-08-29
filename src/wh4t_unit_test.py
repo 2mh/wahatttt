@@ -69,9 +69,12 @@ def spellcheck_test():
                     no_corrected_words += 1
                     print " [" + str(no_corrected_words) + ":", \
                           word, " -> ", word_corrected + "]"
-                    f.write(word + "\t" + word_corrected)
+                    f.write(word + "\t" + word_corrected + "\n")
+                    f.flush() # For the sake of tail(1)
                 else:
-                    print "" 
+                    print ""
+            else:
+                print ""
         else:
             print ""
             no_words_ok += 1
