@@ -36,6 +36,7 @@ DEFAULT_NUMBER_OF_CLUSTERS = 4
 
 # Up to which level the frequent terms should be filtered out
 # -- according to their IDF (inverse document frequency) values
+# Caution: When changes doesn't recreate a new TF*IDF matrix.
 DEFAULT_IDF_FILTER_VALUE = 2.0
 
 # Number of terms which must match in order to cluster two documents.
@@ -43,7 +44,7 @@ DEFAULT_IDF_FILTER_VALUE = 2.0
 # cluster with at least two documents can be constructed, i. e. if
 # DEFAULT_IDF_FILTER_VALUE = 2.0. If higher, then much less is possible,
 # as more frequent terms get removed.
-DEFAULT_COMMON_TERMS_NUMBER = 5
+DEFAULT_COMMON_TERMS_NUMBER = 40
 
 ##########################
 # Paths to folders / files

@@ -9,6 +9,7 @@ from codecs import open
 import enchant
 from nltk.metrics import edit_distance
 from progressbar import ProgressBar
+from collections import defaultdict
 
 from wh4t.documents import Collection
 from wh4t.settings import print_line, print_own_info, get_words_corr_file, \
@@ -22,17 +23,16 @@ def main():
     
     """
     print_own_info(__file__)
-    print spawn_processes(test_function, [1, 2, 3, 4, 5, 6, 7, 8, 9])
-    spawn_processes(translate_words, Collection().get_words())
+    # print spawn_processes(test_function, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    # spawn_processes(translate_words, Collection().get_words())
     """
     print_line()
     en_to_de_dict_test()
-    print_line()
-    synsets_test()
-    print_line()
     single_document_stats(42)
     print_line()
     """
+    synsets_test()
+    print_line()
     
 def test_function(iter_, queue):
     """
@@ -152,12 +152,39 @@ def en_to_de_dict_test():
     print len(d)
 
 def synsets_test():
-    s = Synsets()
+    synsets = Synsets()
+    words_all_uniq = set()
+    words_not_ambig = set()
+    synsets_freq_dict = defaultdict(int)
 
-    for synset in s:
+    # Print every synset and create set of all words found
+    for synset in synsets:
         print str(synset)
+        for word in synset:
+            words_all_uniq.add(word)
+            synsets_freq_dict[word] += 1
+            
+    for word, count in synsets_freq_dict.items():
+        # We are only interestd in words which appear only in one
+        # synset.
+        if count == 1:
+            words_not_ambig.add(word)
+            
+    # Clean synsets (to only have synsets w/ clear meaning)
+    new_synsets = list()
+    count = 0
+    for synset in synsets:
+        count += 1
+        for word in words_not_ambig:
+            print count, synset
+            if word in synset:
+                new_synsets.append(synset)
+                break
     
-    print len(s)
+    print "Total number of synsets:", len(synsets)
+    print "Number of words involved (unique):", len(words_all_uniq)
+    print "Number of words (w/ one meaning)", len(words_not_ambig)
+    print "Total number of synsets (after cleaning):", len(new_synsets)
 
 def single_document_stats(doc_no):
     xmldocuments = Collection()
