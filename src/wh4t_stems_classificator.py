@@ -54,7 +54,9 @@ def create_hard_clusters(soft_clusters, no_of_docs):
     hard_clusters = list()
     for h_cluster in hard_clusters_tmp:
         h_cluster[0] = list(set(h_cluster[0]).difference(border_docs))
-        hard_clusters.append(h_cluster)
+        # A cluster is given if two documents at least exist
+        if len(h_cluster[0]) > 1:
+            hard_clusters.append(h_cluster)
     
     # XXX / Caution: Associated terms not cleaned accordingly
     return hard_clusters 
@@ -229,6 +231,8 @@ def process_project(tfidf_matrix_file, xmlcollection):
     print_line()
     print "Hard clustering (statistics): "
     hard_clusters = create_hard_clusters(soft_clusters, no_of_docs)
+    for h_cluster in hard_clusters:
+        print h_cluster
     print_clusters(hard_clusters, no_of_docs)
     # Create distinct clusters from pairs; pairs may overlap 
     # / may be transitive
