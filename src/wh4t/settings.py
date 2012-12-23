@@ -2,7 +2,7 @@
 """
 @author Hernani Marques <h2m@access.uzh.ch>, 2012
 """
-
+from datetime.datetime import now
 from os import sep
 from os.path import basename, abspath, join, pardir, curdir
 from re import sub
@@ -57,8 +57,9 @@ PROJ_BASE_DIR = abspath(join(curdir, pardir)) + sep
 # The project's (freely available linguistic) resources directory
 PROJ_RES_DIR = PROJ_BASE_DIR + "resources" + sep
 
-# Directories where words, nouns or stems are hold, per document and
+# Directories where clusters, words, nouns, stems are hold, per document and
 # file by file
+PROJ_CLUST_DIR = PROJ_BASE_DIR + "clust_dir" + sep
 PROJ_WORDS_DIR = PROJ_BASE_DIR + "words_dir" + sep
 PROJ_NOUNS_DIR = PROJ_BASE_DIR + "nouns_dir" + sep
 PROJ_STEMS_DIR = PROJ_BASE_DIR + "stems_dir" + sep
@@ -181,7 +182,7 @@ def get_def_no_of_clusters():
 # files.
 # See definitions section for more information on its intended content.
 #######################################################################
-    
+
 def get_mailfolder(content_format="XML"): 
     """
     @param: If type's "CSV" return mail folder where mails in CSV 
@@ -193,6 +194,12 @@ def get_mailfolder(content_format="XML"):
     
     # Fallback case "XML"
     return MAIL_FOLDER_XML
+
+def get_clustdir():
+    """
+    @return: Return a path as string with the clusters' dir
+    """
+    return PROJ_CLUST_DIR + now.strftime("%Y%m%d_%Hh%Mm") + sep
 
 def get_wordsdir(pos='_'):
     """

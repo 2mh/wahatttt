@@ -11,7 +11,8 @@ from wh4t.library import exists_tfidf_matrix, get_positional_index, \
                          filter_subsets
 from wh4t.settings import print_own_info, get_tfidf_matrix_file, \
                           get_def_common_terms_no, print_line, \
-                          get_def_idf_filter_val
+                          get_def_idf_filter_val, \
+                          get_clustdir
     
 def create_hard_clusters(soft_clusters, no_of_docs):
     """
@@ -166,6 +167,10 @@ def print_clusters(clusters, no_of_docs):
     print "Coverage of ten biggest clusters over docs clustered:", \
         sum(ten_biggest_clusters) / float(len(set_of_docs_clustered))
     print "Rate of docs clustered:", rate_of_docs_clustered
+    
+def write_clusters(clusters, type='soft'):
+    # To come
+    pass
 
 def process_project(tfidf_matrix_file, xmlcollection):
     """
@@ -222,21 +227,22 @@ def process_project(tfidf_matrix_file, xmlcollection):
             
         doc_idx1 += 1
         
-    # Print found cluster pairs
-    # print_clusters(cluster_pairs, no_of_docs)
+    # Print found soft cluster groups
     print_line()
     soft_clusters = filter_subsets(soft_clusters, nested=True)
     print "Soft clustering (statistics): "
     print_clusters(soft_clusters, no_of_docs)
     print_line()
+    
+    # Print found hard cluster groups
     print "Hard clustering (statistics): "
     hard_clusters = create_hard_clusters(soft_clusters, no_of_docs)
-    for h_cluster in hard_clusters:
-        print h_cluster
     print_clusters(hard_clusters, no_of_docs)
-    # Create distinct clusters from pairs; pairs may overlap 
-    # / may be transitive
-    # soft_clusters = create_soft_clusters(doc_cluster_pairs)
+    
+    # Write found soft & hard clusters
+    base_clust_dir = get_clustdir()
+    write_clusters(soft_clusters)
+    write_clusters(hard_clusters, type='hard')
         
 def main():
     """
