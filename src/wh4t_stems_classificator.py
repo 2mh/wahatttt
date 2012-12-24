@@ -3,6 +3,9 @@
 """
 @author Hernani Marques <h2m@access.uzh.ch>, 2012
 """
+from codecs import open
+from os import makedirs
+from os import sep
 from progressbar import ProgressBar
 
 from wh4t.documents import Collection
@@ -12,7 +15,8 @@ from wh4t.library import exists_tfidf_matrix, get_positional_index, \
 from wh4t.settings import print_own_info, get_tfidf_matrix_file, \
                           get_def_common_terms_no, print_line, \
                           get_def_idf_filter_val, \
-                          get_clustdir
+                          get_clustdir, \
+                          get_def_enc
     
 def create_hard_clusters(soft_clusters, no_of_docs):
     """
@@ -168,9 +172,29 @@ def print_clusters(clusters, no_of_docs):
         sum(ten_biggest_clusters) / float(len(set_of_docs_clustered))
     print "Rate of docs clustered:", rate_of_docs_clustered
     
-def write_clusters(clusters, type='soft'):
-    # To come
-    pass
+def write_clusters(xmlcollection, clusters, base_clust_dir, type='soft'):
+    """
+    @param xmlcollection: collection of XML documents
+    @param clusters: Structure containing the clustered document
+                     indices and the stems used for doing so.
+    @param base_clust_dir: Where the base directory for storing
+                           clusters reside.
+    @param type: Default arg is 'soft' indicating our clusters
+                 params reflects soft cluster. Other possible
+                 argument: 'hard' for hard clustering.
+    """
+    clust_dir = base_clust_dir + '_' + type
+    try:
+        makedirs(clust_dir)
+    except OSError, e:
+        print(e)
+    
+    # XXX: Check
+    for docs, _ in clusters:
+        for doc_id in docs:
+            xmldoc = xmlcollection.get(doc_id)
+            f = open(clust_dir + sep + xmldoc.get_id(), "w", get_def_enc())
+            f.write(xmldoc.raw_content())
 
 def process_project(tfidf_matrix_file, xmlcollection):
     """
@@ -241,8 +265,8 @@ def process_project(tfidf_matrix_file, xmlcollection):
     
     # Write found soft & hard clusters
     base_clust_dir = get_clustdir()
-    write_clusters(soft_clusters)
-    write_clusters(hard_clusters, type='hard')
+    write_clusters(xmlcollection, soft_clusters, base_clust_dir)
+    write_clusters(xmlcollection, hard_clusters, base_clust_dir, type='hard')
         
 def main():
     """
