@@ -1,4 +1,4 @@
-#! /usr/bin/env python2.6
+#! /usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 """
 @author Hernani Marques <h2m@access.uzh.ch>, 2012

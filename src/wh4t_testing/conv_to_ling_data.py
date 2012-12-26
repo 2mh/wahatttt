@@ -1,3 +1,4 @@
+#! /usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 """
 Started upon (public domain) source: http://stackoverflow.com/questions/701704/how-do-you-convert-html-entities-to-unicode-and-vice-versa-in-python

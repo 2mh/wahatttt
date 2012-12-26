@@ -2,7 +2,7 @@
 """
 @author Hernani Marques <h2m@access.uzh.ch>, 2012
 """
-from datetime.datetime import now
+import datetime as t
 from os import sep
 from os.path import basename, abspath, join, pardir, curdir
 from re import sub
@@ -44,7 +44,7 @@ DEFAULT_IDF_FILTER_VALUE = 2.0
 # cluster with at least two documents can be constructed, i. e. if
 # DEFAULT_IDF_FILTER_VALUE = 2.0. If higher, then much less is possible,
 # as more frequent terms get removed.
-DEFAULT_COMMON_TERMS_NUMBER = 100
+DEFAULT_COMMON_TERMS_NUMBER = 300
 
 ##########################
 # Paths to folders / files
@@ -199,7 +199,7 @@ def get_clustdir():
     """
     @return: Return a path as string with the clusters' dir
     """
-    return PROJ_CLUST_DIR + now.strftime("%Y%m%d_%Hh%Mm") + sep
+    return PROJ_CLUST_DIR + t.datetime.now().strftime("%Y%m%d_%Hh%Mm") + sep
 
 def get_wordsdir(pos='_'):
     """
