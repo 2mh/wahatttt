@@ -5,7 +5,7 @@
 
 from codecs import open
 
-from settings import get_symbols_file, get_def_enc, get_raw_file
+from library import get_symbols_file, get_def_enc, get_raw_file
 
 class Symbols(dict):
     """

@@ -15,7 +15,7 @@ from progressbar import ProgressBar
 
 from wh4t.documents import Collection
 from wh4t.nouns import Nouns
-from wh4t.settings import print_line, get_stems_file, get_def_enc, \
+from wh4t.library import print_line, get_stems_file, get_def_enc, \
                           print_own_info
 
 def main():

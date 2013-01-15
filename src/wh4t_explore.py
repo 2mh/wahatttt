@@ -7,9 +7,9 @@
 from sys import stdout
 
 from wh4t.documents import Collection
-from wh4t.settings import get_raw_file, get_symbols_file, get_tokens_file, \
-                          get_types_file, get_words_file, get_stems_file, \
-                          print_own_info, print_line, print_ok
+from wh4t.library import get_raw_file, get_symbols_file, get_tokens_file, \
+                         get_types_file, get_words_file, get_stems_file, \
+                         print_own_info, print_line, print_ok
 from wh4t.symbols import Symbols
 
 #####################
@@ -176,6 +176,10 @@ def main():
     for stem in xmldocs.get_freqdist().keys()[:42]: 
         print stem
     print_line()
+    
+    # Print the 42 most relevant words -- after tf*idf measure
+    print "Top 42 words (most relevant): "
+    # ...
 
 if __name__ == "__main__":
     main()

@@ -5,7 +5,7 @@
 """
 from sys import stdout
 
-from wh4t.settings import print_own_info
+from wh4t.library import print_own_info
 from wh4t.documents import Collection
 from wh4t.symbols import Symbols
 

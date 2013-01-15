@@ -11,12 +11,10 @@ from progressbar import ProgressBar
 from wh4t.documents import Collection
 from wh4t.exception import VoidStructureError
 from wh4t.library import exists_tfidf_matrix, get_positional_index, \
-                         filter_subsets
-from wh4t.settings import print_own_info, get_tfidf_matrix_file, \
-                          get_def_common_terms_no, print_line, \
-                          get_def_idf_filter_val, \
-                          get_clustdir, \
-                          get_def_enc
+                         filter_subsets, print_own_info, \
+                         get_tfidf_matrix_file, get_def_common_terms_no, \
+                         print_line, get_def_idf_filter_val, get_clustdir, \
+                         get_def_enc
     
 def create_hard_clusters(soft_clusters, no_of_docs):
     """
@@ -193,7 +191,7 @@ def write_clusters(xmlcollection, clusters, base_clust_dir, type_='soft'):
     
     # XXX: Check
     clust_no = 1
-    for docs, _ in clusters:
+    for docs, clust_stems in clusters:
         specific_clust_dir = clust_dir + str(clust_no) + sep
         try:
             makedirs(specific_clust_dir)
@@ -203,7 +201,15 @@ def write_clusters(xmlcollection, clusters, base_clust_dir, type_='soft'):
             xmldoc = xmlcollection.get_doc(doc_id)
             f = open(specific_clust_dir +  xmldoc.get_id(), "w", get_def_enc())
             f.write(xmldoc.get_rawcontent())
+            f.close()
         print "clust_dir: ", clust_dir, "clust_no: ", clust_no, " [written]"
+        f = open(specific_clust_dir + "clust_stems", "w", get_def_enc())
+        g = open("/home/hernani/clust_stems", "a", get_def_enc()) # DEBUG line
+        for clust_stem in clust_stems:
+            f.write(str(clust_stem) + "\n") # stem should come here directly
+            g.write(str(clust_stem) + "\n") # DEBUG line
+        f.close()
+        g.close()
         clust_no += 1
 
 def process_project(tfidf_matrix_file, xmlcollection):

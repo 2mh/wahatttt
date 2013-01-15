@@ -12,10 +12,9 @@ from progressbar import ProgressBar
 from collections import defaultdict
 
 from wh4t.documents import Collection
-from wh4t.settings import print_line, print_own_info, get_words_corr_file, \
-     get_def_enc
+from wh4t.library import print_line, print_own_info, get_words_corr_file, \
+                          get_def_enc, spawn_processes, EnToDeDict, Synsets
 from wh4t.nouns import Nouns
-from wh4t.library import spawn_processes, EnToDeDict, Synsets
 
 def main():
     """ 

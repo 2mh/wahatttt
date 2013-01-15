@@ -5,8 +5,7 @@
 
 from codecs import open
 
-from settings import get_nouns_file, get_def_enc
-from library import normalize_word
+from library import get_nouns_file, get_def_enc, normalize_word
 
 class Nouns(list):
     """

@@ -12,13 +12,12 @@ from nltk.metrics import edit_distance
 from progressbar import ProgressBar
 
 from document import document
-from list_by_len import ListByLen
-from settings import get_mailfolder, get_tokens_file, get_def_enc, \
-                     get_types_file, get_raw_file, get_words_file, \
-                     get_stems_file, get_words_by_editdistance_file, \
-                     get_topwords_file, get_def_no_of_topwords, \
-                     get_def_len_for_editdistancing, \
-                     get_def_editdistance_filename_suffix
+from library import get_mailfolder, get_tokens_file, get_def_enc, \
+                    get_types_file, get_raw_file, get_words_file, \
+                    get_stems_file, get_words_by_editdistance_file, \
+                    get_topwords_file, get_def_no_of_topwords, \
+                    get_def_len_for_editdistancing, \
+                    get_def_editdistance_filename_suffix, ListByLen
 from nouns import Nouns
 
 class Collection(dict):

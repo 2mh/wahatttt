@@ -17,8 +17,8 @@ from xml.sax.handler import ContentHandler
 from xml.sax import make_parser
 from xml.dom.minidom import Document as Doc
 
-from wh4t.settings import print_own_info, get_def_enc, \
-                          get_invalid_xml_filename, get_mailfolder
+from wh4t.library import print_own_info, get_def_enc, \
+                         get_invalid_xml_filename, get_mailfolder
 
 print_own_info(__file__)
 

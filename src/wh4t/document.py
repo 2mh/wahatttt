@@ -15,8 +15,8 @@ from nltk.stem.snowball import GermanStemmer as Stemmer
 from hashlib import sha512
 
 from library import normalize_word, rreplace, clean_iterable, split_term, \
-                    HashDict
-from settings import get_mailfolder, get_def_enc, get_wordsdir, get_stemsdir
+                    HashDict, get_mailfolder, get_def_enc, get_wordsdir, \
+                    get_stemsdir
 
 class document(dict):
     """
