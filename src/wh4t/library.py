@@ -7,6 +7,7 @@ from codecs import open
 from os.path import exists
 from multiprocessing import cpu_count, Process, Queue
 from re import sub, match
+import operator
 from sys import stdout
 
 from nltk.text import TextCollection
@@ -233,6 +234,7 @@ def write_tfidf_file(xmlcollection, nltk_textcollection):
         write_idf_file(xmlcollection, nltk_textcollection)
 
     idf_dict = DictFromFile(idf_file)
+    tfidf_dict = dict()
     high_tfidf_stems = set()
     
     collection_stems = list(xmlcollection.get_stems(uniq=True))
@@ -269,14 +271,28 @@ def write_tfidf_file(xmlcollection, nltk_textcollection):
             # If nothing applies: tf is 0.0
                 
             tfidf = tf*float(idf_dict[stem])
+            tfidf_dict[stem] = tfidf
+
+            # We may find here some threshold that makes sense
             if (tfidf > 0.0):
                 stdout.write(stem + ", ")
                 high_tfidf_stems.add(stem)
+            
             idf_row += str(tfidf) + " "
         f.write(idf_row + "\n")
         stdout.write(")\n")
     f.close()
     print "List length of high value tf*idf terms:", len(high_tfidf_stems)
+    
+    sorted_tfidf_dict = \
+        sorted(tfidf_dict.iteritems(), reverse=True,
+               key=operator.itemgetter(1))
+    
+    f = open(get_stems_file(measure="_tfidf_sorted"), "w", get_def_enc())
+    for pair in sorted_tfidf_dict: 
+        f.write(str(pair[1]) + " " + pair[0] + "\n")
+    f.close()
+    
   
 def write_idf_file(xmlcollection, nltk_textcollection):
     """

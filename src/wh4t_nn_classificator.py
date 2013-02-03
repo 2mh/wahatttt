@@ -15,10 +15,9 @@ from matplotlib.pyplot import figure, ion, title, scatter, draw, gcf, np
 # from kluster.pca import Pca # To be removed eventually
 from kluster.util import decay_learning_rate, const_learning_rate
 from kluster.hebbian_clustering import project_items, learn_weights
-from wh4t.settings import print_own_info
 from wh4t.documents import Collection
 from wh4t.library import write_tfidf_file, get_nltk_text_collection, \
-                         exists_tfidf_matrix
+                         exists_tfidf_matrix, print_own_info
 from wh4t.settings import get_tfidf_matrix_file, get_def_no_of_clusters
 
 def iterate(data, n_clusters, n_visual_dimensions, indices):

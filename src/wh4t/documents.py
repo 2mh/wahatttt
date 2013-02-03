@@ -101,13 +101,18 @@ class Collection(dict):
         
         # Read in all documents
         # XXX: This part may change in its behaviour soon
-        fileslist = listdir(get_mailfolder())
-        for xml_filename in fileslist:
+        files_list = listdir(get_mailfolder())
+        no_of_files = len(files_list)
+        pb = ProgressBar(maxval=no_of_files).start()
+        cnt = 1
+        for xml_filename in files_list:
+            pb.update(cnt)
+            cnt += 1
             xmldoc = document(get_mailfolder() + xml_filename)
             self[self.DOC_LIST].append(xmldoc)
             
         # Store number of files found
-        self.__setitem__(self.DOCS_COUNT, len(fileslist))
+        self.__setitem__(self.DOCS_COUNT, no_of_files)
         
     def get_doc(self, pos): 
         """
@@ -115,6 +120,12 @@ class Collection(dict):
         @return: A specific document (of type document)
         """
         return self[self.DOC_LIST][pos]
+    
+    def get_docs_no(self):
+        """
+        Return number (int) of docs in collection.
+        """
+        return self[self.DOCS_COUNT]
     
     def get_docs(self): 
         """

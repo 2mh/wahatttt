@@ -20,9 +20,9 @@ def create_hard_clusters(soft_clusters, no_of_docs):
     """
     
     """
+    
     if len(soft_clusters) == 0 or no_of_docs == 0:
-        raise VoidStructureError, \
-        "Please provide non-zero/empty values."
+        raise VoidStructureError, "Please provide non-zero/empty values."
     hard_clusters = list()
     border_docs = set()
     
