@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@author Hernani Marques <h2m@access.uzh.ch>, 2012
+@author Hernani Marques <h2m@access.uzh.ch>, 2012-2013
 """
 import datetime as t
 from os import sep
@@ -12,7 +12,7 @@ from re import sub
 ################
 
 # Version of the wahatttt system as a whole; as of 1.0 it'll be usable
-VERSION = "0.82"
+VERSION = "0.83"
 
 # Ensure everything's using one encoding only (here: UTF-8).
 DEFAULT_ENCODING = "UTF-8"
@@ -46,6 +46,9 @@ DEFAULT_IDF_FILTER_VALUE = 2.0
 # as more frequent terms get removed.
 DEFAULT_COMMON_TERMS_NUMBER = 300
 
+# Name the graph for web visualization has
+DEFAULT_GRAPH_NAME = "wh4t_graph"
+
 ##########################
 # Paths to folders / files
 ##########################
@@ -63,6 +66,9 @@ PROJ_CLUST_DIR = PROJ_BASE_DIR + "clust_dir" + sep
 PROJ_WORDS_DIR = PROJ_BASE_DIR + "words_dir" + sep
 PROJ_NOUNS_DIR = PROJ_BASE_DIR + "nouns_dir" + sep
 PROJ_STEMS_DIR = PROJ_BASE_DIR + "stems_dir" + sep
+
+# Directory for visualized web output
+WEB_OUTPUT_DIR = PROJ_BASE_DIR + "wh4t_web" + sep
 
 # XML file containing info about broken XML files, if any
 # (hopefully not).

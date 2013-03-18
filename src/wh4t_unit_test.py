@@ -1,7 +1,7 @@
 #! /usr/bin/env python2.7
 # -*- coding: utf-8 -*-
 """
-@author Hernani Marques <h2m@access.uzh.ch>, 2012
+@author Hernani Marques <h2m@access.uzh.ch>, 2012-2013
 """
 from sys import stdout
 
@@ -53,10 +53,21 @@ def simple_stems_classificator():
     doc_id = 1
     
     print "Put stems into a dict for each document (with an uniq id) ..."
+    print "Create nodes with all the documents' relevant information ..."
     pb = ProgressBar(maxval=docs_no).start()
     for xml_doc in xml_docs.get_docs():
         pb.update(doc_id)
         id_dict[xml_doc.get_xml_filename()] = doc_id
+        g.add_node(doc_id, 
+                   id = xml_doc.get_id(),
+                   rawlen = xml_doc.get_rawlen(),
+                   subj = xml_doc.get_subj(),
+                   author = xml_doc.get_author(),
+                   date = xml_doc.get_date(),
+                   words = xml_doc.get_words(),
+                   uniq_stems = xml_doc.get_stems(uniq=True),
+                   rawcontent = xml_doc.get_rawcontent()
+                   )
         doc_id += 1
         stems_dict[doc_id] = xml_doc.get_stems(uniq=True)
         
@@ -72,9 +83,22 @@ def simple_stems_classificator():
     
         while True:
             # print "Comparing: ", doc_idx1, doc_idx2
-            edge_weight = 1 - jaccard_distance(stems_dict[doc_idx1],
-                                           stems_dict[doc_idx2])
-            g.add_edge(doc_idx1, doc_idx2, weight=edge_weight)
+            
+            # Find longer doc
+            doc1_len, doc2_len = len(stems_dict[doc_idx1]), \
+                                    len(stems_dict[doc_idx2])
+            long_doc_len = max((doc1_len, doc2_len))
+            short_doc_len = min((doc1_len, doc2_len))
+            alias_coeff = float(long_doc_len) / short_doc_len
+            
+            edge_weight = (1 - jaccard_distance(stems_dict[doc_idx1],
+                                           stems_dict[doc_idx2])) \
+                           * alias_coeff
+            print alias_coeff, edge_weight
+            
+            # To be made more flexible
+            if edge_weight == 1:
+                g.add_edge(doc_idx1, doc_idx2, weight=edge_weight)
             doc_idx2 += 1
             pb.update(count)
             count += 1
@@ -94,8 +118,8 @@ def simple_stems_classificator():
     pos = nx.spring_layout(g, scale=20)
     #pos = nx.random_layout(g)
     
-    dlarge = [n for n,d in g.degree_iter() if d >= 10]
-    dmedium = [n for n,d in g.degree_iter() if d > 1 and d < 10]
+    dlarge = [n for n,d in g.degree_iter() if d >= 20]
+    dmedium = [n for n,d in g.degree_iter() if d > 1 and d < 20]
     dsmall = [n for n,d in g.degree_iter() if d == 1]
     dnone = [n for n,d in g.degree_iter() if d == 0]
     print "dlarge: ", len(dlarge)
@@ -126,19 +150,25 @@ def simple_stems_classificator():
     nx.draw_networkx_edges(g, pos, edgelist=elarge, width=0.4)
     nx.draw_networkx_edges(g, pos, edgelist=emedium, edge_color='g', 
                            alpha=0.8, width=0.2)
-    """
     nx.draw_networkx_edges(g, pos, edgelist=esmall, width=0.1,
                            alpha=0.1, edge_color='b')
-    """
     
     # Draw labels
     # nx.draw_networkx_labels(g, pos, font_size=1, font_family='sans-serif')
     
     plt.axis('off')
     plt.figure(1, figsize=(20,20))
+    """
     print "Print PNG"
     plt.savefig("graph.png", dpi=600)
+    """
     # plt.show()
+    nx.write_yaml(g, "test_mit_name.yaml")
+    
+    #import d3_js
+    #g = nx.read_yaml("../test_mit_name.yaml")
+    #
+    
         
 def stems_test():
     """

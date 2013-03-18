@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-@author Hernani Marques <h2m@access.uzh.ch>, 2012
+@author Hernani Marques <h2m@access.uzh.ch>, 2012-2013
 (if not noted someone else)
 """
 from codecs import open
@@ -586,6 +586,13 @@ def get_def_no_of_clusters():
 # See definitions section for more information on its intended content.
 #######################################################################
 
+def get_web_output_dir():
+    """
+    @return: String with path to a folder where web output vor data
+             visualization lies
+    """
+    return WEB_OUTPUT_DIR
+
 def get_mailfolder(content_format="XML"): 
     """
     @param: If type's "CSV" return mail folder where mails in CSV 
@@ -758,7 +765,13 @@ def get_def_common_terms_no():
              documents.
     """
     return DEFAULT_COMMON_TERMS_NUMBER
-    
+
+def get_def_graph_name():
+    """
+    @return: Return default graph name for web visualization
+    """
+    return DEFAULT_GRAPH_NAME
+
 ###################################
 # Simple printer / helper functions
 ###################################
