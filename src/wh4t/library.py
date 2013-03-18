@@ -772,6 +772,12 @@ def get_def_graph_name():
     """
     return DEFAULT_GRAPH_NAME
 
+def get_graph_file(filename=get_def_graph_name()):
+    """
+    @return: String with path to graph file
+    """
+    return get_proj_basedir() + filename + ".yaml"
+
 ###################################
 # Simple printer / helper functions
 ###################################
