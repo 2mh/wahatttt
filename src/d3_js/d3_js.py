@@ -20,6 +20,29 @@ Extended by Hernani Marques (h2m@access.uzh.ch) in 2013
 # All rights reserved.
 """
 
+"""
+TODO (Prio 1):
+1.
+d3.v2.js in d3/ reinkopieren
+2.
+Tabellenstruktur in wh4t_graph.html automatisch (richtig), mit all den
+erforderlichen Feldern rekonstruieren
+3.
+Höhe in wh4t_graph.js richtig einstellen (dynamisch?)
+4.
+distance & charge so einstellen, dass sinnvolle Abstände bestehen
+5a.
+Feld-Update-Funktionalität dynamisch generieren, mit allen wichtigen
+Fehlern; Quelleangabe
+5b.
+Code flexibler gestalten (Unterfunktionen erstellen? Wäre nice!)
+
+
+TODO (Prio 2):
+1.
+Zoom-Funktionalität fixen / herstellen
+"""
+
 __author__="""Drew Conway (drew.conway@nyu.edu)"""
 
 __all__=['write_d3_js',
@@ -36,7 +59,8 @@ from d3_js_files import *
 import json
 import re	
 
-from wh4t.library import get_def_graph_name, get_web_output_dir
+from wh4t.library import get_def_enc, get_def_graph_name, \
+						 get_web_output_dir, get_webgraph_res
 
 def is_string_like(obj): # from John Hunter, types-free version
     """Check if obj is string."""
@@ -167,10 +191,10 @@ def export_d3_js(G,
 				files_dir=get_web_output_dir(), 
 				graphname=get_def_graph_name(), 
 				group=None, 
-				width=960, 
-				height=500, 
+				width=get_webgraph_res()[0], 
+				height=get_webgraph_res()[1], 
 				node_labels=False, 
-				encoding="utf-8"):
+				encoding=get_def_enc()):
 	"""
 	A function that exports a NetworkX graph as an interavtice D3.js object.  
 	The function builds a folder, containing the graph's formatted JSON, the D3.js 

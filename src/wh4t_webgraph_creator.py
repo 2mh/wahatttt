@@ -4,6 +4,14 @@
 @author Hernani Marques <h2m@access.uzh.ch>, 2013
 """  
 
+"""
+TODO:
+1. 
+Make program parametrizable, e. g. possibility to indicate YAML file.
+2.
+...
+"""
+
 import matplotlib.pyplot as plt
 import networkx as nx
 from nltk.metrics import jaccard_distance

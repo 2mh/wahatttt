@@ -6393,15 +6393,28 @@ line.link {
 d3_html = '''<!DOCTYPE html>
 <html>
   <head>
-    <title>Force-Directed Layout</title>
-    <script type="text/javascript" src="../../d3.js"></script>
-    <script type="text/javascript" src="../../d3.geom.js"></script>
-    <script type="text/javascript" src="../../d3.layout.js"></script>
-    <link type="text/css" rel="stylesheet" href="force.css"/>
+    <title>wh4t webgraph</title>
+    <script type="text/javascript" src="../d3/d3.v2.js" charset="UTF-8"></script>
+    <link type="text/css" rel="stylesheet" href="d3/force.css"/>
   </head>
   <body>
+        <table border="1" width="100%">
+        <tr>
+        <td>
     <div id="chart"></div>
-    <script type="text/javascript" src="force.js"></script>
+        </td>
+        <td width="30%">
+        <table height="500">
+        <tr><td height="50"><h2>Doc: &nbsp;</h2></td><td><div id="doc_no"></div></td></tr>
+        <tr><td height="50"><h2>Group:&nbsp;</h2></td><td><div id="group_no"></div></td></tr>
+        <tr><td height="200"><h2>Stems:&nbsp;</h2></td><td><div id="stems"></div></td></tr>
+        <tr><td height="200"><h2>Words:&nbsp;</h2></td><td><div id="words"></div></td></tr>
+        </tr>
+        </table>
+        </td>
+        </tr>
+        </table>
+    <script type="text/javascript" src="wh4t_graph.js"></script>
   </body>
 </html>
 '''

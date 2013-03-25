@@ -778,6 +778,13 @@ def get_graph_file(filename=get_def_graph_name()):
     """
     return get_proj_basedir() + filename + ".yaml"
 
+def get_webgraph_res():
+    """
+    @return: 2-element tuple with width and height
+             representing the webgraph's resolution
+    """
+    return DEFAULT_WEBGRAPH_RESOLUTION
+
 ###################################
 # Simple printer / helper functions
 ###################################

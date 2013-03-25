@@ -49,6 +49,9 @@ DEFAULT_COMMON_TERMS_NUMBER = 300
 # Name the graph for web visualization has
 DEFAULT_GRAPH_NAME = "wh4t_graph"
 
+# Standard resolution for the web graph in the browser, width x height
+DEFAULT_WEBGRAPH_RESOLUTION = (960, 500)
+
 ##########################
 # Paths to folders / files
 ##########################
