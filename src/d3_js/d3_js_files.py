@@ -13,13 +13,7 @@ Created by Drew Conway (drew.conway@nyu.edu) on 2011-07-25
 
 __author__="""Drew Conway (drew.conway@nyu.edu)"""
 
-__all__=['d3_js',
-		 'd3_layout',
-		 'd3_geom',
-		 'd3_force',
-		 'd3_css',
-		 'd3_html',
-		 'd3_license']
+__all__=['d3_html']
 
 d3_js = '''(function(){d3 = {version: "1.27.2"}; // semver
 if (!Date.now) Date.now = function() {
@@ -6324,19 +6318,30 @@ d3.layout.treemap = function() {
 })();
 '''
 
-d3_force = '''var w = 960,
-    h = 500,
-    fill = d3.scale.category20();
+d3_force = '''var w = 950, // initially 800
+    h = 700, // initially less
+    fill = d3.scale.category10(); // initially 20
+
+function redraw() {
+  vis.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")");
+  vis.attr("font-size", (nodeFontSize / d3.event.scale) + "px");
+  vis.selectAll("line.link").style("stroke-width", getStrokeWidth); // Function so it runs for each element individually
+}
 
 var vis = d3.select("#chart")
   .append("svg:svg")
     .attr("width", w)
-    .attr("height", h);
+    .attr("height", h)
+  .append("svg:svg")
+    .call(d3.behavior.zoom().on("zoom", redraw))
+  .append("svg:svg");
 
-d3.json("miserables.json", function(json) {
+
+d3.json("wh4t_graph.json", function(json) {
+
   var force = d3.layout.force()
-      .charge(-125)
-      .linkDistance(50)
+      .charge(-10) // Regulates distance
+      .linkDistance(100) // initially 50
       .nodes(json.nodes)
       .links(json.links)
       .size([w, h])
@@ -6357,10 +6362,65 @@ d3.json("miserables.json", function(json) {
     .enter().append("svg:g")
       .attr("class", "node")
 
-  	node.append("svg:circle")
+      node.append("svg:circle")
       .attr("r", 5)
       .style("fill", function(d) { return fill(d.group); })
       .call(force.drag);
+
+ node.append("title")
+	.text(function(d) { return d.name; });
+
+node.on("mouseover", update_field);
+node.on("mouseout", remove_field);
+
+var doc_no = d3.select("#doc_no")
+var group_no = d3.select("#group_no")
+var stems = d3.select("#stems")
+var words = d3.select("#words")
+
+function update_field(d)
+{
+	doc_no.html("<h2>"+d.name+"</h2>");
+	group_no.html("<h2>"+d.group+"</h2>");
+	
+	// Print stems in formatted way
+	stems_formatted = "<h4>" + 
+                          format_array_to_html_str(d.uniq_stems) + 
+                          "</h4>";
+	stems.html(stems_formatted);
+
+	// Print words in formatted way
+	words_formatted = "<h4>" +
+                          format_array_to_html_str(d.words) + 
+			  "</h4>";
+	words.html(words_formatted);
+	
+	doc_no.transition().duration(200).style("opacity","1")
+	group_no.transition().duration(200).style("opacity","1")
+	stems.transition().duration(200).style("opacity","1")
+	words.transition().duration(200).style("opacity","1")
+}
+
+function format_array_to_html_str(arr)
+{
+	var str = "";
+        for (i=0; i<=10; i++)
+        {
+                str += arr[i]+", ";
+                if ( (i+1) % 3 == 0)
+                        str+="<br />";
+        }
+
+	return str;
+}
+
+function remove_field(d)
+{
+	doc_no.transition().duration(1000).style("opacity","0")
+	group_no.transition().duration(1000).style("opacity","0")
+	stems.transition().duration(1000).style("opacity","0")
+	words.transition().duration(1000).style("opacity","0")
+}
 
   vis.style("opacity", 1e-6)
     .transition()
@@ -6374,28 +6434,17 @@ d3.json("miserables.json", function(json) {
         .attr("y2", function(d) { return d.target.y; });
     
     node.attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+
   });
 });
 '''
-
-d3_css = '''circle.node {
-  stroke: #fff;
-  stroke-width: 1.5px;
-}
-
-line.link {
-  stroke: #999;
-  stroke-opacity: .6;
-}
-
-.nodetext { pointer-events: none; font: 10px'''
 
 d3_html = '''<!DOCTYPE html>
 <html>
   <head>
     <title>wh4t webgraph</title>
     <script type="text/javascript" src="../d3/d3.v2.js" charset="UTF-8"></script>
-    <link type="text/css" rel="stylesheet" href="d3/force.css"/>
+    <link type="text/css" rel="stylesheet" href="../d3/force.css"/>
   </head>
   <body>
         <table border="1" width="100%">
@@ -6414,7 +6463,7 @@ d3_html = '''<!DOCTYPE html>
         </td>
         </tr>
         </table>
-    <script type="text/javascript" src="wh4t_graph.js"></script>
+    <script type="text/javascript" src="../d3/wh4t_graph.js"></script>
   </body>
 </html>
 '''
