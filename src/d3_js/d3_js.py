@@ -15,35 +15,31 @@ redering options are based on the force-directed example by Mike Bostock at
 
 Created by Drew Conway (drew.conway@nyu.edu) on 2011-07-13 
 Extended by Hernani Marques (h2m@access.uzh.ch) in 2013
-# Copyright (c) 2011, under the Simplified BSD License.  
-# For more information on FreeBSD see: http://www.opensource.org/licenses/bsd-license.php
+# Copyright (c) 2011, 2013 under the Simplified BSD License.  
+# For more information on the BSD license see: 
+# http://www.opensource.org/licenses/bsd-license.php
 # All rights reserved.
 """
 
 """
-TODO (Prio 1):
+TODO (Priority 1):
 1.
-d3.v2.js in d3/ reinkopieren
+Size of graph in wh4t_graph.js must be set optimally (dynamically?)
 2.
-Tabellenstruktur in wh4t_graph.html automatisch (richtig), mit all den
-erforderlichen Feldern rekonstruieren
-3.
-Höhe in wh4t_graph.js richtig einstellen (dynamisch?)
-4.
-distance & charge so einstellen, dass sinnvolle Abstände bestehen
-5a.
-Feld-Update-Funktionalität dynamisch generieren, mit allen wichtigen
-Fehlern; Quelleangabe
-5b.
-Code flexibler gestalten (Unterfunktionen erstellen? Wäre nice!)
+distance & charge must be adjusted in a way, that interaction w/
+graph is useful
+3a.
+Field update functionality should be created dynamically
+3b.
+Code should be much more flexible (create subfunctions or similar)
 
-
-TODO (Prio 2):
+TODO (Priority 2):
 1.
-Zoom-Funktionalität fixen / herstellen
+Zoom functionality is still broken; must be fixed
 """
 
-__author__="""Drew Conway (drew.conway@nyu.edu)"""
+__author__=["""Drew Conway (drew.conway@nyu.edu)""",
+		    """Hernani Marques (h2m@access.uzh.ch)"""]
 
 __all__=['write_d3_js',
 		 'd3_json',
@@ -55,12 +51,41 @@ from shutil import copyfile
 #from networkx.utils import _get_fh
 from networkx.utils import make_str
 import networkx as nx
-from d3_js_files import *
+#from d3_js_files import *
 import json
 import re	
 
 from wh4t.library import get_def_enc, get_def_graph_name, \
 						 get_web_output_dir, get_webgraph_res
+
+d3_html = '''<!DOCTYPE html>
+<html>
+  <head>
+    <title>wh4t webgraph</title>
+    <script type="text/javascript" src="../d3/d3.v2.js" charset="UTF-8"></script>
+    <link type="text/css" rel="stylesheet" href="../d3/force.css"/>
+  </head>
+  <body>
+        <table border="1" width="100%">
+        <tr>
+        <td>
+    <div id="chart"></div>
+        </td>
+        <td width="30%">
+        <table height="500">
+        <tr><td height="50"><h2>Doc: &nbsp;</h2></td><td><div id="doc_no"></div></td></tr>
+        <tr><td height="50"><h2>Group:&nbsp;</h2></td><td><div id="group_no"></div></td></tr>
+        <tr><td height="200"><h2>Stems:&nbsp;</h2></td><td><div id="stems"></div></td></tr>
+        <tr><td height="200"><h2>Words:&nbsp;</h2></td><td><div id="words"></div></td></tr>
+        </tr>
+        </table>
+        </td>
+        </tr>
+        </table>
+    <script type="text/javascript" src="../d3/wh4t_graph.js"></script>
+  </body>
+</html>
+'''
 
 def is_string_like(obj): # from John Hunter, types-free version
     """Check if obj is string."""
@@ -242,14 +267,17 @@ def export_d3_js(G,
 	# Begin by creating the necessary JS and HTML files
 	
 	# This part really sucks bad, someone needs to make this better.
+	"""
 	d3_files = {'d3.js' : d3_js, 'd3.geom.js' : d3_geom, 'd3.layout.js' : d3_layout, 'force.css' : d3_css, 'LICENSE' : d3_license}
 	for f in d3_files.keys():
 		f_open = open(files_dir+'/d3/'+f, "w")
 		f_open.write(d3_files[f])
 		f_open.close()
+	"""
 		
 	# Next, go through and customize force.js and html to the given export
 	
+	"""
 	graph_force_js = open(files_dir+'/'+graphname+'.js', "w")
 	for line in d3_force.split('\n'):
 		if line.find('w = 960') > 0:
@@ -270,6 +298,7 @@ def export_d3_js(G,
     .text(function(d) { return d.name; });\n'''
 			graph_force_js.write(label_func.encode(encoding))
 	graph_force_js.close()
+	"""
 	
 	graph_force_html = open(files_dir+'/'+graphname+'.html', 'w')
 	for line in d3_html.split("\n"):
@@ -285,7 +314,3 @@ def export_d3_js(G,
 			line = line.replace('"force.js"', '"'+graphname+'.js"')
 		graph_force_html.write(line+'\n'.encode(encoding))
 	graph_force_html.close()
-
-
-
-

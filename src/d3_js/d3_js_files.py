@@ -13,7 +13,12 @@ Created by Drew Conway (drew.conway@nyu.edu) on 2011-07-25
 
 __author__="""Drew Conway (drew.conway@nyu.edu)"""
 
-__all__=['d3_html']
+__all__=['d3_js',
+		 'd3_geom',
+		 'd3_layout',
+		 'd3_force',
+		 'd3_license',
+		'd3_html']
 
 d3_js = '''(function(){d3 = {version: "1.27.2"}; // semver
 if (!Date.now) Date.now = function() {
