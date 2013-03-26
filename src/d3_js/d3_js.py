@@ -259,46 +259,10 @@ def export_d3_js(G,
 	if not os.path.exists(files_dir):
 	    os.makedirs(files_dir)
 	
+	# Begin by creating the necessary JS and HTML files
+
 	write_d3_js(G, path=files_dir+"/"+graphname+".json", group=group, encoding=encoding)
 	
-	if not os.path.exists(files_dir+"/d3"):
-		os.makedirs(files_dir+"/d3")
-	
-	# Begin by creating the necessary JS and HTML files
-	
-	# This part really sucks bad, someone needs to make this better.
-	"""
-	d3_files = {'d3.js' : d3_js, 'd3.geom.js' : d3_geom, 'd3.layout.js' : d3_layout, 'force.css' : d3_css, 'LICENSE' : d3_license}
-	for f in d3_files.keys():
-		f_open = open(files_dir+'/d3/'+f, "w")
-		f_open.write(d3_files[f])
-		f_open.close()
-	"""
-		
-	# Next, go through and customize force.js and html to the given export
-	
-	"""
-	graph_force_js = open(files_dir+'/'+graphname+'.js', "w")
-	for line in d3_force.split('\n'):
-		if line.find('w = 960') > 0:
-			line = line.replace('w = 960', 'w = '+str(width))
-		if line.find('h = 500') > 0:
-			line = line.replace('h = 500', 'h = '+str(height))
-		if line.find('"miserables.json"') > 0:
-			line = line.replace('"miserables.json"', '"'+graphname+'.json"')
-		graph_force_js.write(line+'\n'.encode(encoding))
-		if line.find('drag') > 0 and node_labels:
-			label_func = '''\n  node.append("svg:text")
-    .attr("class", "nodetext")
-    .attr("dx", 10)
-	.attr("dy", ".35em")
-	.text(function(d) { return d.name; });
-
-  node.append("svg:title")
-    .text(function(d) { return d.name; });\n'''
-			graph_force_js.write(label_func.encode(encoding))
-	graph_force_js.close()
-	"""
 	
 	graph_force_html = open(files_dir+'/'+graphname+'.html', 'w')
 	for line in d3_html.split("\n"):
