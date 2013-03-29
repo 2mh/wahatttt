@@ -55,6 +55,8 @@ class Collection(dict):
         Initialization of key-value pairs to hold the collection
         of documents.
         """
+        print "Loading collection ..."
+        
         dict.__init__(self)
         
         # For holding a list of documents
@@ -136,11 +138,16 @@ class Collection(dict):
                  name (ASCII encoding order)
         """
         if author is not None:
+            print "Filter mails for author", author, "..."
+            cnt = 0
+            pb = ProgressBar(maxval=self[self.DOCS_COUNT]).start()
             sub_doc_list = self[self.DOC_LIST][:] # Shallow copy
             for doc in self[self.DOC_LIST]:
                 doc_author = doc.get_author()
                 if doc.get_author() != author:
                     sub_doc_list.remove(doc)
+                cnt += 1
+                pb.update(cnt)
             return sorted(sub_doc_list, key=lambda doc: doc.get_id())
         
         return sorted(self[self.DOC_LIST], key=lambda doc: doc.get_id())

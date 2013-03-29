@@ -39,7 +39,6 @@ def main():
 
 def create_graph():  
     g = nx.Graph()
-    print "Loading collection ..."
     xml_docs = Collection()
     xml_docs_subset = xml_docs.get_docs(author="Wau Holland")
     docs_no = len(xml_docs_subset)
@@ -50,7 +49,6 @@ def create_graph():
     print "Put stems into a dict for each document (with an uniq id) ..."
     print "Create nodes with all the documents' relevant information ..."
     pb = ProgressBar(maxval=docs_no).start()
-    print "LENGTH:",len(xml_docs_subset)
     for xml_doc in xml_docs_subset:
         pb.update(doc_id)
         id_dict[xml_doc.get_xml_filename()] = doc_id
@@ -103,7 +101,7 @@ def create_graph():
     
     print "Draw graph showing possible clusters  ..."
     
-    elarge = [(u,v) for (u,v,d) in g.edges(data=True) if d['weight'] > 0.4]
+    elarge = [(u,v) for (u,v,d) in g.edges(data=True) if d['weight'] > 0.2]
     emedium = [(u,v) for (u,v,d) in g.edges(data=True) 
               if d['weight'] > 0.2 and d['weight'] < 0.4]
     esmall = [(u,v) for (u,v,d) in g.edges(data=True) if d['weight'] <= 0.2]
