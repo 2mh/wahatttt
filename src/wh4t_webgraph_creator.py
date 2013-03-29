@@ -28,7 +28,7 @@ def main():
 
     yaml_file = get_graph_file()
     if exists(yaml_file):
-        print "Graph (YAML) file exists: ", yaml_file
+        print "Graph (YAML) file exists: ",yaml_file
         print "Reading it ..."
         g = nx.read_yaml(yaml_file)
         d3_js.export_d3_js(g)
