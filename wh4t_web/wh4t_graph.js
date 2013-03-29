@@ -1,3 +1,11 @@
+/* 
+Based upon code of Martin Bostock, 2010
+Web: https://github.com/mbostock/
+
+Somewhat extended by Hernani Marques <h2m@access.uzh.ch>, 2013
+to meet wh4t's needs
+*/
+
 var w = 950, // initially 800
     h = 700, // initially less
     fill = d3.scale.category10(); // initially 20
@@ -50,15 +58,15 @@ d3.json("wh4t_graph.json", function(json) {
  node.append("title")
 	.text(function(d) { return d.name; });
 
-node.on("mouseover", update_field);
-node.on("mouseout", remove_field);
+node.on("mouseover", on_mouseover);
+node.on("mouseout", on_mouseout);
 
 var doc_no = d3.select("#doc_no")
 var group_no = d3.select("#group_no")
 var stems = d3.select("#stems")
 var words = d3.select("#words")
 
-function update_field(d)
+function on_mouseover(d)
 {
 	doc_no.html("<h2>"+d.name+"</h2>");
 	group_no.html("<h2>"+d.group+"</h2>");
@@ -99,7 +107,7 @@ function format_array_to_html_str(arr)
 	return str;
 }
 
-function remove_field(d)
+function on_mouseout(d)
 {
 	doc_no.transition().duration(1000).style("opacity","0")
 	group_no.transition().duration(1000).style("opacity","0")
