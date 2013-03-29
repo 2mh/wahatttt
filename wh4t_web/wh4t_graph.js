@@ -1,3 +1,11 @@
+/* 
+Based upon code of Martin Bostock, 2010
+Web: https://github.com/mbostock/
+
+Somewhat extended by Hernani Marques <h2m@access.uzh.ch>, 2013
+to meet wh4t's needs
+*/
+
 var w = 950, // initially 800
     h = 700, // initially less
     fill = d3.scale.category10(); // initially 20
