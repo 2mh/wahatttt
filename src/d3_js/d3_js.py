@@ -82,7 +82,7 @@ d3_html = '''<!DOCTYPE html>
         </td>
         </tr>
         </table>
-    <script type="text/javascript" src="d3/wh4t_graph.js"></script>
+    <script type="text/javascript" src="wh4t_graph.js"></script>
   </body>
 </html>
 '''
