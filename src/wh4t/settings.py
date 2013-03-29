@@ -12,7 +12,7 @@ from re import sub
 ################
 
 # Version of the wahatttt system as a whole; as of 1.0 it'll be usable
-VERSION = "0.83"
+VERSION = "0.9"
 
 # Ensure everything's using one encoding only (here: UTF-8).
 DEFAULT_ENCODING = "UTF-8"
@@ -37,7 +37,7 @@ DEFAULT_NUMBER_OF_CLUSTERS = 4
 # Up to which level the frequent terms should be filtered out
 # -- according to their IDF (inverse document frequency) values
 # Caution: When changes doesn't recreate a new TF*IDF matrix.
-DEFAULT_IDF_FILTER_VALUE = 2.0
+DEFAULT_IDF_FILTER_VALUE = 3
 
 # Number of terms which must match in order to cluster two documents.
 # With a number of 5 (empirically tested) for ~99% of the documents a

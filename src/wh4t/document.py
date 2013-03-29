@@ -16,7 +16,8 @@ from hashlib import sha512
 
 from library import normalize_word, rreplace, clean_iterable, split_term, \
                     HashDict, get_mailfolder, get_def_enc, get_wordsdir, \
-                    get_stemsdir
+                    get_stemsdir, DictFromFile, get_classification_stems, \
+                    get_stems_file
 
 class document(dict):
     """
@@ -375,30 +376,42 @@ class document(dict):
         
         return self[self.WORDS]
 
-    def get_stems(self, uniq=False, trans=False):
+    def get_stems(self, uniq=False, trans=False, relev=False):
         """
         @param uniq: Defaults to False, i. e. returns not-unique stems.
                      Can be changed by providing True. Optional 
                      setting.
         @param trans: Get stems after translation of foreign-language 
                       words
+        @param relev: Only return relevant stems, of the sort useful
+                      for classification, i. e. w/o stop words or very
+                      rare words (appearing e. g. only once everywhere).
         @return: Set of stems found upon the words. Create once.
         """
         var = self.STEMS
         if uniq == True:
             var = self.STEMS_UNIQ
+            self[var] = set(self[var]) # Ugly: This shouldn't be necessary
         
         if len(self[var]) == 0:
             for word in self.get_words(trans=trans):
                 # Below argument "german" for compatibility reasons 
                 # w/ older versions of NTLK
                 if uniq == True:
+                    # Code breaks here under some circumstances, w/o
+                    # above ugly line.
                     self[var].add(Stemmer("german").stem(word))
                     pass
                 else:
                     self[var].append(Stemmer("german").stem(word))
                     pass
             self.write_file(self.STEMS)
+            
+        if relev == True:
+            idf_file = get_stems_file(measure="_idf")
+            idf_dict = DictFromFile(idf_file)
+            self[var] = get_classification_stems(self[var], idf_dict)
+            
         return self[var]
     
     """

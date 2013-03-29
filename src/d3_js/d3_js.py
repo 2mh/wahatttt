@@ -57,8 +57,7 @@ import re
 from wh4t.library import get_def_enc, get_def_graph_name, \
 						 get_web_output_dir, get_webgraph_res
 
-d3_html = '''
-<!DOCTYPE html>
+d3_html = '''<!DOCTYPE html>
 <html>
   <head>
     <title>wh4t webgraph</title>
@@ -75,7 +74,8 @@ d3_html = '''
         <td height="650" width="300">
         <table>
         <tr><td height="100"><h2>ID: &nbsp;</h2></td><td><div id="doc_id"></div></td></tr>
-        <tr><td height="100"><h2>Group:&nbsp;</h2></td><td><div id="group_no"></div></td></tr>
+        <!--<tr><td height="100"><h2>Group:&nbsp;</h2></td><td><div id="group_no"></div></td></tr>-->
+        <tr><td height="100"><h2>Cluster stems:&nbsp;</h2></td><td><div id="cluster_stems"></div></td></tr>
         <tr><td height="225"><h2>Stems:&nbsp;</h2></td><td><div id="stems"></div></td></tr>
         <tr><td height="225"><h2>Words:&nbsp;</h2></td><td><div id="words"></div></td></tr>
         </tr>

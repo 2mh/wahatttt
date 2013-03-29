@@ -8,7 +8,6 @@
 TODO:
 1. 
 Make program parametrizable, e. g. possibility to indicate YAML file.
-2.
 ...
 """
 
@@ -20,8 +19,7 @@ from progressbar import ProgressBar
 
 from d3_js import d3_js
 from wh4t.documents import Collection
-from wh4t.library import get_def_graph_name, get_graph_file, \
-                         print_own_info
+from wh4t.library import get_def_graph_name, get_graph_file, print_own_info
  
 def main():
     print_own_info(__file__)
@@ -49,6 +47,7 @@ def create_graph():
     print "Put stems into a dict for each document (with an uniq id) ..."
     print "Create nodes with all the documents' relevant information ..."
     pb = ProgressBar(maxval=docs_no).start()
+    
     for xml_doc in xml_docs_subset:
         pb.update(doc_id)
         id_dict[xml_doc.get_xml_filename()] = doc_id
@@ -58,12 +57,15 @@ def create_graph():
                    subj = xml_doc.get_subj(),
                    author = xml_doc.get_author(),
                    date = xml_doc.get_date(),
-                   words = xml_doc.get_words()[:10],
-                   uniq_stems = list(xml_doc.get_stems(uniq=True))[:10],
+                   words = xml_doc.get_words(),
+                   uniq_stems = list(xml_doc.get_stems(uniq=True, 
+                                                       relev=True)),
                    rawcontent = xml_doc.get_rawcontent()
                    )
         doc_id += 1
-        stems_dict[doc_id] = xml_doc.get_stems(uniq=True)
+        # It seems sometimes a list (-> set conversion) gets returned 
+        # ... ugly. XXX
+        stems_dict[doc_id] = set(xml_doc.get_stems(uniq=True, relev=True))
         
     print "Create undirected, weighted graph based on Jaccard similarity ..."
     no_of_edges = docs_no * (docs_no - 1) / 2
@@ -83,15 +85,38 @@ def create_graph():
                                     len(stems_dict[doc_idx2])
             long_doc_len = max((doc1_len, doc2_len))
             short_doc_len = min((doc1_len, doc2_len))
-            alias_coeff = float(long_doc_len) / short_doc_len
+            
+            # In case a document has no useful stems to classify
+            alias_coeff = 0
+            if short_doc_len != 0:
+                alias_coeff = float(long_doc_len) / short_doc_len
             
             edge_weight = (1 - jaccard_distance(stems_dict[doc_idx1],
                                            stems_dict[doc_idx2])) \
                            * alias_coeff
             print alias_coeff, edge_weight
             
+            # Still redundant, only for testing
+            if (edge_weight > 0.25):
+                cluster_stems = stems_dict[doc_idx1].intersection(
+                               stems_dict[doc_idx2])
+                try: 
+                    g.node[doc_idx1]['cluster_stems']
+                except KeyError:
+                    g.node[doc_idx1]['cluster_stems'] = cluster_stems
+                else:
+                    for stem in cluster_stems:
+                        g.node[doc_idx1]['cluster_stems'].add(stem)
+                try: 
+                    g.node[doc_idx2]['cluster_stems']
+                except KeyError:
+                    g.node[doc_idx2]['cluster_stems'] = cluster_stems
+                else:
+                    for stem in cluster_stems:
+                        g.node[doc_idx2]['cluster_stems'].add(stem)
+            
             # To be made more flexible
-            if edge_weight == 1:
+            if edge_weight > 0.25:
                 g.add_edge(doc_idx1, doc_idx2, weight=edge_weight)
             doc_idx2 += 1
             pb.update(count)
@@ -101,7 +126,7 @@ def create_graph():
     
     print "Draw graph showing possible clusters  ..."
     
-    elarge = [(u,v) for (u,v,d) in g.edges(data=True) if d['weight'] > 0.2]
+    elarge = [(u,v) for (u,v,d) in g.edges(data=True) if d['weight'] > 0.4]
     emedium = [(u,v) for (u,v,d) in g.edges(data=True) 
               if d['weight'] > 0.2 and d['weight'] < 0.4]
     esmall = [(u,v) for (u,v,d) in g.edges(data=True) if d['weight'] <= 0.2]
