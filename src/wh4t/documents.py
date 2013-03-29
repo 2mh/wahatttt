@@ -50,7 +50,7 @@ class Collection(dict):
     REF_NOUNS = "ref_nouns" 
     DOCS_COUNT = "docs_count"
         
-    def __init__(self, author=None):
+    def __init__(self):
         """
         Initialization of key-value pairs to hold the collection
         of documents.
