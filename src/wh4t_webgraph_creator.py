@@ -15,6 +15,7 @@ Make program parametrizable, e. g. possibility to indicate YAML file.
 import matplotlib.pyplot as plt
 import networkx as nx
 from nltk.metrics import jaccard_distance
+from os.path import exists
 from progressbar import ProgressBar
 
 from d3_js import d3_js
@@ -24,7 +25,19 @@ from wh4t.library import get_def_graph_name, get_graph_file, \
  
 def main():
     print_own_info(__file__)
-    
+
+    yaml_file = get_graph_file()
+    if exists(yaml_file):
+        print "Graph (YAML) file exists: ", yaml_file
+        print "Reading it ..."
+        g = nx.read_yaml(yaml_file)
+        d3_js.export_d3_js(g)
+        print "Web files exported: ", 
+    else:
+        create_graph()
+
+
+def create_graph():  
     g = nx.Graph()
     print "Loading collection ..."
     xml_docs = Collection()
@@ -45,8 +58,8 @@ def main():
                    subj = xml_doc.get_subj(),
                    author = xml_doc.get_author(),
                    date = xml_doc.get_date(),
-                   words = xml_doc.get_words(),
-                   uniq_stems = xml_doc.get_stems(uniq=True),
+                   words = xml_doc.get_words()[:10],
+                   uniq_stems = list(xml_doc.get_stems(uniq=True))[:10],
                    rawcontent = xml_doc.get_rawcontent()
                    )
         doc_id += 1

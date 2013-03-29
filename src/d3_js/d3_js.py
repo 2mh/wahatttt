@@ -51,7 +51,6 @@ from shutil import copyfile
 #from networkx.utils import _get_fh
 from networkx.utils import make_str
 import networkx as nx
-#from d3_js_files import *
 import json
 import re	
 
@@ -62,10 +61,11 @@ d3_html = '''<!DOCTYPE html>
 <html>
   <head>
     <title>wh4t webgraph</title>
-    <script type="text/javascript" src="../d3/d3.v2.js" charset="UTF-8"></script>
-    <link type="text/css" rel="stylesheet" href="../d3/force.css"/>
+    <script type="text/javascript" src="d3/d3.v2.js" charset="UTF-8"></script>
+    <link type="text/css" rel="stylesheet" href="d3/force.css"/>
   </head>
   <body>
+  <script type="text/javascript" src="wz/wz_tooltip.js"></script> 
         <table border="1" width="100%">
         <tr>
         <td>
@@ -82,7 +82,7 @@ d3_html = '''<!DOCTYPE html>
         </td>
         </tr>
         </table>
-    <script type="text/javascript" src="../d3/wh4t_graph.js"></script>
+    <script type="text/javascript" src="d3/wh4t_graph.js"></script>
   </body>
 </html>
 '''
