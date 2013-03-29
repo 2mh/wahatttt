@@ -41,7 +41,8 @@ def create_graph():
     g = nx.Graph()
     print "Loading collection ..."
     xml_docs = Collection()
-    docs_no = xml_docs.get_docs_no()
+    xml_docs_subset = xml_docs.get_docs(author="Wau Holland")
+    docs_no = len(xml_docs_subset)
     id_dict = dict()
     stems_dict = dict()
     doc_id = 1
@@ -49,7 +50,8 @@ def create_graph():
     print "Put stems into a dict for each document (with an uniq id) ..."
     print "Create nodes with all the documents' relevant information ..."
     pb = ProgressBar(maxval=docs_no).start()
-    for xml_doc in xml_docs.get_docs():
+    print "LENGTH:",len(xml_docs_subset)
+    for xml_doc in xml_docs_subset:
         pb.update(doc_id)
         id_dict[xml_doc.get_xml_filename()] = doc_id
         g.add_node(doc_id, 

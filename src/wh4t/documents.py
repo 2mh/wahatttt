@@ -50,7 +50,7 @@ class Collection(dict):
     REF_NOUNS = "ref_nouns" 
     DOCS_COUNT = "docs_count"
         
-    def __init__(self):
+    def __init__(self, author=None):
         """
         Initialization of key-value pairs to hold the collection
         of documents.
@@ -127,11 +127,22 @@ class Collection(dict):
         """
         return self[self.DOCS_COUNT]
     
-    def get_docs(self): 
+    def get_docs(self, author=None): 
         """
+        @param author: To specifiy which docs to get based on the author; 
+                       returns sublist, not modifying object in any 
+                       attributes
         @return: List of all documents in this collection, sorted by
                  name (ASCII encoding order)
         """
+        if author is not None:
+            sub_doc_list = self[self.DOC_LIST][:] # Shallow copy
+            for doc in self[self.DOC_LIST]:
+                doc_author = doc.get_author()
+                if doc.get_author() != author:
+                    sub_doc_list.remove(doc)
+            return sorted(sub_doc_list, key=lambda doc: doc.get_id())
+        
         return sorted(self[self.DOC_LIST], key=lambda doc: doc.get_id())
     
     def get_filesize(self):

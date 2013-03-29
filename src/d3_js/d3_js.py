@@ -57,7 +57,8 @@ import re
 from wh4t.library import get_def_enc, get_def_graph_name, \
 						 get_web_output_dir, get_webgraph_res
 
-d3_html = '''<!DOCTYPE html>
+d3_html = '''
+<!DOCTYPE html>
 <html>
   <head>
     <title>wh4t webgraph</title>
@@ -65,18 +66,18 @@ d3_html = '''<!DOCTYPE html>
     <link type="text/css" rel="stylesheet" href="d3/force.css"/>
   </head>
   <body>
-  <script type="text/javascript" src="wz/wz_tooltip.js"></script> 
-        <table border="1" width="100%">
+  <script type="text/javascript" src="wz/wz_tooltip.js"></script>
+        <table border="0" width="1000">
         <tr>
-        <td>
+        <td width="700">
     <div id="chart"></div>
         </td>
-        <td width="30%">
-        <table height="500">
-        <tr><td height="50"><h2>Doc: &nbsp;</h2></td><td><div id="doc_no"></div></td></tr>
-        <tr><td height="50"><h2>Group:&nbsp;</h2></td><td><div id="group_no"></div></td></tr>
-        <tr><td height="200"><h2>Stems:&nbsp;</h2></td><td><div id="stems"></div></td></tr>
-        <tr><td height="200"><h2>Words:&nbsp;</h2></td><td><div id="words"></div></td></tr>
+        <td height="650" width="300">
+        <table>
+        <tr><td height="100"><h2>ID: &nbsp;</h2></td><td><div id="doc_id"></div></td></tr>
+        <tr><td height="100"><h2>Group:&nbsp;</h2></td><td><div id="group_no"></div></td></tr>
+        <tr><td height="225"><h2>Stems:&nbsp;</h2></td><td><div id="stems"></div></td></tr>
+        <tr><td height="225"><h2>Words:&nbsp;</h2></td><td><div id="words"></div></td></tr>
         </tr>
         </table>
         </td>
