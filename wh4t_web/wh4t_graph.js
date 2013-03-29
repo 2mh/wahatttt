@@ -105,9 +105,14 @@ function on_mouseover(d)
 function format_array_to_html_str(arr)
 {
 	var str = "";
-        for (i=0; i<=15; i++)
+
+	len = arr.length;
+	if (len > 10)
+		len = 10;
+		
+        for (i=0; i<=len; i++)
         {
-                str += arr[i]+", ";
+                str += arr[i]+" ";
                 if ( (i+1) % 3 == 0)
                         str+="<br />";
         }

@@ -97,7 +97,7 @@ def create_graph():
             print alias_coeff, edge_weight
             
             # Still redundant, only for testing
-            if (edge_weight > 0.25):
+            if (edge_weight > 0.2):
                 cluster_stems = stems_dict[doc_idx1].intersection(
                                stems_dict[doc_idx2])
                 try: 
@@ -116,7 +116,7 @@ def create_graph():
                         g.node[doc_idx2]['cluster_stems'].add(stem)
             
             # To be made more flexible
-            if edge_weight > 0.25:
+            if edge_weight > 0.2:
                 g.add_edge(doc_idx1, doc_idx2, weight=edge_weight)
             doc_idx2 += 1
             pb.update(count)
