@@ -87,13 +87,17 @@ def create_graph():
             short_doc_len = min((doc1_len, doc2_len))
             
             # In case a document has no useful stems to classify
+            edge_weight = 0
             alias_coeff = 0
-            if short_doc_len != 0:
+            if long_doc_len == 0 or short_doc_len == 0:
+                pass
+            else:
                 alias_coeff = float(long_doc_len) / short_doc_len
             
-            edge_weight = (1 - jaccard_distance(stems_dict[doc_idx1],
+                edge_weight = (1 - jaccard_distance(stems_dict[doc_idx1],
                                            stems_dict[doc_idx2])) \
                            * alias_coeff
+                           
             print alias_coeff, edge_weight
             
             # Still redundant, only for testing

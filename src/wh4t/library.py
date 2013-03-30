@@ -217,6 +217,30 @@ def get_classification_stems(stems, idf_dict):
     return [stem for stem in stems
             if idf_dict[stem] > get_def_idf_filter_val()
             and not idf_dict[stem].as_integer_ratio() == max_val]
+    
+def get_top_ranked_idf_terms(terms):
+    """
+    This functions returns the top (10) ranked idf terms passed.
+    @param terms: An iterable with terms to be sorted after values, in
+                  this case idf values; biggest first.
+    @return: List with top ranked idf terms.
+    """
+    max_len = 10
+    
+    idf_file = get_stems_file(measure="_idf")
+    idf_dict = DictFromFile(idf_file)
+    
+    terms_dict = dict()
+    for term in terms:
+        terms_dict[term] = idf_dict[term]
+    
+    terms_sorted = [term[0] for term in sorted(terms_dict.items(), 
+                    key=lambda x: x[1], reverse=True)]
+    
+    if len(terms_sorted) > max_len:
+        return terms_sorted[:max_len]
+    
+    return terms_sorted
 
 def write_tfidf_file(xmlcollection, nltk_textcollection):
     """

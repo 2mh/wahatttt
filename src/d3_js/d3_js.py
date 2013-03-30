@@ -55,7 +55,8 @@ import json
 import re	
 
 from wh4t.library import get_def_enc, get_def_graph_name, \
-						 get_web_output_dir, get_webgraph_res
+						 get_web_output_dir, get_webgraph_res, \
+						 get_top_ranked_idf_terms
 
 d3_html = '''<!DOCTYPE html>
 <html>
@@ -199,6 +200,16 @@ def d3_json(G, group=None):
 			if type(val) == set:
 				val = list(val)
 			graph_json['nodes'][j][key] = val
+		# Only export top ranked stems, after their IDF values
+		node['uniq_stems'] = get_top_ranked_idf_terms(node['uniq_stems'])
+		# Not all nodes are connected, i. e. have cluster terms with other
+		# nodes.
+		try: 
+			node['cluster_stems'] = \
+				get_top_ranked_idf_terms(node['cluster_stems'])
+		except KeyError:
+			pass
+
 		
 	# Build up edge dictionary in JSON format
 	json_edges = list()
