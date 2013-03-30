@@ -72,13 +72,14 @@ d3_html = '''<!DOCTYPE html>
         <td width="700">
     <div id="chart"></div>
         </td>
-        <td height="650" width="300">
+        <td height="900" width="300">
         <table>
-        <tr><td height="100"><h2>ID: &nbsp;</h2></td><td><div id="doc_id"></div></td></tr>
+        <tr><td height="150"><h2>ID: &nbsp;</h2></td><td><div id="doc_id"></div></td></tr>
         <!--<tr><td height="100"><h2>Group:&nbsp;</h2></td><td><div id="group_no"></div></td></tr>-->
-        <tr><td height="100"><h2>Cluster stems:&nbsp;</h2></td><td><div id="cluster_stems"></div></td></tr>
-        <tr><td height="225"><h2>Stems:&nbsp;</h2></td><td><div id="stems"></div></td></tr>
-        <tr><td height="225"><h2>Words:&nbsp;</h2></td><td><div id="words"></div></td></tr>
+        <tr><td height="200"><h2>Cluster stems:&nbsp;</h2></td><td><div id="cluster_stems"></div></td></tr>
+        <tr><td height="200"><h2>Stems:&nbsp;</h2></td><td><div id="stems"></div></td></tr>
+        <tr><td height="200"><h2>Words:&nbsp;</h2></td><td><div id="words"></div></td></tr>
+        <tr><td height="150"></td></tr>
         </tr>
         </table>
         </td>
@@ -194,19 +195,23 @@ def d3_json(G, group=None):
 	nodes_indices = G.nodes()
 	for i in nodes_indices:
 		node = G.node[i]
+		j = i - 1
 		for key in node:
-			j = i - 1
 			val = node[key]
 			if type(val) == set:
 				val = list(val)
 			graph_json['nodes'][j][key] = val
+		
 		# Only export top ranked stems, after their IDF values
-		node['uniq_stems'] = get_top_ranked_idf_terms(node['uniq_stems'])
-		# Not all nodes are connected, i. e. have cluster terms with other
-		# nodes.
+		graph_json['nodes'][j]['uniq_stems'] = \
+			get_top_ranked_idf_terms(
+				graph_json['nodes'][j]['uniq_stems'])
+		# Not all nodes are connected, i. e. have cluster terms 
+		# with other nodes.
 		try: 
-			node['cluster_stems'] = \
-				get_top_ranked_idf_terms(node['cluster_stems'])
+			graph_json['nodes'][j]['cluster_stems'] = \
+				get_top_ranked_idf_terms(
+					graph_json['nodes'][j]['cluster_stems'])
 		except KeyError:
 			pass
 

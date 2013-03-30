@@ -7,7 +7,7 @@ to meet wh4t's needs
 */
 
 var w = 700, // initially 800
-    h = 650, // initially less
+    h = 700, // initially less
     fill = d3.scale.category10(); // initially 20
 
 function redraw() {
@@ -79,10 +79,12 @@ function on_mouseover(d)
 	stems.html(stems_formatted);
 
 
-	cluster_stems_formatted = "<h4>" + 
+	if(d.cluster_stems) {
+		cluster_stems_formatted = "<h4>" + 
                           format_array_to_html_str(d.cluster_stems) + 
                           "</h4>";
-	cluster_stems.html(cluster_stems_formatted);
+		cluster_stems.html(cluster_stems_formatted);
+	}
 
 	// Print words in formatted way
 	words_formatted = "<h4>" +
@@ -110,7 +112,7 @@ function format_array_to_html_str(arr)
 	if (len > 10)
 		len = 10;
 		
-        for (i=0; i<=len; i++)
+        for (i=0; i<len; i++)
         {
                 str += arr[i]+" ";
                 if ( (i+1) % 3 == 0)
