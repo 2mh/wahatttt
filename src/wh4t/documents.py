@@ -255,10 +255,12 @@ class Collection(dict):
         # If pos is "_"
         return self[self.WORDS]
         
-    def get_stems(self, uniq=False):
+    def get_stems(self, uniq=False, trans=(False, None)):
         """
         @param uniq: Defaults to False and indicates we want 
                      not-uniqe stems. Otherwise True can be used.
+        @param trans First argument if translation of foreign terms to be made,
+                     second argument bidictionary as dict object.
         @return: Set of all stems found in the documents.
         """
         var = self.STEMS
@@ -267,7 +269,7 @@ class Collection(dict):
         
         if len(self[var]) == 0:
             for doc in self.get_docs(): 
-                for stem in doc.get_stems():
+                for stem in doc.get_stems(trans=trans):
                     if uniq == True:
                         self[var].add(stem)
                     else:

@@ -17,7 +17,7 @@ from hashlib import sha512
 from library import normalize_word, rreplace, clean_iterable, split_term, \
                     HashDict, get_mailfolder, get_def_enc, get_wordsdir, \
                     get_stemsdir, DictFromFile, get_classification_stems, \
-                    get_stems_file
+                    get_stems_file, EnToDeDict
 
 class document(dict):
     """
@@ -269,7 +269,7 @@ class document(dict):
         # Lower case list and return set
         return set(map(lambda x:x.lower(), self[self.TYPES]))
     
-    def get_words(self, pos='_', ref_nouns=None, trans=False):
+    def get_words(self, pos='_', ref_nouns=None, trans=(False, None)):
         """
         @param pos: It's possible to say which words we want. ATM 
                     only '_' (all words; that's the default) or 'n' 
@@ -277,7 +277,9 @@ class document(dict):
         @param ref_nouns: Optional parameter (together with pos) 
                                 to indicate which reference nouns 
                                 (object nouns) to use.
-        @param trans: Translate foreign-language words
+        @param trans: First argument specifies if translation should
+                      occur; second argument gives possibility to 
+                      specify a bi-dictionary as object.
         @return: Return words (determined by surface forms) that seem 
                  to be of linguistic nature, and thus "real" words.
                  Words in this sense are built out of the tokens, which 
@@ -369,20 +371,19 @@ class document(dict):
                 
             return self[self.NOUNS]
                
-        # In case param pos is '_' (all words)        
-        
-        if trans == True:
-            self._translate_words() # XXX: Does nothing so far.
+        if trans[0] == True:
+            self._translate_words(en_to_de_dict=trans[1])
         
         return self[self.WORDS]
 
-    def get_stems(self, uniq=False, trans=False, relev=False):
+    def get_stems(self, uniq=False, trans=(False, None), relev=False):
         """
         @param uniq: Defaults to False, i. e. returns not-unique stems.
                      Can be changed by providing True. Optional 
                      setting.
-        @param trans: Get stems after translation of foreign-language 
-                      words
+        @param trans: First argument specifies if translation should
+                      occur; second argument gives possibility to 
+                      specify a bi-dictionary as object.
         @param relev: Only return relevant stems, of the sort useful
                       for classification, i. e. w/o stop words or very
                       rare words (appearing e. g. only once everywhere).
@@ -409,6 +410,8 @@ class document(dict):
             
         if relev == True:
             idf_file = get_stems_file(measure="_idf")
+            
+            
             idf_dict = DictFromFile(idf_file)
             self[var] = get_classification_stems(self[var], idf_dict)
             
@@ -562,9 +565,17 @@ class document(dict):
         """
         self[self.HASHSUMS] = HashDict()
         
-    def _translate_words(self):
+    def _translate_words(self, en_to_de_dict=None):
         """
         Translate words using (for now) an en-de-bidix.
+        @param en_to_de_dict: A dictionary object can be directly
+                              passed, to increase speed when
+                              translating several documents'
+                              words.
         """
-        # XXX: Nothing happens so far; efficient solution must be 
-        # found.
+        if (en_to_de_dict == None):
+            en_to_de_dict = EnToDeDict()
+        
+        # Substitute all (English) words by (potential) German ones
+        for i in range(len(self[self.WORDS])):
+            self[self.WORDS][i] = en_to_de_dict[self[self.WORDS][i]]

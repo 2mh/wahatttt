@@ -19,7 +19,8 @@ from progressbar import ProgressBar
 
 from d3_js import d3_js
 from wh4t.documents import Collection
-from wh4t.library import get_def_graph_name, get_graph_file, print_own_info
+from wh4t.library import get_def_graph_name, get_graph_file, print_own_info, \
+                         EnToDeDict, exists_tfidf_matrix
  
 def main():
     print_own_info(__file__)
@@ -32,16 +33,22 @@ def main():
         d3_js.export_d3_js(g)
         print "Web files exported: ", 
     else:
-        create_graph()
+        xml_docs = Collection()
+        en_to_de_dict = EnToDeDict()
+    
+        if exists_tfidf_matrix(xml_docs, 
+                               create=True, 
+                               trans=(True, en_to_de_dict)) is True:
+            create_graph()
 
 
-def create_graph():  
+def create_graph(xml_docs):  
     g = nx.Graph()
-    xml_docs = Collection()
     xml_docs_subset = xml_docs.get_docs(author="Wau Holland")
     docs_no = len(xml_docs_subset)
     id_dict = dict()
     stems_dict = dict()
+    en_to_de_dict = EnToDeDict()
     doc_id = 1
     
     print "Put stems into a dict for each document (with an uniq id) ..."
@@ -59,13 +66,15 @@ def create_graph():
                    date = xml_doc.get_date(),
                    words = xml_doc.get_words(),
                    uniq_stems = list(xml_doc.get_stems(uniq=True, 
-                                                       relev=True)),
+                                     relev=True), 
+                                     trans=(True, en_to_de_dict)),
                    rawcontent = xml_doc.get_rawcontent()
                    )
         doc_id += 1
         # It seems sometimes a list (-> set conversion) gets returned 
         # ... ugly. XXX
-        stems_dict[doc_id] = set(xml_doc.get_stems(uniq=True, relev=True))
+        stems_dict[doc_id] = set(xml_doc.get_stems(uniq=True, 
+                                 relev=True, trans=(True, en_to_de_dict)))
         
     print "Create undirected, weighted graph based on Jaccard similarity ..."
     no_of_edges = docs_no * (docs_no - 1) / 2

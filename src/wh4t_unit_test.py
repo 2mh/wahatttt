@@ -28,9 +28,9 @@ def main():
     print_own_info(__file__)
     # print spawn_processes(test_function, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     # spawn_processes(translate_words, Collection().get_words())
-    """
     print_line()
     en_to_de_dict_test()
+    """
     single_document_stats(42)
     print_line()
     """
