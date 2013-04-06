@@ -293,7 +293,8 @@ class document(dict):
         doc_id = self[self.DOC_ID]
         hashsums_dict = self[self.HASHSUMS]
         w, w_hash  = self.get_file(self.WORDS)
-        folder = self._get_folder_by_key(self.WORDS)      
+        folder = self._get_folder_by_key(self.WORDS)
+        en_to_de_dict = EnToDeDict()
          
         if self[self.HASHSUMS] == 0 \
         or w_hash == None \
@@ -326,11 +327,17 @@ class document(dict):
                                 # Terms may become void / short; avoid 
                                 # adding them
                                 if len(sub_t) > 1:
-                                    self[self.WORDS].append(sub_t)
+                                    try: 
+                                        self[self.WORDS].append(en_to_de_dict[t.lower()])
+                                    except KeyError:
+                                        self[self.WORDS].append(t)
                         else:
                             # As above
                             if len(t) > 1:
-                                self[self.WORDS].append(t)
+                                try:
+                                    self[self.WORDS].append(en_to_de_dict[t.lower()])
+                                except KeyError:
+                                    self[self.WORDS].append(t)
                     else: # istoadd is False
                         istoadd = True
                 self.write_file(self.WORDS)
@@ -578,4 +585,7 @@ class document(dict):
         
         # Substitute all (English) words by (potential) German ones
         for i in range(len(self[self.WORDS])):
-            self[self.WORDS][i] = en_to_de_dict[self[self.WORDS][i]]
+            try: 
+                self[self.WORDS][i] = en_to_de_dict[self[self.WORDS][i]]
+            except KeyError:
+                pass

@@ -17,7 +17,7 @@ import networkx as nx
 from wh4t.documents import Collection
 from wh4t.library import print_line, print_own_info, get_words_corr_file, \
                           get_def_enc, spawn_processes, EnToDeDict, \
-                          get_stemsdir
+                          get_stemsdir, Synsets
 from wh4t.nouns import Nouns
 
 def main():
@@ -29,12 +29,12 @@ def main():
     # print spawn_processes(test_function, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
     # spawn_processes(translate_words, Collection().get_words())
     print_line()
-    en_to_de_dict_test()
+    #en_to_de_dict_test()
     """
     single_document_stats(42)
     print_line()
     """
-    #synsets_test()
+    synsets_test()
     #print_line()
     # stems_test()
     # simple_stems_classificator()
@@ -188,7 +188,7 @@ def synsets_test():
     for synset in synsets:
         count += 1
         for word in words_not_ambig:
-            print count, synset
+            #print count, synset
             if word in synset:
                 new_synsets.append(synset)
                 break

@@ -4,13 +4,6 @@
 @author Hernani Marques <h2m@access.uzh.ch>, 2013
 """  
 
-"""
-TODO:
-1. 
-Make program parametrizable, e. g. possibility to indicate YAML file.
-...
-"""
-
 import matplotlib.pyplot as plt
 import networkx as nx
 from nltk.metrics import jaccard_distance
@@ -20,7 +13,7 @@ from progressbar import ProgressBar
 from d3_js import d3_js
 from wh4t.documents import Collection
 from wh4t.library import get_def_graph_name, get_graph_file, print_own_info, \
-                         EnToDeDict, exists_tfidf_matrix
+EnToDeDict, exists_tfidf_matrix
  
 def main():
     print_own_info(__file__)
@@ -39,7 +32,7 @@ def main():
         if exists_tfidf_matrix(xml_docs, 
                                create=True, 
                                trans=(True, en_to_de_dict)) is True:
-            create_graph()
+            create_graph(xml_docs)
 
 
 def create_graph(xml_docs):  
@@ -65,9 +58,11 @@ def create_graph(xml_docs):
                    author = xml_doc.get_author(),
                    date = xml_doc.get_date(),
                    words = xml_doc.get_words(),
-                   uniq_stems = list(xml_doc.get_stems(uniq=True, 
-                                     relev=True), 
-                                     trans=(True, en_to_de_dict)),
+                   uniq_stems = list(xml_doc.get_stems(
+                                    uniq=True,
+                                    trans=(True, en_to_de_dict),
+                                    relev=True)
+                                    ),
                    rawcontent = xml_doc.get_rawcontent()
                    )
         doc_id += 1

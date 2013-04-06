@@ -183,10 +183,12 @@ def clean_iterable(iter_to_clean):
     """
     return map(lambda s : s.strip(), iter_to_clean)
 
-def get_nltk_text_collection(xmlcollection):
+def get_nltk_text_collection(xmlcollection, trans=(False, None)):
     """
     @param xmlcollection: A collection of all (as of now) XML 
                           documents, of type collection.
+    @param trans: First argument if translation of foreign terms to be made,
+                 second argument bidictionary as dict object.
     @return: Retrieves an NLTK TextCollection with all stems from our 
              document collection.
     """
@@ -200,7 +202,7 @@ def get_nltk_text_collection(xmlcollection):
     for doc in xmlcollection_list:
         cnt += 1
         pb.update(cnt)
-        nltk_textcollectionList.append(list(doc.get_stems()))
+        nltk_textcollectionList.append(list(doc.get_stems(trans=trans)))
         
     return TextCollection(nltk_textcollectionList)
 
@@ -371,11 +373,11 @@ def exists_tfidf_matrix(xmlcollection, create=False, trans=(False, None)):
     if not exists(get_tfidf_matrix_file()):
         print "TF*IDF matrix seems not available."
         if create is True:
-            nltk_textcollection = get_nltk_text_collection(xmlcollection)
+            nltk_textcollection = get_nltk_text_collection(xmlcollection, trans=trans)
             write_tfidf_file(xmlcollection, nltk_textcollection, trans=trans)
             print "TF*IDF matrix written to: ", get_tfidf_matrix_file()
             retval = True
-    else:
+    else:   
         print "TF*IDF matrix seems available: ", get_tfidf_matrix_file()
         retval = True
         

@@ -268,7 +268,7 @@ class Collection(dict):
             var = self.STEMS_UNIQ
         
         if len(self[var]) == 0:
-            for doc in self.get_docs(): 
+            for doc in self.get_docs():
                 for stem in doc.get_stems(trans=trans):
                     if uniq == True:
                         self[var].add(stem)
