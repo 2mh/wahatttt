@@ -183,12 +183,10 @@ def clean_iterable(iter_to_clean):
     """
     return map(lambda s : s.strip(), iter_to_clean)
 
-def get_nltk_text_collection(xmlcollection, trans=(False, None)):
+def get_nltk_text_collection(xmlcollection):
     """
     @param xmlcollection: A collection of all (as of now) XML 
                           documents, of type collection.
-    @param trans: First argument if translation of foreign terms to be made,
-                 second argument bidictionary as dict object.
     @return: Retrieves an NLTK TextCollection with all stems from our 
              document collection.
     """
@@ -202,7 +200,7 @@ def get_nltk_text_collection(xmlcollection, trans=(False, None)):
     for doc in xmlcollection_list:
         cnt += 1
         pb.update(cnt)
-        nltk_textcollectionList.append(list(doc.get_stems(trans=trans)))
+        nltk_textcollectionList.append(list(doc.get_stems()))
         
     return TextCollection(nltk_textcollectionList)
 
@@ -244,23 +242,20 @@ def get_top_ranked_idf_terms(terms):
     
     return terms_sorted
 
-def write_tfidf_file(xmlcollection, nltk_textcollection, 
-                     trans=(False, None)):
+def write_tfidf_file(xmlcollection, nltk_textcollection):
     """
     Writes a tf*idf matrix file with all tf*idf values for each 
     document, row by row. The columns represent the (alphabetically
     ordered) stems available in the whole collection.
     @param xmlcollection: Collection of XML documents, type collection
     @param nltk_textcollection: NLTK TextCollection of all the stems
-    @param trans First argument if translation of foreign terms to be made,
-                 second argument bidictionary as dict object.
     """
     idf_file = get_stems_file(measure="_idf")
     avg_words_per_doc = len(xmlcollection.get_words()) / \
                         len(xmlcollection.get_docs())
 
     if not exists(idf_file):
-        write_idf_file(xmlcollection, nltk_textcollection, trans=trans)
+        write_idf_file(xmlcollection, nltk_textcollection)
 
     idf_dict = DictFromFile(idf_file)
     tfidf_dict = dict()
@@ -323,17 +318,14 @@ def write_tfidf_file(xmlcollection, nltk_textcollection,
     f.close()
     
   
-def write_idf_file(xmlcollection, nltk_textcollection,
-                   trans=(False, None)):
+def write_idf_file(xmlcollection, nltk_textcollection):
     """
     Writes a (collection-wide) file with idf valus for each stem.
     @param xmlcollection: Collection of XML documents, type collection
     @param nltk_textcollection: NLTK TextCollection of all the stems
-    @param trans First argument if translation of foreign terms to be made,
-                 second argument bidictionary as dict object.    
     """
     print "Calculating idf values for all stems ..."
-    all_stems = xmlcollection.get_stems(uniq=True, trans=trans)
+    all_stems = xmlcollection.get_stems(uniq=True)
     idfset = set()
     pb = ProgressBar(maxval=len(all_stems)).start()
     cnt = 0
@@ -349,7 +341,7 @@ def write_idf_file(xmlcollection, nltk_textcollection,
         f.write(pair[1] + " " + str(pair[0]) + "\n")
     f.close()
     
-def exists_tfidf_matrix(xmlcollection, create=False, trans=(False, None)):
+def exists_tfidf_matrix(xmlcollection, create=False):
     """
     This method checks for the existence of a TF*IDF matrix, and may
     invoke its creation.
@@ -362,8 +354,6 @@ def exists_tfidf_matrix(xmlcollection, create=False, trans=(False, None)):
                           should be created for. Defaults to the full
                           collection if nothing given AND a TF*IDF
                           matrix is not present already.
-    @param trans First argument if translation of foreign terms to be made,
-                 second argument bidictionary as dict object.
     @return: Boolean value being True or False, indicating if a TF*IDF 
              matrix could be found or created.
              
@@ -373,11 +363,11 @@ def exists_tfidf_matrix(xmlcollection, create=False, trans=(False, None)):
     if not exists(get_tfidf_matrix_file()):
         print "TF*IDF matrix seems not available."
         if create is True:
-            nltk_textcollection = get_nltk_text_collection(xmlcollection, trans=trans)
-            write_tfidf_file(xmlcollection, nltk_textcollection, trans=trans)
+            nltk_textcollection = get_nltk_text_collection(xmlcollection)
+            write_tfidf_file(xmlcollection, nltk_textcollection)
             print "TF*IDF matrix written to: ", get_tfidf_matrix_file()
             retval = True
-    else:   
+    else:
         print "TF*IDF matrix seems available: ", get_tfidf_matrix_file()
         retval = True
         
