@@ -18,6 +18,7 @@ EnToDeDict, exists_tfidf_matrix
 def main():
     print_own_info(__file__)
 
+
     yaml_file = get_graph_file()
     if exists(yaml_file):
         print "Graph (YAML) file exists: ",yaml_file
