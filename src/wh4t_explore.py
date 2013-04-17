@@ -76,7 +76,7 @@ def main():
     # created, like URLs, at this stage.
     # That's why these tokens here are denoted as being "raw".
     print "-- Get tokens ..."
-    tokenized_text = xmldocs.get_tokens()
+    tokenized_text = map(lambda x:x.lower(), xmldocs.get_tokens())
     print "Total number of (raw) tokens: " + str(len(tokenized_text))
     print "Avg number of (raw) tokens: " + \
         str(len(tokenized_text)/no_of_docs)
@@ -104,8 +104,11 @@ def main():
     #   observations made.
     print "-- Get number of words ..."
     words = xmldocs.get_words()
+    words2 = set(words)
     print "Total number of words: " + \
     str(len(words))
+    print "Total number of words2: " + \
+    str(len(words2))
     print "Avg number of words: " + \
     str(len(words)/no_of_docs)
     print_line()
