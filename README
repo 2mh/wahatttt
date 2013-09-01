@@ -130,3 +130,4 @@ cd ../src/
 javac GrabFitug.java
 java GrabFitug
 ./wh4t_stems_classificator.py # Works quite fast
+
